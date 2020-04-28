@@ -2,7 +2,7 @@ const AWS = require("aws-sdk");
   
 
 function getBranchNamefromRef(refvalue){
-  return refvalue.split('/').pop();
+  return refvalue;
 
 }
 
