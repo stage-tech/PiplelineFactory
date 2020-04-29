@@ -73,7 +73,7 @@ exports.handleGitHubMessage =  function(event) {
         },
         {
           name: 'ARTIFACTS_PREFIX', 
-          value: `react/release/door`, 
+          value: ``, 
           type: "PLAINTEXT" 
         }  
       ]
