@@ -31,7 +31,7 @@ export class BuildRunnerIamRole extends cdk.Construct {
       statements : [ 
         new iam.PolicyStatement({
         resources: ['*'],
-        actions: ['cloudformation:*']
+        actions: ['*']
       }),
       new iam.PolicyStatement({
         resources: ['*'],
