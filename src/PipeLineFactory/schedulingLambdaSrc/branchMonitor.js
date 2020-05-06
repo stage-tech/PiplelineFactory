@@ -5,24 +5,8 @@ function getBranchNamefromRef(refvalue){
 
 }
 
-exports.handleApiRequest = async function(event) {
-  var payload = event;
-  console.debug(payload);
- 
-  var buildParameter = {
-    branchaction : "action",
-    changeset : githubContext.after,
-   repository : {
-        name:  githubContext.repository.name,
-        owner: githubContext.repository.owner.login,
-        branch : getBranchNamefromRef(githubContext.ref)
-    }
-  }
 
-  TriggerProject(buildParameter, "create")
-}
-
-exports.branchCreated = async function(event) {
+exports.apiBranchCreated =  function(event) {
     var payload = event.Records[0].Sns.Message;
     console.debug(payload);
     var buildParameter = JSON.parse(payload);
@@ -30,7 +14,15 @@ exports.branchCreated = async function(event) {
    TriggerProject(buildParameter, "create")
 }
 
-exports.branchDeleted = function(event) {
+exports.apiBranchDeleted =  function(event) {
+  var payload = event.Records[0].Sns.Message;
+  console.debug(payload);
+  var buildParameter = JSON.parse(payload);
+ 
+ TriggerProject(buildParameter, "destroy")
+}
+
+exports.snsBranchDeleted = function(event) {
   var payload = event.Records[0].Sns.Message;
   console.debug(payload);
   var githubContext = JSON.parse(payload);
@@ -45,7 +37,7 @@ exports.branchDeleted = function(event) {
   TriggerProject(buildParameter, "destroy")
 }
 
-exports.githubEventRecieved = function(event) {
+exports.snsBracnhCreated = function(event) {
   var payload = event.Records[0].Sns.Message;
   console.debug(payload);
   var githubContext = JSON.parse(payload);
