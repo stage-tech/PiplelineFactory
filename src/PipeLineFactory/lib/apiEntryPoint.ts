@@ -40,7 +40,7 @@ export default class ApiEntryPoint extends cdk.Construct {
     branchDeletion.addMethod("POST", deletionLambda);
 
     const apiKey = new apigateway.ApiKey(this, `ApiGatewayKey`, {
-      apiKeyName: `${props.projectName}-key`,
+      apiKeyName: `${props.projectName}-access-key`,
       description: `APIKey used to access PLF API`,
       enabled: true,
     });

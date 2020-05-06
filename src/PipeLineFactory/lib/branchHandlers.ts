@@ -25,7 +25,7 @@ export default class BranchHandlers extends cdk.Construct {
     };
 
       this.apiBranchCreated = new lambda.Function(
-        this, "Lambda_BranchCreation",
+        this, "Lambda_API_BranchCreation",
         {
           runtime: lambda.Runtime.NODEJS_10_X,
           functionName : `${props.projectName}-API-BranchCreatedHandler`,
@@ -38,7 +38,7 @@ export default class BranchHandlers extends cdk.Construct {
       );
 
       this.apiBranchDeleted = new lambda.Function(
-        this, "Lambda_BranchCreation",
+        this, "Lambda_API_BranchDeletion",
         {
           runtime: lambda.Runtime.NODEJS_10_X,
           functionName : `${props.projectName}-API-BranchDeletedHandler`,
@@ -51,7 +51,7 @@ export default class BranchHandlers extends cdk.Construct {
       );
      
       this.snsBranchDeleted  = new lambda.Function(
-        this, "Lambda_BranchDeletion",
+        this, "Lambda_SNS_BranchDeletion",
         {
           runtime: lambda.Runtime.NODEJS_10_X,
           functionName : `${props.projectName}-SNS-BranchDeletedHandler`,
@@ -64,7 +64,7 @@ export default class BranchHandlers extends cdk.Construct {
       );
 
       this.snsBranchCreated = new lambda.Function(
-        this, "Lambda_GitHubEvents",
+        this, "Lambda_SNS_BranchCreation",
         {
           runtime: lambda.Runtime.NODEJS_10_X,
           functionName : `${props.projectName}-SNS-BranchCreatedHandler`,
