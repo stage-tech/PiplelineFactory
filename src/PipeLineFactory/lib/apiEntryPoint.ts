@@ -1,8 +1,9 @@
 import * as cdk from "@aws-cdk/core";
 import * as apigateway from "@aws-cdk/aws-apigateway";
+import { ApiKeySourceType } from "@aws-cdk/aws-apigateway";
+import * as acm from '@aws-cdk/aws-certificatemanager'
 import BranchHandlers from "./branchHandlers";
 import FactoryProperties from "./factoryProperties";
-import { ApiKeySourceType } from "@aws-cdk/aws-apigateway";
 
 export default class ApiEntryPoint extends cdk.Construct {
   public readonly buildProjectArn: string;
@@ -17,6 +18,7 @@ export default class ApiEntryPoint extends cdk.Construct {
     const entryPointApi = new apigateway.RestApi(this, "APIGateway", {
       restApiName: props.projectName,
       apiKeySourceType: ApiKeySourceType.HEADER,
+      
     });
 
     const creationLambda = new apigateway.LambdaIntegration(
@@ -27,7 +29,9 @@ export default class ApiEntryPoint extends cdk.Construct {
     );
 
     const branchCreation = entryPointApi.root.addResource("branch-created");
-    branchCreation.addMethod("POST", creationLambda);
+    branchCreation.addMethod("POST", creationLambda, {
+      apiKeyRequired : true
+    });
 
     const deletionLambda = new apigateway.LambdaIntegration(
       handlers.apiBranchDeleted,
@@ -37,7 +41,10 @@ export default class ApiEntryPoint extends cdk.Construct {
     );
 
     const branchDeletion = entryPointApi.root.addResource("branch-deleted");
-    branchDeletion.addMethod("POST", deletionLambda);
+    branchDeletion.addMethod("POST", deletionLambda, {
+      apiKeyRequired : true,
+      
+    });
 
     const apiKey = new apigateway.ApiKey(this, `ApiGatewayKey`, {
       apiKeyName: `${props.projectName}-access-key`,
@@ -45,6 +52,12 @@ export default class ApiEntryPoint extends cdk.Construct {
       enabled: true,
     });
 
-    
+    new apigateway.DomainName(this, 'ApiCustomDomain', {
+      domainName: props.apiDomainName,
+      certificate: acm.Certificate.fromCertificateArn(this, "customDomainCertificate" , props.apiDomainCertificateArn),
+      endpointType: apigateway.EndpointType.REGIONAL, // default is REGIONAL
+      securityPolicy: apigateway.SecurityPolicy.TLS_1_2,
+      mapping : entryPointApi
+    });
   }
 }
