@@ -7,7 +7,7 @@ function getBranchNamefromRef(refvalue){
 
 
 exports.apiBranchCreated =  function(event) {
-    var payload = event.Records[0].Sns.Message;
+    var payload = event.body;
     console.debug(payload);
     var buildParameter = JSON.parse(payload);
    
@@ -15,7 +15,7 @@ exports.apiBranchCreated =  function(event) {
 }
 
 exports.apiBranchDeleted =  function(event) {
-  var payload = event.Records[0].Sns.Message;
+  var payload = event.body;
   console.debug(payload);
   var buildParameter = JSON.parse(payload);
  

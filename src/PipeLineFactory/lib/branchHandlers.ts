@@ -29,7 +29,7 @@ export default class BranchHandlers extends cdk.Construct {
         {
           runtime: lambda.Runtime.NODEJS_10_X,
           functionName : `${props.projectName}-API-BranchCreatedHandler`,
-          handler: "branchMonitor.apibranchCreated",
+          handler: "branchMonitor.apiBranchCreated",
           role: props.lambdaRole,
           code: lambda.Code.fromAsset("schedulingLambdaSrc"), 
           environment: environmentVariables,
