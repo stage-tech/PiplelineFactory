@@ -11,8 +11,8 @@ export default class ApiEntryPoint extends cdk.Construct {
     scope: cdk.Construct,
     id: string,
     props: FactoryProperties,
-    handlers: BranchHandlers
-  ) {
+    handlers: BranchHandlers)
+  {
     super(scope, id);
 
     const entryPointApi = new apigateway.RestApi(this, "APIGateway", {
@@ -52,10 +52,21 @@ export default class ApiEntryPoint extends cdk.Construct {
       enabled: true,
     });
 
+    const usagePlan = new apigateway.UsagePlan(this , "UsagePlan" , {
+      apiKey : apiKey,
+      name : "Basic Unlimited",
+      apiStages : [
+        {
+          api : entryPointApi,
+          stage : entryPointApi.deploymentStage,
+        }
+      ] 
+    })
+
     new apigateway.DomainName(this, 'ApiCustomDomain', {
       domainName: props.apiDomainName,
       certificate: acm.Certificate.fromCertificateArn(this, "customDomainCertificate" , props.apiDomainCertificateArn),
-      endpointType: apigateway.EndpointType.REGIONAL, // default is REGIONAL
+      endpointType: apigateway.EndpointType.REGIONAL, 
       securityPolicy: apigateway.SecurityPolicy.TLS_1_2,
       mapping : entryPointApi
     });
