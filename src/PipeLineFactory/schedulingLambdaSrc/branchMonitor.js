@@ -20,11 +20,10 @@ exports.apiBranchCreated = function (event, context, callback) {
 
 }
 
-exports.apiBranchDeleted = function (event) {
-  var payload = event.body;
+exports.apiBranchDeleted = function (event, context, callback) {
+    var payload = event.body;
   console.debug(payload);
   var buildParameter = JSON.parse(payload);
-  
   var result = TriggerProject(buildParameter, "destroy")
   callback(null , ({
     'statusCode': 200,
