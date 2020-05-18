@@ -8,7 +8,7 @@ export class Notification extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string, props: BuildOperationsDetails, pipeline: IPipeline) {
         super(scope, id);
         
-        let slackChannelName = 'sphinx-env-';
+        let slackChannelName = props.slackChannelNamePrefix;
         if(props.githubRepositoryBranch === 'master' || props.githubRepositoryBranch.startsWith('bumastemra-uat')){
             slackChannelName += props.githubRepositoryBranch;
         } else {
@@ -22,7 +22,7 @@ export class Notification extends cdk.Construct {
             configurationName: props.projectName + 'CodePipelineStateChangesConfiguration',
             iamRoleArn: props.buildAsRoleArn,
             slackChannelId: slackChannelId,
-            slackWorkspaceId: 'T5J1W20JV',
+            slackWorkspaceId: props.slackWorkspaceId,
           });
     }
 }
