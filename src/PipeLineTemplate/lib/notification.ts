@@ -23,7 +23,6 @@ export class Notification extends cdk.Construct {
             iamRoleArn: props.buildAsRoleArn,
             slackChannelId: slackChannelId,
             slackWorkspaceId: 'T5J1W20JV',
-            // snsTopicArns: [notificationTopic.topicArn],
           });
     }
 }
