@@ -9,7 +9,7 @@ export class Notification extends cdk.Construct {
         super(scope, id);
         
         let slackChannelName = 'sphinx-env-';
-        if(props.githubRepositoryBranch === 'master' || props.githubRepositoryBranch === 'bumastemra-uat'){
+        if(props.githubRepositoryBranch === 'master' || props.githubRepositoryBranch.startsWith('bumastemra-uat')){
             slackChannelName += props.githubRepositoryBranch;
         } else {
             slackChannelName += 'other';
