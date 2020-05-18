@@ -9,7 +9,7 @@ export class Notification extends cdk.Construct {
         super(scope, id);
         
         let slackChannelName = props.slackChannelNamePrefix;
-        if(props.githubRepositoryBranch === 'master' || props.githubRepositoryBranch.startsWith('bumastemra-uat')){
+        if(props.githubRepositoryBranch === 'master' || props.githubRepositoryBranch.startsWith('bumastemra')){
             slackChannelName += props.githubRepositoryBranch;
         } else {
             slackChannelName += 'other';
