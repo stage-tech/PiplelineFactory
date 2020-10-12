@@ -23,13 +23,13 @@ exports.TriggerProject = function (payLoad, requestedAction) {
 
   var transientArtifactsBucket = buildParameters.transient_artifacts_bucket || process.env.DEFAULT_TRANSIENT_ARTIFACTS_BUCKET_NAME;
   
-  var artifactsBucketName = buildParameters.artifacts_bucket_name || process.env.DEFAULT_ARTIFACTS_BUCKET_NAME;
+  var artifactsBucketName = buildParameters.artifactsBucketName || process.env.DEFAULT_ARTIFACTS_BUCKET_NAME;
  
   var gitHubTokenSecretName = buildParameters.github_token_secret_name || process.env.DEFAULT_GITHUB_TOKEN_SECRET_NAME;
   
-  var buildAsRoleArn = buildParameters.build_as_role_arn || process.env.BUILD_AS_ROLE_ARN;
+  var buildAsRoleArn = buildParameters.buildAsRoleArn || process.env.BUILD_AS_ROLE_ARN;
   
-  var buildSpecLocation = buildParameters.buildspec_file_location || "buildspec.yml";
+  var buildSpecLocation = buildParameters.buildspecFileLocation || "buildspec.yml";
   
   var artifactsPrefix = buildParameters.artifacts_prefix || "";
   
