@@ -16,9 +16,11 @@ function extractBranchName(branchName) {
 
 function mergeRepositorySettings(payLoad) {
   var mergedParameters = payLoad 
-  mergedParameters.settings = null;
 
   const repositorySettings = payLoad.settings;
+  
+  mergedParameters.settings = null;
+
   Object.keys(repositorySettings).forEach(function (key) {
     mergedParameters[key] = repositorySettings[key];
   });
@@ -124,18 +126,18 @@ exports.TriggerProject = function (payLoad, requestedAction) {
 
   const monitoredBranches = Array.isArray(buildParameters.monitoredBranches) ? buildParameters.monitoredBranches : []
   monitoredBranches.push('master');
-  if(monitoredBranches.fruits.includes(branchName)) {
+  if(monitoredBranches.includes(branchName)) {
     console.debug(`branch name is configured for monitoring`)
   }
   else {
     console.debug(`Skipping , branch name is not configured for monitoring`)
-    return null;   
+    return { message : "This branch is not configured for monitoring "      };   
   }
 
   //return;
   const AWS = require("aws-sdk");
   var codebuild = new AWS.CodeBuild({ apiVersion: '2016-10-06' });
-  var buildresult = codebuild.startBuild(params, function (err, data) {
+  var buildResult = codebuild.startBuild(params, function (err, data) {
     if (err) {
       console.log(err, err.stack);
       
