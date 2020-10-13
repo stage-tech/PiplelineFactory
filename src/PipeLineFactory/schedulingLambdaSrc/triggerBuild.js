@@ -1,3 +1,18 @@
+function extractBranchName(branchName) {
+  
+  console.log(`branch name passed from github ${branchName}`)
+  
+  branchName = branchName.toLowerCase();
+
+  if(branchName.startsWith("refs/heads/"))
+  {
+    branchName = branchName.replace("refs/heads/", "");
+  }
+  
+  console.debug("Trimmed Branch Name : " + branchName)
+  return branchName;
+}
+
 
 function mergeRepositorySettings(payLoad) {
   var mergedParameters = payLoad 
@@ -19,6 +34,8 @@ exports.TriggerProject = function (payLoad, requestedAction) {
 
   console.debug(buildParameters);
 
+  const branchName = extractBranchName(buildParameters.branch);
+
   var buildProjectName = process.env.FactoryCodeBuildProjectName;
 
   var transientArtifactsBucket = buildParameters.transient_artifacts_bucket || process.env.DEFAULT_TRANSIENT_ARTIFACTS_BUCKET_NAME;
@@ -37,7 +54,6 @@ exports.TriggerProject = function (payLoad, requestedAction) {
   
   var slackChannelNamePrefix = buildParameters.slackChannelNamePrefix || process.env.SLACK_CHANNEL_NAME_PREFIX;
 
-
   var params =
   {
     projectName: buildProjectName,
@@ -49,7 +65,7 @@ exports.TriggerProject = function (payLoad, requestedAction) {
       },
       {
         name: 'GITHUB_REPOSITORY_BRANCH',
-        value: buildParameters.branch,
+        value: branchName,
         type: "PLAINTEXT"
       },
       {

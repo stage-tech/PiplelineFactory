@@ -1,17 +1,5 @@
 const { TriggerProject } = require('./triggerBuild');
 
-function sanitizeBranchName(branchName) {
-  branchName = branchName.toLowerCase();
-
-  if(branchName.startsWith("refs/heads/"))
-  {
-    branchName = branchName.replace("refs/heads/", "");
-  }
-  
-  console.debug("Sanitize Branch Name : " + branchName)
-  return branchName;
-}
-
 exports.apiBranchCreated = function (event, context, callback) {
   var payload = event.body;
   console.debug(payload);
@@ -48,7 +36,7 @@ exports.snsBranchDeleted = function (event) {
   var buildParameter = {
     "repository_name": githubContext.repository.name,
     "repository_owner": githubContext.repository.owner.login,
-    "branch": sanitizeBranchName(githubContext.ref)
+    "branch": githubContext.ref
   };
 
   TriggerProject(buildParameter, "destroy")
@@ -63,7 +51,7 @@ exports.snsBranchCreated = function (event) {
   var buildParameter = {
     "repository_name": githubContext.repository.name,
     "repository_owner": githubContext.repository.owner.login,
-    "branch": sanitizeBranchName(githubContext.ref)
+    "branch": githubContext.ref
   };
 
   TriggerProject(buildParameter, "create")
