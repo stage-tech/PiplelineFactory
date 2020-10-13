@@ -27,7 +27,7 @@ function mergeRepositorySettings(payLoad) {
 }
 
 exports.TriggerProject = function (payLoad, requestedAction) {
-
+  console.debug(`requested action ${requestedAction}`);
   console.debug(payLoad);
 
   const buildParameters = mergeRepositorySettings(payLoad);
@@ -116,12 +116,22 @@ exports.TriggerProject = function (payLoad, requestedAction) {
     ]
   };
 
-  console.debug(`requested action ${requestedAction}`);
   if (requestedAction == "destroy") {
     params.buildspecOverride = 'src/PipeLineTemplate/teardown.json';
   }
 
   console.debug(params);
+
+  const monitoredBranches = Array.isArray(buildParameters.monitoredBranches) ? buildParameters.monitoredBranches : []
+  monitoredBranches.push('master');
+  if(monitoredBranches.fruits.includes(branchName)) {
+    console.debug(`branch name is configured for monitoring`)
+  }
+  else {
+    console.debug(`Skipping , branch name is not configured for monitoring`)
+    return null;   
+  }
+
   //return;
   const AWS = require("aws-sdk");
   var codebuild = new AWS.CodeBuild({ apiVersion: '2016-10-06' });
