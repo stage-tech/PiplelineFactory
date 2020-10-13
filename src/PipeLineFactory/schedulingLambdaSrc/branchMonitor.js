@@ -2,8 +2,8 @@ const { TriggerProject } = require('./triggerBuild');
 
 exports.apiBranchCreated = function (event, context, callback) {
   var payload = event.body;
-  console.debug(payload);
   var buildParameter = JSON.parse(payload);
+  console.debug(`pay load received ${JSON.stringify(buildParameter, null , 4)}`);
 
   var result = TriggerProject(buildParameter, "create")
   callback(null , ({
@@ -15,9 +15,10 @@ exports.apiBranchCreated = function (event, context, callback) {
 }
 
 exports.apiBranchDeleted = function (event, context, callback) {
-    var payload = event.body;
-  console.debug(payload);
+  var payload = event.body;
   var buildParameter = JSON.parse(payload);
+  console.debug(`pay load received ${JSON.stringify(buildParameter, null , 4)}`);
+ 
   var result = TriggerProject(buildParameter, "destroy")
   callback(null , ({
     'statusCode': 200,

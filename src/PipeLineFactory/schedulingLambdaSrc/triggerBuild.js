@@ -1,16 +1,14 @@
 function extractBranchName(branchName) {
   
-  console.log(`branch name passed from github ${branchName}`)
-  
-  branchName = branchName.toLowerCase();
+  var trimmedBranchName = branchName.toLowerCase();
 
   if(branchName.startsWith("refs/heads/"))
   {
-    branchName = branchName.replace("refs/heads/", "");
+    trimmedBranchName = branchName.replace("refs/heads/", "");
   }
   
-  console.debug("Trimmed Branch Name : " + branchName)
-  return branchName;
+  console.debug(`branch name passed from github: [${branchName}] , Trimmed Branch Name : [${trimmedBranchName}] ` )
+  return trimmedBranchName;
 }
 
 
@@ -30,12 +28,11 @@ function mergeRepositorySettings(payLoad) {
 
 exports.TriggerProject = function (payLoad, requestedAction) {
   console.debug(`requested action ${requestedAction}`);
-  console.debug(payLoad);
-
+  
   const buildParameters = mergeRepositorySettings(payLoad);
 
-  console.debug(buildParameters);
-
+  console.debug(`merged build Parameters ${JSON.stringify(buildParameters, null , 4)}`);
+ 
   const branchName = extractBranchName(buildParameters.branch);
 
   var buildProjectName = process.env.FactoryCodeBuildProjectName;
@@ -122,16 +119,14 @@ exports.TriggerProject = function (payLoad, requestedAction) {
     params.buildspecOverride = 'src/PipeLineTemplate/teardown.json';
   }
 
-  console.debug(params);
-
   const monitoredBranches = Array.isArray(buildParameters.monitoredBranches) ? buildParameters.monitoredBranches : []
   monitoredBranches.push('master');
   if(monitoredBranches.includes(branchName)) {
     console.debug(`branch name is configured for monitoring`)
   }
   else {
-    console.debug(`Skipping , branch name is not configured for monitoring`)
-    return { message : "This branch is not configured for monitoring "      };   
+    console.debug(`Skipping , branch name is not configured for monitoring , configured branches are ${JSON.stringify(monitoredBranches)}`)
+    return { message : `This branch is not configured for monitoring  , configured branches are ${JSON.stringify(monitoredBranches)}`      };   
   }
 
   //return;
