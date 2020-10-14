@@ -19,10 +19,11 @@ function mergeRepositorySettings(payLoad) {
   
   mergedParameters.settings = null;
 
-  Object.keys(repositorySettings).forEach(function (key) {
-    mergedParameters[key] = repositorySettings[key];
-  });
-
+  if(repositorySettings){
+    Object.keys(repositorySettings).forEach(function (key) {
+      mergedParameters[key] = repositorySettings[key];
+    });
+  }
   return mergedParameters;
 }
 
