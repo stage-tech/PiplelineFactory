@@ -11,6 +11,7 @@ export class TriggerStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: FactoryProperties) {
     super(scope, id, props);
     
+    cdk.Tag.add(this , "service" , "pipeline-factory");
     const factoryBuilder = new FactoryBuilder(this, "factoryBuilder", props )
     
     // role to run the lambda function
