@@ -24,5 +24,6 @@
   },
   "files.watcherExclude": {
     "**/target": true
-  }
+  },
+  "cSpell.words": ["buildspec"]
 }
