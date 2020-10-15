@@ -7,9 +7,15 @@ class CreateBranchHandler {
     const payload = JSON.parse(event.body || '');
 
     const pipelineProps = new PipeLinePropertiesBuilder().build(payload);
-
+    console.log(JSON.stringify(pipelineProps, null, 4));
     const codeBuildManager = new PipelineManager();
-    return codeBuildManager.createPipeLine(pipelineProps);
+    const result = codeBuildManager.createPipeLine(pipelineProps);
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(result),
+    };
   };
 }
 
