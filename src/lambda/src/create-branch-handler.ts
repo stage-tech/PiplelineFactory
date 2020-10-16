@@ -9,7 +9,7 @@ class CreateBranchHandler {
     const pipelineProps = new PipeLinePropertiesBuilder().build(payload);
     console.log(JSON.stringify(pipelineProps, null, 4));
     const codeBuildManager = new PipelineManager();
-    const result = codeBuildManager.createPipeLine(pipelineProps);
+    const result = await codeBuildManager.createPipeLine(pipelineProps);
 
     return {
       statusCode: 200,
