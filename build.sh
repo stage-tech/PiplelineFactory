@@ -25,19 +25,22 @@ then
   echo "created artifacts bucket $s3_bucket_name"
 fi
 
-## get some versioning variables
+## get versioning variables
 hash=$(git rev-parse --short HEAD)
 branch_name=$(git rev-parse --abbrev-ref HEAD)
 package_name=$(basename `git rev-parse --show-toplevel`)
-echo version number is $hash
+
+echo "building for version number is $hash"
 package_file_name="${package_name}-${hash}.zip"
 s3_lambda_object_key="$package_name/$branch_name/$package_file_name"
 s3_package_path="s3://$s3_bucket_name/$s3_lambda_object_key"
+
 pushd $PWD
 cd ./src/lambda
-echo $PWD
 ./build.sh $package_file_name $s3_package_path
 popd
+
+pushd $PWD
 cd ./src/PipeLineFactory
-echo $PWD
 cdk deploy --context s3_bucket_name=$s3_bucket_name --context s3_lambda_object_key=$s3_lambda_object_key
+popd
