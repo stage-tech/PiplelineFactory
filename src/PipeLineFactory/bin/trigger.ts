@@ -9,6 +9,7 @@ const app = new cdk.App();
 
 const s3_lambda_object_key = app.node.tryGetContext('s3_lambda_object_key');
 const s3_bucket_name = app.node.tryGetContext('s3_bucket_name');
+console.log(`s3_lambda_object_key ${s3_lambda_object_key} , s3_bucket_name ${s3_bucket_name} `)
 const projectName : string = "PipeLine-Factory"
 const factoryProperties : FactoryProperties = {
     githubRepositoryBranch : "feat/spx-116",
