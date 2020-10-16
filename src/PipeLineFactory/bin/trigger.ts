@@ -18,7 +18,9 @@ const factoryProperties : FactoryProperties = {
     apiDomainCertificateArn : "arn:aws:acm:eu-west-1:928065939415:certificate/257976ea-e9ff-4a05-8dba-a034f2228326",
     apiDomainName : "pipeline-factory.tools.salt-dev.ws",
     slackWorkspaceId: "T5J1W20JV",
-    slackChannelNamePrefix: "sphinx-env-"
+    slackChannelNamePrefix: "sphinx-env-",
+    triggerCodeS3Bucket : "salt-deployment-packages",
+    triggerCodeS3Key : "pipeline-factory/feat/spx-116/pipeline-factory-lambda-73c4a94.zip"
 }
 const app = new cdk.App();
 new TriggerStack(app,projectName , factoryProperties);

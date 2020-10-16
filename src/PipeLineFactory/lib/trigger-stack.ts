@@ -45,6 +45,8 @@ export class TriggerStack extends cdk.Stack {
       defaultBuildArtifactsBucketName : props.defaultArtifactsBucket,
       slackWorkspaceId: props.slackWorkspaceId,
       slackChannelNamePrefix: props.slackChannelNamePrefix,
+      triggerCodeS3Bucket : props.triggerCodeS3Bucket,
+      triggerCodeS3Key : props.triggerCodeS3Key
     }
 
     const handlers = new BranchHandlers(this, "handlers", triggeringLambdaProperties)
