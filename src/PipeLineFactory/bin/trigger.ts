@@ -5,7 +5,10 @@ import { TriggerStack } from '../lib/trigger-stack';
 import FactoryProperties from  '../lib/factoryProperties'
 
 const stageDev = { account: '928065939415', region: 'eu-west-1' };
+const app = new cdk.App();
 
+const s3_lambda_object_key = app.node.tryGetContext('s3_lambda_object_key');
+const s3_bucket_name = app.node.tryGetContext('s3_bucket_name');
 const projectName : string = "PipeLine-Factory"
 const factoryProperties : FactoryProperties = {
     githubRepositoryBranch : "feat/spx-116",
@@ -19,8 +22,7 @@ const factoryProperties : FactoryProperties = {
     apiDomainName : "pipeline-factory.tools.salt-dev.ws",
     slackWorkspaceId: "T5J1W20JV",
     slackChannelNamePrefix: "sphinx-env-",
-    triggerCodeS3Bucket : "salt-deployment-packages",
-    triggerCodeS3Key : "pipeline-factory/feat/spx-116/pipeline-factory-lambda-73c4a94.zip"
+    triggerCodeS3Bucket : s3_bucket_name,
+    triggerCodeS3Key : s3_lambda_object_key
 }
-const app = new cdk.App();
 new TriggerStack(app,projectName , factoryProperties);
