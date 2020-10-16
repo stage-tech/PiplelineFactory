@@ -8,6 +8,38 @@ export interface PipeLineCreationResult {
 }
 
 export class PipelineManager {
+  async deletePipeLine(buildParameters: PipelineProperties): Promise<PipeLineCreationResult> {
+    const cloudFormationClient = new AWS.CloudFormation();
+    const result = await cloudFormationClient.describeStacks({}).promise();
+    const matchingStacks = result.Stacks?.filter(
+      (s) =>
+        s.Tags?.find(
+          (t) =>
+            t.Key == 'repository' &&
+            t.Value == `${buildParameters.repository_owner}/${buildParameters.repository_name}`,
+        ) &&
+        s.Tags.find((t) => t.Key == 'service' && t.Value == `pipeline-factory`) &&
+        s.Tags.find((t) => t.Key == 'branch' && t.Value == `${buildParameters.branchName}`),
+    );
+
+    const stack = matchingStacks ? matchingStacks[0] : null;
+    if (stack) {
+      console.log(`deleting stack ${stack.StackName}`);
+      const deletionResult = await cloudFormationClient.deleteStack({ StackName: stack.StackName }).promise();
+      console.log(JSON.stringify(deletionResult.$response.data));
+
+      return {
+        message: `deleted pipeline with cloudformation stack name ${stack.StackName}`,
+      };
+    } else {
+      return {
+        message: `no matching stack found for
+         ${buildParameters.repository_owner}/${buildParameters.repository_name} 
+        and branch ${buildParameters.branchName}`,
+      };
+    }
+  }
+
   async createPipeLine(buildParameters: PipelineProperties): Promise<PipeLineCreationResult> {
     const params: AWS.CodeBuild.StartBuildInput = {
       projectName: buildParameters.projectName,
@@ -81,7 +113,9 @@ export class PipelineManager {
         )}`,
       );
       return {
-        message: `This branch is not configured for monitoring  , configured branches are ${JSON.stringify(
+        message: `This branch ${
+          buildParameters.branchName
+        } is not configured for monitoring  , configured branches are ${JSON.stringify(
           buildParameters.monitoredBranches,
         )}`,
       };

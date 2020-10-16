@@ -1,4 +1,4 @@
-import { PipeLinePropertiesBuilder } from '../src/pipeline-properties-builder';
+import { PipeLinePropertiesBuilder } from '../../src/pipeline-properties-builder';
 
 describe('Sample Test', () => {
   it('should correctly extract properties from payload', () => {
