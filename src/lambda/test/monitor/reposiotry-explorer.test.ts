@@ -1,8 +1,10 @@
+import { MonitorRepositoriesHandler } from '../../src/monitor-repositories-handler';
+import { OrganizationInfo, OrganizationManager } from '../../src/monitor/organization-manager';
 import { RepositoryExplorer } from '../../src/monitor/repository-explorer';
 import AuthHelper from '../auth-helper';
 const OLD_ENV = process.env;
-
-beforeEach(() => {
+let organizationInfo: OrganizationInfo;
+beforeAll(async () => {
   jest.resetModules(); // this is important - it clears the cache
   process.env = {
     ...OLD_ENV,
@@ -12,7 +14,10 @@ beforeEach(() => {
 
   const credentials = AuthHelper.LoadCredentials('stage-dev');
   console.log(credentials.accessKeyId);
+  organizationInfo = await new OrganizationManager().get('stage-tech');
+});
 
+beforeEach(() => {
   delete process.env.NODE_ENV;
 });
 
@@ -21,23 +26,28 @@ afterEach(() => {
 });
 
 describe('Sample Test', () => {
-  xit('should list repositories in organization ', async () => {
-    const explorer = new RepositoryExplorer('6aee2e00a67fa15a5dbf28dc468e3ad634811ca9');
-    const repos = await explorer.findMonitoredRepos('stage-tech');
-    repos.forEach(async (repo) => {
-      const pipeline = await explorer.getBranchConfigurations(repo.owner.login, repo.name);
-    });
+  it('list all repos in organization ', async () => {
+    const explorer = new RepositoryExplorer(organizationInfo.githubToken);
+    const repos = await explorer.findSubscribedRepositories('stage-tech');
+
+    console.log(JSON.stringify(repos, null, 2));
   });
 
-  xit('should list repositories in organization ', async () => {
-    const explorer = new RepositoryExplorer('6aee2e00a67fa15a5dbf28dc468e3ad634811ca9');
-    const pipeline = await explorer.getBranchConfigurations('stage-tech', 'stage-door-cdk');
+  it('should list branches in a certain repository', async () => {
+    const explorer = new RepositoryExplorer(organizationInfo.githubToken);
+    const pipeline = await explorer.getBranchConfigurations({
+      name: 'stage-door-cdk',
+      owner: 'stage-tech',
+    });
     console.log(pipeline);
   });
 
-  it('should list repositories in organization ', async () => {
-    const explorer = new RepositoryMonitorHandler('6aee2e00a67fa15a5dbf28dc468e3ad634811ca9');
-    const pipeline = await explorer.loadSettingsFile('stage-tech', 'stage-door-cdk', 'abdo');
+  xit('Should Create messages in the queue', async () => {
+    const explorer = new MonitorRepositoriesHandler({
+      organizationName: 'stage-tech',
+      queueUrl: 'https://sqs.eu-west-1.amazonaws.com/928065939415/repository_discovery_jobs',
+    });
+    const pipeline = await explorer.handler(null, null);
     console.log(pipeline);
   });
 });

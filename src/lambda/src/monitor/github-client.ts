@@ -4,7 +4,7 @@ import { decode } from 'js-base64';
 export class Repository {
   name: string;
   owner: string;
-  pipelines?: BranchConfigurations[];
+  branches?: BranchConfigurations[];
 }
 
 export class BranchConfigurations {
@@ -32,7 +32,7 @@ export class GithubClient implements ISvcClient {
     });
 
     return repos
-      .filter((r) => r.topics.includes('pipeline-factory'))
+      .filter((r) => r.name.startsWith('stage'))
       .map((r) => {
         return {
           name: r.name,

@@ -1,7 +1,3 @@
-import { Octokit } from '@octokit/rest';
-import { decode } from 'js-base64';
-
-import { PipelineProperties, PipeLinePropertiesBuilder } from '../pipeline-properties-builder';
 import { BranchConfigurations, GithubClient, Repository } from './github-client';
 export class RepositoryExplorer {
   private client: GithubClient;
