@@ -7,6 +7,7 @@ import  PipelineDependencies from './pipelineDependencies'
 import BranchHandlers from './branchHandlers';
 import TriggeringLambdaProperties from './triggeringLambdaProperties'
 import { Monitor } from "./monitor/monitor";
+import Notifications from "./notifications";
 
 export class TriggerStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: FactoryProperties) {
@@ -33,6 +34,41 @@ export class TriggerStack extends cdk.Stack {
         actions: ['codebuild:StartBuild']
       })]
     }));
+
+    lambdaRole.attachInlinePolicy(new iam.Policy(this, "LambdaCanDiscoverStacks" , {
+      policyName :`${this.stackName}-LambdaDescribeStack`,
+      statements : [ new iam.PolicyStatement({
+      resources : ["*"],
+        actions: ['cloudformation:DescribeStacks']
+      })]
+    }));
+    
+    lambdaRole.attachInlinePolicy(new iam.Policy(this, "LambdaCanDeleteStacks" , {
+      policyName :`${this.stackName}-LambdaDeleteStack`,
+      statements : [ new iam.PolicyStatement({
+      resources : ["*"],
+        actions: [
+          'cloudformation:DeleteStack' , 
+          'codebuild:DeleteProject' ,
+         'codepipeline:DeletePipeline' , 
+         'codepipeline:GetPipeline' ,
+       'secretsmanager:GetSecretValue'],
+        conditions :{
+          "StringEquals": {"aws:ResourceTag/service": "pipeline-factory"}
+        },
+
+      })]
+    }));
+
+    lambdaRole.attachInlinePolicy(new iam.Policy(this, "LambdaCanWebHooks" , {
+      policyName :`${this.stackName}-LambdaWebHooks`,
+      statements : [ new iam.PolicyStatement({
+      resources : ["*"],
+        actions: ['codepipeline:DeletePipeline', 'codepipeline:GetPipeline', 'codepipeline:DeregisterWebhookWithThirdParty' , 'codepipeline:DeleteWebhook'],
+       
+      })]
+    }));
+
     
     const pipelineDependencies = new PipelineDependencies(this , "ApplicationDependencies" , props);
 
@@ -55,5 +91,6 @@ export class TriggerStack extends cdk.Stack {
     const apiEntryPoint = new ApiEntryPoint(this , "apiEntryPoint", props, handlers)
 
     const monitor = new Monitor(this , "Monitor", triggeringLambdaProperties)
+    const notifications = new Notifications(this , "PipelineNotifications", triggeringLambdaProperties)
   }
 }
