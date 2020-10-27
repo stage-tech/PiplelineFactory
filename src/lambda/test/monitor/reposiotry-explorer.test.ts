@@ -35,11 +35,11 @@ describe('Sample Test', () => {
 
   it('should list branches in a certain repository', async () => {
     const explorer = new RepositoryExplorer(organizationInfo.githubToken);
-    const pipeline = await explorer.getBranchConfigurations({
+    const buildConfiguration = await explorer.getBuildConfiguration({
       name: 'stage-door-cdk',
       owner: 'stage-tech',
     });
-    console.log(pipeline);
+    console.log(JSON.stringify(buildConfiguration, null, 2));
   });
 
   xit('Should Create messages in the queue', async () => {

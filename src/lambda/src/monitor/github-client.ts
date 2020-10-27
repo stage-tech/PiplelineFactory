@@ -4,18 +4,26 @@ import { decode } from 'js-base64';
 export class Repository {
   name: string;
   owner: string;
-  branches?: BranchConfigurations[];
 }
 
-export class BranchConfigurations {
+export class RepositoryBuildConfiguration extends Repository {
+  branches?: Branch[];
+}
+
+export class Branch {
   branchName: string;
-  settingsFile: any;
+  commitSha: string;
+  repository: Repository;
+  settings?: any;
+  isMonitoredBranch?: boolean;
 }
 
 export interface ISvcClient {
   findSubscribedRepositories(organization: string): Promise<Repository[]>;
 
-  getPipelineConfigurations(repo: Repository): Promise<BranchConfigurations[]>;
+  getPipelineFactorySettings(repo: Branch): Promise<any>;
+
+  fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null>;
 }
 
 export class GithubClient implements ISvcClient {
@@ -41,38 +49,50 @@ export class GithubClient implements ISvcClient {
       });
   }
 
-  async getPipelineConfigurations(repo: Repository): Promise<BranchConfigurations[]> {
-    const branches = await this.octokit.repos.listBranches({
+  public async findBranches(repo: Repository): Promise<Branch[]> {
+    const listBranchesResponse = await this.octokit.repos.listBranches({
       repo: repo.name,
       owner: repo.owner,
     });
-
-    return Promise.all(
-      branches.data.map(async (branch) => {
-        const settingsFileJSON: any = await this.getRepositorySettings(repo.owner, repo.name, branch.name);
-        const pipelineInfo: BranchConfigurations = {
-          branchName: branch.name,
-          settingsFile: settingsFileJSON,
-        };
-
-        return pipelineInfo;
-      }),
+    return (
+      listBranchesResponse.data
+        //   .filter((b) => b.name == 'master' || b.name == 'abdo')
+        .map((branch) => {
+          const b: Branch = {
+            branchName: branch.name,
+            commitSha: branch.commit.sha,
+            repository: repo,
+          };
+          return b;
+        })
     );
   }
 
-  private async getRepositorySettings(owner: string, repo: string, branchName: string) {
+  public async getPipelineFactorySettings(branch: Branch): Promise<any> {
+    const settingsFileContent: any = await this.fetchFile(
+      branch.repository.owner,
+      branch.repository.name,
+      branch.branchName,
+      'pipeline-factory.settings',
+    );
+
+    const settingsFileJSON = JSON.parse(settingsFileContent);
+    return settingsFileJSON;
+  }
+
+  public async fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null> {
     let settingsFileContent;
     return await this.octokit.repos
       .getContent({
         owner: owner,
         repo: repo,
         ref: branchName,
-        path: 'pipeline-factory.settings',
+        path: filePath,
       })
       .then((settingsFileResponse) => {
         if (settingsFileResponse.status == 200) {
           settingsFileContent = decode(settingsFileResponse.data.content);
-          return JSON.parse(settingsFileContent);
+          return settingsFileContent;
         } else {
           return null;
         }
