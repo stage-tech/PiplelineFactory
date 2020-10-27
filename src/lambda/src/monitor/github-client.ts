@@ -1,24 +1,11 @@
 import { Octokit } from '@octokit/rest';
 import { decode } from 'js-base64';
 
-export class Repository {
-  name: string;
-  owner: string;
-}
+import { Branch, Repository } from './models';
 
-export class RepositoryBuildConfiguration extends Repository {
-  branches?: Branch[];
-}
+export interface ISourceControlClient {
+  findBranches(owner: string, repositoryName: string): Promise<Branch[]>;
 
-export class Branch {
-  branchName: string;
-  commitSha: string;
-  repository: Repository;
-  settings?: any;
-  isMonitoredBranch?: boolean;
-}
-
-export interface ISvcClient {
   findSubscribedRepositories(organization: string): Promise<Repository[]>;
 
   getPipelineFactorySettings(repo: Branch): Promise<any>;
@@ -26,7 +13,7 @@ export interface ISvcClient {
   fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null>;
 }
 
-export class GithubClient implements ISvcClient {
+export class GithubClient implements ISourceControlClient {
   private octokit: Octokit;
   constructor(token: string) {
     this.octokit = new Octokit({
@@ -49,11 +36,12 @@ export class GithubClient implements ISvcClient {
       });
   }
 
-  public async findBranches(repo: Repository): Promise<Branch[]> {
+  public async findBranches(owner: string, repositoryName: string): Promise<Branch[]> {
     const listBranchesResponse = await this.octokit.repos.listBranches({
-      repo: repo.name,
-      owner: repo.owner,
+      repo: repositoryName,
+      owner: owner,
     });
+
     return (
       listBranchesResponse.data
         //   .filter((b) => b.name == 'master' || b.name == 'abdo')
@@ -61,7 +49,11 @@ export class GithubClient implements ISvcClient {
           const b: Branch = {
             branchName: branch.name,
             commitSha: branch.commit.sha,
-            repository: repo,
+            repository: {
+              name: repositoryName,
+              owner: owner,
+            },
+            isMonitoredBranch: false,
           };
           return b;
         })

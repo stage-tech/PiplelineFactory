@@ -4,6 +4,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as iam from "@aws-cdk/aws-iam";
 import TriggeringLambdaProperties from "../triggeringLambdaProperties";
+import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 
 export class Monitor extends cdk.Construct {
   public readonly buildProjectArn: string;
@@ -41,16 +42,42 @@ export class Monitor extends cdk.Construct {
     });
 
     lambdaRole.addManagedPolicy( iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"))
-    
+    lambdaRole.attachInlinePolicy(new iam.Policy(this , "SecretManagerPolicy" , {
+        statements : [ new iam.PolicyStatement({
+          actions : ['secretsmanager:GetSecretValue'],
+          effect : iam.Effect.ALLOW,
+          resources : ['arn:aws:secretsmanager:*:secret:/pipeline-factory/organization/*']
+        }) ]
+    }))
+
+    lambdaRole.attachInlinePolicy(new iam.Policy(this , "SqsPolicy" , {
+      statements : [ new iam.PolicyStatement({
+        actions : ['sqs:*'],
+        effect : iam.Effect.ALLOW,
+        resources : [queue.queueArn]
+      }) ]
+  }))
 
     new lambda.Function(this, "Lambda_Repository_Monitor", {
       runtime: lambda.Runtime.NODEJS_10_X,
       functionName: `${props.projectName}-Repository-Monitor`,
-      handler: "dist/monitor-repositories-handler.handler",
+      handler: "dist/monitor/monitor-repositories-handler.handler",
       role: lambdaRole,
       code: lambdaCode,
       environment: environmentVariables,
       timeout: cdk.Duration.seconds(10),
     });
+
+    const pipelineManagementHandler =    new lambda.Function(this, "Lambda_Pipeline_Manager", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      functionName: `${props.projectName}-Pipeline-Manager`,
+      handler: "dist//monitor/pipeline-management-handler.handler",
+      role: lambdaRole,
+      code: lambdaCode,
+      environment: environmentVariables,
+      timeout: cdk.Duration.seconds(10),
+    });
+
+    pipelineManagementHandler.addEventSource(new SqsEventSource(queue))
   }
 }
