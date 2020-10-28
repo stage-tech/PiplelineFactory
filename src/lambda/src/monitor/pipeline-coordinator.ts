@@ -32,7 +32,7 @@ export class PipelineCoordinator {
     );
   }
 
-  async findNewBranches(repo: Repository): Promise<Branch[]> {
+  private async findNewBranches(repo: Repository): Promise<Branch[]> {
     const buildConfiguration = await this.repositoryExplorer.findBranchConfigurations(repo);
     const monitoredBranch = buildConfiguration.monitoredBranches();
     const existingPipelines = await this.cloudFormationManager.findPipelineStacksForRepository(repo.owner, repo.name);
@@ -52,7 +52,7 @@ export class PipelineCoordinator {
     });
   }
 
-  async findObsoletePipelines(repo: Repository): Promise<StackInformation[]> {
+  private async findObsoletePipelines(repo: Repository): Promise<StackInformation[]> {
     const buildConfiguration = await this.repositoryExplorer.findBranchConfigurations(repo);
     const existingPipelines = await this.cloudFormationManager.findPipelineStacksForRepository(repo.owner, repo.name);
 
