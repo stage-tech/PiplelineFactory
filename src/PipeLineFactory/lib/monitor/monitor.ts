@@ -61,7 +61,7 @@ export class Monitor extends cdk.Construct {
     new lambda.Function(this, "Lambda_Repository_Monitor", {
       runtime: lambda.Runtime.NODEJS_10_X,
       functionName: `${props.projectName}-Repository-Monitor`,
-      handler: "dist/monitor/monitor-repositories-handler.handler",
+      handler: "dist/monitor/handler-monitor-repositories.handler",
       role: lambdaRole,
       code: lambdaCode,
       environment: environmentVariables,
@@ -71,7 +71,7 @@ export class Monitor extends cdk.Construct {
     const pipelineManagementHandler =    new lambda.Function(this, "Lambda_Pipeline_Manager", {
       runtime: lambda.Runtime.NODEJS_10_X,
       functionName: `${props.projectName}-Pipeline-Manager`,
-      handler: "dist//monitor/pipeline-management-handler.handler",
+      handler: "dist//monitor/handler-pipeline-management.handler",
       role: lambdaRole,
       code: lambdaCode,
       environment: environmentVariables,

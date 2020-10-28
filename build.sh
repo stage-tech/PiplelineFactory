@@ -37,7 +37,7 @@ s3_package_path="s3://$s3_bucket_name/$s3_lambda_object_key"
 
 pushd $PWD
 cd ./src/lambda
-#./build.sh $package_file_name $s3_package_path
+./build.sh $package_file_name $s3_package_path
 popd
 
 pushd $PWD
