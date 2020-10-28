@@ -6,7 +6,14 @@ export interface PipeLineOperationResult {
   buildArn?: string;
 }
 
-export interface StackInformation {
+export class StackInformation {
+  constructor(stack: AWS.CloudFormation.Stack) {
+    this.stackName = stack.StackName;
+    this.repository = stack.Tags?.find((t) => t.Key == 'repository')?.Value || '';
+    this.owner = stack.Tags?.find((t) => t.Key == 'owner')?.Value || '';
+    this.branchName = stack.Tags?.find((t) => t.Key == 'branch')?.Value || '';
+  }
+
   stackName: string;
   repository: string;
   owner: string;
@@ -60,26 +67,26 @@ export class CloudFormationManager {
     branchName: string,
   ): Promise<StackInformation | null> {
     const result = await this.cloudFormationClient.describeStacks({}).promise();
-    const matchingStacks = result.Stacks?.filter(
-      (s) =>
-        s.Tags?.find((t) => t.Key == 'repository' && t.Value == `${repositoryOwner}/${repositoryName}`) &&
-        s.Tags.find((t) => t.Key == 'service' && t.Value == `pipeline-factory`) &&
-        s.Tags.find((t) => t.Key == 'branch' && t.Value == `${branchName}`),
+    const matchingStacks = result.Stacks?.filter((s) =>
+      this.isRelatedStack(s, repositoryOwner, repositoryName, branchName),
     );
 
     const stack = matchingStacks ? matchingStacks[0] : null;
-    let stackInfo: StackInformation | null = null;
-
-    if (stack) {
-      stackInfo = {
-        stackName: stack.StackName,
-        repository: stack.Tags?.find((t) => t.Key == 'repository')?.Value || '',
-        owner: stack.Tags?.find((t) => t.Key == 'owner')?.Value || '',
-        branchName: stack.Tags?.find((t) => t.Key == 'branch')?.Value || '',
-      };
-    }
-
+    const stackInfo = stack ? new StackInformation(stack) : null;
     return stackInfo;
+  }
+
+  private isRelatedStack(
+    stack: AWS.CloudFormation.Stack,
+    repositoryOwner: string,
+    repositoryName: string,
+    branchName: string,
+  ): unknown {
+    return (
+      stack.Tags?.find((t) => t.Key == 'repository' && t.Value == `${repositoryOwner}/${repositoryName}`) &&
+      stack.Tags.find((t) => t.Key == 'service' && t.Value == `pipeline-factory`) &&
+      stack.Tags.find((t) => t.Key == 'branch' && t.Value == `${branchName}`)
+    );
   }
 
   public async findPipelineStacksForRepository(
@@ -95,13 +102,7 @@ export class CloudFormationManager {
 
     return (
       matchingStacks?.map((s) => {
-        const stackInfo: StackInformation = {
-          stackName: s.StackName,
-          repository: s.Tags?.find((t) => t.Key == 'repository')?.Value || '',
-          owner: s.Tags?.find((t) => t.Key == 'owner')?.Value || '',
-          branchName: s.Tags?.find((t) => t.Key == 'branch')?.Value || '',
-        };
-
+        const stackInfo: StackInformation = new StackInformation(s);
         return stackInfo;
       }) || []
     );
