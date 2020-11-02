@@ -17,9 +17,9 @@ export class MonitorRepositoriesHandler {
   public handler = async () => {
     const organizationInfo = await new OrganizationManager().get(this.props.organizationName);
     const githubClient = new GithubClient(organizationInfo.githubToken);
-    const repositoryExplorer = new RepositoryExplorer(githubClient);
-    const jobScheduler = new JobScheduler(this.props.queueUrl, new AWS.SQS());
     const cloudFormationManager = new CloudFormationManager();
+    const repositoryExplorer = new RepositoryExplorer(githubClient, cloudFormationManager);
+    const jobScheduler = new JobScheduler(this.props.queueUrl, new AWS.SQS());
     const coordinator = new PipelineCoordinator(repositoryExplorer, cloudFormationManager, jobScheduler);
     await coordinator.scheduleDiscoveryJobs(this.props.organizationName);
   };

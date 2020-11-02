@@ -1,8 +1,6 @@
-import AWS from 'aws-sdk';
-
 import { CloudFormationManager, StackInformation } from './cloudformation-manager';
 import { JobScheduler } from './JobScheduler';
-import { Branch, Repository } from './models';
+import { Branch, Repository, RepositoryBuildConfiguration } from './models';
 import { RepositoryExplorer } from './repository-explorer';
 
 export class PipelineCoordinator {
@@ -14,53 +12,29 @@ export class PipelineCoordinator {
 
   async scheduleDiscoveryJobs(organizationName: string) {
     const repos = await this.repositoryExplorer.findSubscribedRepositories(organizationName);
-
     const result = await this.jobScheduler?.queueRepositoryDiscoveryJobs(repos);
     return result;
   }
 
-  async createNewPipelines(repo: Repository) {
-    const newBranches = await this.findNewBranches(repo);
+  async createNewPipelines(buildConfigurations: RepositoryBuildConfiguration) {
     await Promise.all(
-      newBranches.map(async (branch) => {
+      buildConfigurations.newMonitoredBranches().map(async (branch) => {
         return await this.cloudFormationManager.createPipeline(
-          branch.repository.owner,
-          branch.repository.name,
+          buildConfigurations.repository.owner,
+          buildConfigurations.repository.name,
           branch.branchName,
         );
       }),
     );
   }
 
-  private async findNewBranches(repo: Repository): Promise<Branch[]> {
-    const buildConfiguration = await this.repositoryExplorer.findBranchConfigurations(repo);
-    const monitoredBranch = buildConfiguration.monitoredBranches();
-    const existingPipelines = await this.cloudFormationManager.findPipelineStacksForRepository(repo.owner, repo.name);
-
-    const newBranches = monitoredBranch.filter(
-      (monitoredBranch) =>
-        !existingPipelines.find((exitingStack) => exitingStack.branchName == monitoredBranch.branchName),
-    );
-    return newBranches;
-  }
-
-  async removePipelines(repo: Repository) {
-    const removedBranches = await this.findObsoletePipelines(repo);
-
-    removedBranches.map((branch) => {
-      return this.cloudFormationManager.deletePipeLineStack(branch.owner, branch.repository, branch.branchName);
+  async cleanObsoletePipelines(buildConfigurations: RepositoryBuildConfiguration) {
+    buildConfigurations.obsoletePipelines().map((branch) => {
+      return this.cloudFormationManager.deletePipeLineStack(
+        buildConfigurations.repository.owner,
+        buildConfigurations.repository.name,
+        branch,
+      );
     });
-  }
-
-  private async findObsoletePipelines(repo: Repository): Promise<StackInformation[]> {
-    const buildConfiguration = await this.repositoryExplorer.findBranchConfigurations(repo);
-    const existingPipelines = await this.cloudFormationManager.findPipelineStacksForRepository(repo.owner, repo.name);
-
-    const monitoredBranches = buildConfiguration.monitoredBranches();
-
-    const removedBranches = existingPipelines.filter(
-      (existingPipeline) => !monitoredBranches.find((branch) => existingPipeline.branchName == branch.branchName),
-    );
-    return removedBranches;
   }
 }

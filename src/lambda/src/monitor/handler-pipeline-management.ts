@@ -1,4 +1,5 @@
 import lambda from 'aws-lambda';
+
 import { CloudFormationManager } from './cloudformation-manager';
 import { GithubClient } from './github-client';
 import { Repository } from './models';
@@ -13,11 +14,12 @@ export class PipelineManagementHandler {
       console.debug(JSON.stringify(repository, null, 4));
       const organizationInfo = await new OrganizationManager().get(repository.owner);
       const githubClient = new GithubClient(organizationInfo.githubToken);
-      const repositoryExplorer = new RepositoryExplorer(githubClient);
       const cloudFormationManager = new CloudFormationManager();
+      const repositoryExplorer = new RepositoryExplorer(githubClient, cloudFormationManager);
       const coordinator = new PipelineCoordinator(repositoryExplorer, cloudFormationManager);
-      await coordinator.createNewPipelines(repository);
-      await coordinator.removePipelines(repository);
+      const configuration = await repositoryExplorer.getRepositoryBuildConfiguration(repository);
+      await coordinator.createNewPipelines(configuration);
+      await coordinator.cleanObsoletePipelines(configuration);
     });
   };
 }
