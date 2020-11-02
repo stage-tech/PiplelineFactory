@@ -146,7 +146,9 @@ export class PipelineManager {
   private isMonitoredBranch(buildParameters: PipelineProperties) {
     const monitoredBranches = Array.isArray(buildParameters.monitoredBranches) ? buildParameters.monitoredBranches : [];
     monitoredBranches.push('master');
-    const isMonitoredBranch = monitoredBranches.includes(buildParameters.branchName);
+    const isMonitoredBranch = monitoredBranches
+      .map((b) => b.toLowerCase())
+      .includes(buildParameters.branchName.toLowerCase());
     return isMonitoredBranch;
   }
 }

@@ -1,14 +1,14 @@
 import { Octokit } from '@octokit/rest';
 import { decode } from 'js-base64';
 
-import { Branch, Repository } from './models';
-
 export interface ISourceControlClient {
-  findBranches(owner: string, repositoryName: string): Promise<Branch[]>;
+  findBranches(owner: string, repositoryName: string): Promise<{ branchName: string; commitSha: string }[]>;
 
-  findSubscribedRepositories(organization: string): Promise<Repository[]>;
+  findSubscribedRepositories(
+    organization: string,
+  ): Promise<{ repositoryName: string; owner: string; defaultBranch: string }[]>;
 
-  getPipelineFactorySettings(repo: Branch): Promise<any>;
+  getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any>;
 
   fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null>;
 }
@@ -21,7 +21,9 @@ export class GithubClient implements ISourceControlClient {
     });
   }
 
-  public async findSubscribedRepositories(organization: string): Promise<Repository[]> {
+  public async findSubscribedRepositories(
+    organization: string,
+  ): Promise<{ repositoryName: string; owner: string; defaultBranch: string }[]> {
     const repos = await this.octokit.paginate(this.octokit.repos.listForOrg, {
       org: organization,
     });
@@ -30,13 +32,17 @@ export class GithubClient implements ISourceControlClient {
       .filter((r) => r.name.startsWith('stage'))
       .map((r) => {
         return {
-          name: r.name,
+          repositoryName: r.name,
           owner: r.owner.login,
+          defaultBranch: r.default_branch,
         };
       });
   }
 
-  public async findBranches(owner: string, repositoryName: string): Promise<Branch[]> {
+  public async findBranches(
+    owner: string,
+    repositoryName: string,
+  ): Promise<{ branchName: string; commitSha: string }[]> {
     const listBranchesResponse = await this.octokit.repos.listBranches({
       repo: repositoryName,
       owner: owner,
@@ -46,25 +52,19 @@ export class GithubClient implements ISourceControlClient {
       listBranchesResponse.data
         //   .filter((b) => b.name == 'master' || b.name == 'abdo')
         .map((branch) => {
-          const b: Branch = {
+          return {
             branchName: branch.name,
             commitSha: branch.commit.sha,
-            repository: {
-              name: repositoryName,
-              owner: owner,
-            },
-            isMonitoredBranch: false,
           };
-          return b;
         })
     );
   }
 
-  public async getPipelineFactorySettings(branch: Branch): Promise<any> {
+  public async getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any> {
     const settingsFileContent: any = await this.fetchFile(
-      branch.repository.owner,
-      branch.repository.name,
-      branch.branchName,
+      owner,
+      repositoryName,
+      branchName,
       'pipeline-factory.settings',
     );
 

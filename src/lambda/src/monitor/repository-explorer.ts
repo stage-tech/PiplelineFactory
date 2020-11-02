@@ -1,31 +1,26 @@
+import { CloudFormationManager } from './cloudformation-manager';
 import { ISourceControlClient } from './github-client';
-import { Repository, RepositoryBuildConfiguration } from './models';
+import { Branch, Repository, RepositoryBuildConfiguration } from './models';
 export class RepositoryExplorer {
-  constructor(private client: ISourceControlClient) {}
+  constructor(private client: ISourceControlClient, private cloudFormationManager: CloudFormationManager) {}
 
   public async findSubscribedRepositories(organization: string): Promise<Repository[]> {
     const repos = await this.client.findSubscribedRepositories(organization);
-    return repos;
+    return repos.map((r) => new Repository(r.owner, r.repositoryName, r.defaultBranch));
   }
 
-  private isMonitoredBranch(branchName: string, settings: any): boolean {
-    const monitoredBranches = Array.isArray(settings?.monitoredBranches) ? settings.monitoredBranches : [];
-    monitoredBranches.push('master');
-    const isMonitoredBranch = monitoredBranches.includes(branchName);
-    return isMonitoredBranch;
-  }
-
-  public async findBranchConfigurations(repo: Repository): Promise<RepositoryBuildConfiguration> {
-    const branches = await this.client.findBranches(repo.owner, repo.name);
-    const branchesWithSettings = await Promise.all(
-      branches.map(async (b) => {
-        const settings = await this.client.getPipelineFactorySettings(b);
-        return { ...b, settings, isMonitoredBranch: this.isMonitoredBranch(b.branchName, settings) };
-      }),
+  public async getRepositoryBuildConfiguration(repo: Repository): Promise<RepositoryBuildConfiguration> {
+    const repositoryBranches = await this.client.findBranches(repo.owner, repo.name);
+    const branches = repositoryBranches.map((b) => new Branch(b.branchName, b.commitSha));
+    const settingsFile = await this.client.getPipelineFactorySettings(repo.owner, repo.name, repo.defaultBranch);
+    const existingPipelines = await this.cloudFormationManager.findPipelineStacksForRepository(repo.owner, repo.name);
+    const branchesWithPipelines = existingPipelines.map((s) => s.branchName);
+    const repositoryBuildConfiguration = new RepositoryBuildConfiguration(
+      repo,
+      branches,
+      settingsFile,
+      branchesWithPipelines,
     );
-
-    const repositoryBuildConfiguration: RepositoryBuildConfiguration = new RepositoryBuildConfiguration(repo);
-    repositoryBuildConfiguration.branches = branchesWithSettings;
     return repositoryBuildConfiguration;
   }
 }
