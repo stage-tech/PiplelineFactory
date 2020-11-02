@@ -1,3 +1,5 @@
+import { StackInformation } from './cloudformation-manager';
+
 export class Repository {
   constructor(public owner: string, public name: string, public defaultBranch: string) {}
 }
@@ -13,38 +15,51 @@ export class RepositoryBuildConfiguration {
   requestedBranches(): Branch[] {
     const monitoredBySettingsFile: string[] = this.settings?.monitoredBranches || [];
     monitoredBySettingsFile.push(this.repository.defaultBranch);
-    const requested = (branchName: string) => {
-      return monitoredBySettingsFile.map((b) => b.toLowerCase()).indexOf(branchName.toLowerCase()) >= 0;
-    };
+    const allRequestedBranchNames = monitoredBySettingsFile.map((b) => b.toLowerCase());
+    return this.branches.filter((b) => allRequestedBranchNames.find((br) => br == b.branchName.toLowerCase()));
+  }
 
-    return this.branches?.filter((b) => requested(b.branchName));
+  private isRequestedForMonitoring(branchName: string): boolean {
+    const result =
+      this.requestedBranches().findIndex((b) => b.branchName.toLowerCase() == branchName.toLocaleLowerCase()) > -1;
+    return result;
+  }
+
+  private isNew(branchName: string): boolean {
+    const result = this.configuredBranches.findIndex((b) => b.toLowerCase() == branchName.toLocaleLowerCase()) == -1;
+    return result;
+  }
+
+  private isAlreadyMonitored(branchName: string): boolean {
+    const result = this.configuredBranches.findIndex((b) => b.toLowerCase() == branchName.toLocaleLowerCase()) > -1;
+    return result;
   }
 
   newMonitoredBranches(): Branch[] {
-    const alreadyMonitored = (b: string) => {
-      return this.configuredBranches.map((b) => b.toLowerCase()).indexOf(b.toLowerCase()) >= 0;
-    };
-    return this.requestedBranches().filter((b) => !alreadyMonitored(b.branchName));
+    const newRequestedBranches: Branch[] = [];
+
+    this.branches.forEach((branch) => {
+      if (this.isRequestedForMonitoring(branch.branchName) && this.isNew(branch.branchName)) {
+        newRequestedBranches.push(branch);
+      }
+    });
+    return newRequestedBranches;
   }
 
-  obsoletePipelines(): string[] {
-    const requested = (b: string) => {
-      return (
-        this.requestedBranches()
-          .map((b) => b.branchName.toLowerCase())
-          .indexOf(b.toLowerCase()) >= 0
-      );
-    };
+  obsoletePipelines(): Branch[] {
+    const obsoleteBranches: Branch[] = [];
 
-    const removedBranches = this.configuredBranches.filter(
-      (existingPipeline) =>
-        !this.requestedBranches().find((branch) => existingPipeline.toLowerCase() == branch.branchName.toLowerCase()),
-    );
+    this.branches.forEach((branch) => {
+      if (!this.isRequestedForMonitoring(branch.branchName) && this.isAlreadyMonitored(branch.branchName)) {
+        obsoleteBranches.push(branch);
+      }
+    });
 
-    return removedBranches;
+    return obsoleteBranches;
   }
 }
 
 export class Branch {
   constructor(public branchName: string, public commitSha: string) {}
+  public pipelineStack: StackInformation;
 }
