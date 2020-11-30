@@ -2,7 +2,7 @@ import { anyOfClass, anyString, anything, capture, instance, mock, verify, when 
 
 import { CloudFormationManager } from '../../src/monitor/cloudformation-manager';
 import { JobScheduler } from '../../src/monitor/JobScheduler';
-import { Branch, Repository } from '../../src/monitor/models';
+import { Branch, Repository, RepositoryBuildConfiguration } from '../../src/monitor/models';
 import { PipelineCoordinator } from '../../src/monitor/pipeline-coordinator';
 import { RepositoryExplorer } from '../../src/monitor/repository-explorer';
 
@@ -17,14 +17,17 @@ beforeAll(() => {
     {
       name: 'stage-R1',
       owner: 'owner1',
+      defaultBranch: 'dev',
     },
     {
       name: 'stage-R3',
       owner: 'owner1',
+      defaultBranch: 'master',
     },
     {
       name: 'R2',
       owner: 'owner1',
+      defaultBranch: 'master',
     },
   ]);
 
@@ -75,37 +78,20 @@ describe('pipeline coordinator', () => {
       },
     ]);
 
-    when(repositoryExplorerMock.findBranchConfigurations(anything())).thenResolve({
-      name: 'R3',
-      owner: 'owner1',
-      monitoredBranches: (): Branch[] => {
-        return [
-          {
-            branchName: 'old',
-            repository: { name: 'R3', owner: 'owner1 ' },
-            isMonitoredBranch: true,
-            commitSha: 'someId',
-          },
-          {
-            branchName: 'new',
-            repository: { name: 'R3', owner: 'owner1 ' },
-            isMonitoredBranch: true,
-            commitSha: 'someId',
-          },
-        ];
-      },
-    });
+    when(repositoryExplorerMock.getRepositoryBuildConfiguration(anything())).thenResolve(
+      new RepositoryBuildConfiguration(
+        new Repository('owner1', 'R3', 'master'),
+        [new Branch('old', 'someId'), new Branch('new', 'someId')],
+        [],
+        [],
+      ),
+    );
 
     coordinator = new PipelineCoordinator(
       instance(repositoryExplorerMock),
       instance(cloudFormationManagerMock),
       instance(schedulerMock),
     );
-
-    await coordinator.createNewPipelines({
-      name: 'R3',
-      owner: 'owner1',
-    });
 
     verify(cloudFormationManagerMock.createPipeline(anyString(), anyString(), anyString())).once();
     const creationParams = capture(cloudFormationManagerMock.createPipeline).first();
@@ -128,37 +114,20 @@ describe('pipeline coordinator', () => {
       },
     ]);
 
-    when(repositoryExplorerMock.findBranchConfigurations(anything())).thenResolve({
-      name: 'R3',
-      owner: 'owner1',
-      monitoredBranches: (): Branch[] => {
-        return [
-          {
-            branchName: 'old',
-            repository: { name: 'R3', owner: 'owner1 ' },
-            isMonitoredBranch: true,
-            commitSha: 'someId',
-          },
-          {
-            branchName: 'new',
-            repository: { name: 'R3', owner: 'owner1 ' },
-            isMonitoredBranch: true,
-            commitSha: 'someId',
-          },
-        ];
-      },
-    });
+    when(repositoryExplorerMock.getRepositoryBuildConfiguration(anything())).thenResolve(
+      new RepositoryBuildConfiguration(
+        new Repository('owner1', 'R3', 'master'),
+        [new Branch('old', 'someId'), new Branch('new', 'someId')],
+        [],
+        [],
+      ),
+    );
 
     coordinator = new PipelineCoordinator(
       instance(repositoryExplorerMock),
       instance(cloudFormationManagerMock),
       instance(schedulerMock),
     );
-
-    await coordinator.removePipelines({
-      name: 'R3',
-      owner: 'owner1',
-    });
 
     verify(cloudFormationManagerMock.deletePipeLineStack(anyString(), anyString(), anyString())).once();
     const creationParams = capture(cloudFormationManagerMock.deletePipeLineStack).first();
