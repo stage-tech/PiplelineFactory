@@ -54,6 +54,10 @@ export class CodeBuildProject extends cdk.Construct {
 
       projectName: `PLF-${props.projectName}`,
       environmentVariables: {
+        ENV_NAME: {
+          value: props.githubRepositoryBranch.toLowerCase(),
+          type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+        },
         STAGE_ENV_NAME: {
           value: props.githubRepositoryBranch.toLowerCase(),
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
