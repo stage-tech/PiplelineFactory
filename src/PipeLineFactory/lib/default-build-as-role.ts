@@ -19,85 +19,49 @@ export default class DefaultBuildAsRole extends cdk.Construct {
       new iam.Policy(this, "CodeBuildCloudFormationAccess", {
         policyName: `PLF-${projectName}-CloudFormationAccess`,
         statements: [
-          new iam.PolicyStatement({
+           new iam.PolicyStatement({
+             sid : "ci-cd",
             resources: ["*"],
-            actions: ["cloudformation:*"],
+            actions: ["codebuild:*", "codepipeline:*" , "cloudformation:*"],
           }),
           new iam.PolicyStatement({
+            sid : "compute",
             resources: ["*"],
-            actions: ["iam:*"],
+            actions: ["ec2:*", "ecs:*", "lambda:*", "states:*" , "logs:*"],
           }),
           new iam.PolicyStatement({
+            sid: "parameters",
             resources: ["*"],
-            actions: ["codebuild:*"],
+            actions: ["ssm:*", "secretsmanager:*"],
           }),
           new iam.PolicyStatement({
+            sid: "auth-and-encrypt",
             resources: ["*"],
-            actions: ["codepipeline:*"],
+            actions: ["iam:*", "kms:*", "acm:*"],
           }),
           new iam.PolicyStatement({
+            sid: "delivery",
             resources: ["*"],
-            actions: ["ec2:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["ecs:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["ssm:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["lambda:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["secretsmanager:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["kms:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["s3:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["logs:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["acm:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["route53:*"],
+            actions: ["route53:*", "cloudfront:*"],
           }),
           new iam.PolicyStatement({
             resources: ["*"],
             actions: ["es:*"],
           }),
           new iam.PolicyStatement({
+            sid : "messaging",
             resources: ["*"],
-            actions: ["sqs:*"],
+            actions: ["sqs:*", "events:*", "sns:*", "schemas:*"],
           }),
           new iam.PolicyStatement({
+            sid : "storage",
             resources: ["*"],
-            actions: ["events:*"],
+            actions: ["datasync:*", "transfer:*" , "s3:*"],
           }),
           new iam.PolicyStatement({
+            sid : "cognito",
             resources: ["*"],
-            actions: ["datasync:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["states:*"],
-          }),
-          new iam.PolicyStatement({
-            resources: ["*"],
-            actions: ["cognito-idp:*" , "transfer:*"],
+            actions: ["cognito-idp:*", "cognito-identity:*"],
           }),
         ],
       })
