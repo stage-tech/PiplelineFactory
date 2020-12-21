@@ -20,7 +20,7 @@ export default class DefaultBuildAsRole extends cdk.Construct {
         policyName: `PLF-${projectName}-CloudFormationAccess`,
         statements: [
            new iam.PolicyStatement({
-             sid : "ci-cd",
+             sid : "deployment",
             resources: ["*"],
             actions: ["codebuild:*", "codepipeline:*" , "cloudformation:*"],
           }),
@@ -35,7 +35,7 @@ export default class DefaultBuildAsRole extends cdk.Construct {
             actions: ["ssm:*", "secretsmanager:*"],
           }),
           new iam.PolicyStatement({
-            sid: "auth-and-encrypt",
+            sid: "AuthEncrypt",
             resources: ["*"],
             actions: ["iam:*", "kms:*", "acm:*"],
           }),
