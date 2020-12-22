@@ -33,7 +33,7 @@ export class PipelineCoordinator {
       return this.cloudFormationManager.deletePipeLineStack(
         buildConfigurations.repository.owner,
         buildConfigurations.repository.name,
-        branch,
+        branch.branchName,
       );
     });
   }
