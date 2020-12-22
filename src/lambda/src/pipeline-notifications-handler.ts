@@ -1,5 +1,4 @@
 import * as lambda from 'aws-lambda';
-
 class PipelineNotificationsHandler {
   public handler = async (event: lambda.SNSEvent) => {
     const payload = JSON.parse(event.Records[0].Sns.Message || '');

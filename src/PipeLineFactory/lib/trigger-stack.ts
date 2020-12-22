@@ -6,6 +6,8 @@ import Notifications from "./notifications/notifications";
 import Api from "./api";
 import DefaultBuildAsRole from "./default-build-as-role";
 import DefaultBuckets from "./default-buckets";
+import * as iam from "@aws-cdk/aws-iam";
+import { Monitor } from "./monitor/monitor";
 
 export class TriggerStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: FactoryProperties) {
@@ -17,7 +19,7 @@ export class TriggerStack extends cdk.Stack {
       secretName: `/${this.stackName.toLowerCase()}/default-github-token`,
     });
 
-    new DefaultBuildAsRole(this, "DefaultBuildAdAsRole");
+    const buildAsRole = new DefaultBuildAsRole(this, "DefaultBuildAdAsRole").role;
 
     new DefaultBuckets(this, "defaultBuckets");
 
@@ -35,5 +37,12 @@ export class TriggerStack extends cdk.Stack {
       triggerCodeS3Bucket: props.triggerCodeS3Bucket,
       triggerCodeS3Key: props.triggerCodeS3Key,
     });
+  
+ 
+    const monitor = new Monitor(this , "Monitor", {
+      buildAsRoleArn : buildAsRole.roleArn,
+      defaultBuildArtifactsBucketName : props.triggerCodeS3Bucket,
+      
+    })
   }
 }
