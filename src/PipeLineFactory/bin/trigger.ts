@@ -18,5 +18,8 @@ const factoryProperties: FactoryProperties = {
   pipelineTemplateGithubOwner: "stage-tech",
   triggerCodeS3Bucket: s3_bucket_name,
   triggerCodeS3Key: s3_lambda_object_key,
+  apiDomainCertificateArn : app.node.tryGetContext("apiDomainCertificateArn"),
+  apiDomainName : app.node.tryGetContext("apiDomainName"),
+  existingBucketName :  app.node.tryGetContext("existingBucketName")
 };
 new TriggerStack(app, projectName, factoryProperties);

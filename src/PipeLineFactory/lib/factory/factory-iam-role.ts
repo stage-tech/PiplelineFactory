@@ -8,7 +8,7 @@ export default class FactoryIamRole extends cdk.Construct {
     super(scope, id);
     const projectName = cdk.Stack.of(this).stackName
     const codebuildRole = new iam.Role(this, "Role_Codebuild", {
-      roleName: `PLF-${projectName}`,
+      roleName: `PLF-${projectName}-Role`,
       assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
     });
 

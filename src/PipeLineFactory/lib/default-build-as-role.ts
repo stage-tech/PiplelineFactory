@@ -79,7 +79,7 @@ export default class DefaultBuildAsRole extends cdk.Construct {
       })
     );
 
-    new ssm.StringParameter(this, "artifactsBucketSsm", {
+    new ssm.StringParameter(this, "defaultRoleSsm", {
       parameterName: `/${stack.stackName.toLowerCase()}/default-build-as-role`,
       stringValue: codebuildRole.roleArn,
     });

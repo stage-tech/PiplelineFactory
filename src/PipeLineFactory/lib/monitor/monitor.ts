@@ -3,15 +3,20 @@ import * as sqs from "@aws-cdk/aws-sqs";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as iam from "@aws-cdk/aws-iam";
-import TriggeringLambdaProperties from "../triggeringLambdaProperties";
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
+
+export interface MonitorProps {
+  triggerCodeS3Key: string;
+  triggerCodeS3Bucket: string;
+  PipelineFactoryBuildProjectName: string;
+}
 
 export class Monitor extends cdk.Construct {
   public readonly buildProjectArn: string;
   constructor(
     scope: cdk.Construct,
     id: string,
-    props: TriggeringLambdaProperties
+    props: MonitorProps
   ) {
     super(scope, id);
     const queue = new sqs.Queue(this, "repository_discovery_jobs", {
@@ -33,11 +38,10 @@ export class Monitor extends cdk.Construct {
 
     const environmentVariables: { [key: string]: string } = {
       SQS_QUEUE_URL: queue.queueUrl,
-      GITHUB_TOKEN_SECRET_NAME : props.default_github_token_secret_name
     };
 
     const lambdaRole = new iam.Role(this, "Role_LambdaFunction", {
-      roleName: `PLF-${props.projectName}-Repository-Monitor`,
+      roleName: `PLF-${cdk.Stack.of(this).stackName}-Repository-Monitor`,
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
     });
 
@@ -60,7 +64,7 @@ export class Monitor extends cdk.Construct {
 
     new lambda.Function(this, "Lambda_Repository_Monitor", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      functionName: `${props.projectName}-Repository-Monitor`,
+      functionName: `${cdk.Stack.of(this).stackName}-Repository-Monitor`,
       handler: "dist/monitor/handler-monitor-repositories.handler",
       role: lambdaRole,
       code: lambdaCode,
@@ -70,8 +74,8 @@ export class Monitor extends cdk.Construct {
 
     const pipelineManagementHandler =    new lambda.Function(this, "Lambda_Pipeline_Manager", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      functionName: `${props.projectName}-Pipeline-Manager`,
-      handler: "dist//monitor/handler-pipeline-management.handler",
+      functionName: `${cdk.Stack.of(this).stackName}-Pipeline-Manager`,
+      handler: "dist/monitor/handler-pipeline-management.handler",
       role: lambdaRole,
       code: lambdaCode,
       environment: environmentVariables,

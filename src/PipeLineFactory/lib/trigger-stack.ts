@@ -6,7 +6,6 @@ import Notifications from "./notifications/notifications";
 import Api from "./api";
 import DefaultBuildAsRole from "./default-build-as-role";
 import DefaultBuckets from "./default-buckets";
-import * as iam from "@aws-cdk/aws-iam";
 import { Monitor } from "./monitor/monitor";
 
 export class TriggerStack extends cdk.Stack {
@@ -19,9 +18,11 @@ export class TriggerStack extends cdk.Stack {
       secretName: `/${this.stackName.toLowerCase()}/default-github-token`,
     });
 
-    const buildAsRole = new DefaultBuildAsRole(this, "DefaultBuildAdAsRole").role;
+    new DefaultBuildAsRole(this, "DefaultBuildAdAsRole").role;
 
-    new DefaultBuckets(this, "defaultBuckets");
+    new DefaultBuckets(this, "defaultBuckets" , {
+      existingBucketName : props.existingBucketName
+    });
 
     const factory = new Factory(this, "factoryBuilder", props);
 
@@ -31,6 +32,7 @@ export class TriggerStack extends cdk.Stack {
       apiDomainName: props.apiDomainName,
       triggerCodeS3Bucket: props.triggerCodeS3Bucket,
       triggerCodeS3Key: props.triggerCodeS3Key,
+
     });
 
     new Notifications(this, "PipelineNotifications", {
@@ -39,10 +41,11 @@ export class TriggerStack extends cdk.Stack {
     });
   
  
-    const monitor = new Monitor(this , "Monitor", {
-      buildAsRoleArn : buildAsRole.roleArn,
-      defaultBuildArtifactsBucketName : props.triggerCodeS3Bucket,
-      
+    new Monitor(this , "Monitor", {
+      triggerCodeS3Bucket : props.triggerCodeS3Bucket,
+      triggerCodeS3Key: props.triggerCodeS3Key,
+      PipelineFactoryBuildProjectName : factory.buildProjectName
+
     })
   }
 }
