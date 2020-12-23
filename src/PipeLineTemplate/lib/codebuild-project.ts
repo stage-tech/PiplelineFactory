@@ -70,6 +70,10 @@ export class CodeBuildProject extends cdk.Construct {
           value: props.gitHubTokenSecretArn,
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
         },
+        GITHUB_TOKEN_SECRETNAME : {
+          value: props.gitHubTokenSecretArn,
+          type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+        },
         GITHUB_REPOSITORY_BRANCH: {
           value: props.githubRepositoryBranch,
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
