@@ -6,7 +6,7 @@ import { Branch, Repository } from './models';
 export interface ISourceControlClient {
   getRepository(owner: string, repositoryName: string): Promise<Repository>;
 
-  findRepositories(organization: string): Promise<{ repositoryName: string; owner: string; id: string }[]>;
+  findRepositories(organization: string): Promise<{ name: string; owner: string; id: string }[]>;
 
   fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null>;
 }
@@ -46,9 +46,7 @@ export class GithubClient implements ISourceControlClient {
     };
   }
 
-  public async findRepositories(
-    organization: string,
-  ): Promise<{ repositoryName: string; owner: string; id: string }[]> {
+  public async findRepositories(organization: string): Promise<{ name: string; owner: string; id: string }[]> {
     const repos = await this.octokit.paginate(this.octokit.repos.listForOrg, {
       org: organization,
     });
@@ -57,7 +55,7 @@ export class GithubClient implements ISourceControlClient {
       .filter((r) => true || r.name.startsWith('stage'))
       .map((r) => {
         return {
-          repositoryName: r.name,
+          name: r.name,
           owner: r.owner.login,
           id: r.id.toString(),
         };

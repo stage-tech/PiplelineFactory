@@ -8,9 +8,7 @@ export class RepositoryExplorer {
     return await this.client.getRepository(owner, repositoryName);
   }
 
-  public async listRepositories(
-    organization: string,
-  ): Promise<{ repositoryName: string; owner: string; id: string }[]> {
+  public async listRepositories(organization: string): Promise<{ name: string; owner: string; id: string }[]> {
     const repos = await this.client.findRepositories(organization);
     return repos;
   }

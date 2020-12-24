@@ -17,7 +17,7 @@ export class PipelineManagementHandler {
       const cloudFormationManager = new CloudFormationManager();
       const repositoryExplorer = new RepositoryExplorer(githubClient, cloudFormationManager);
       const coordinator = new PipelineCoordinator(repositoryExplorer, cloudFormationManager);
-      const repository = await repositoryExplorer.getRepository(job.owner, job.repositoryName);
+      const repository = await repositoryExplorer.getRepository(job.owner, job.name);
       const configuration = await repositoryExplorer.getRepositoryBuildConfiguration(repository);
       await coordinator.createNewPipelines(configuration);
       await coordinator.cleanObsoletePipelines(configuration);

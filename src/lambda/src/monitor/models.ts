@@ -1,7 +1,7 @@
 import { StackInformation } from './cloudformation-manager';
 
 export class DiscoveryJob {
-  repositoryName: string;
+  name: string;
   owner: string;
   id: string;
 }
