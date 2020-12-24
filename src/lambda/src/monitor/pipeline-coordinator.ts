@@ -1,6 +1,6 @@
 import { CloudFormationManager, StackInformation } from './cloudformation-manager';
 import { JobScheduler } from './JobScheduler';
-import { Branch, Repository, RepositoryBuildConfiguration } from './models';
+import { RepositoryBuildConfiguration } from './models';
 import { RepositoryExplorer } from './repository-explorer';
 
 export class PipelineCoordinator {
@@ -11,7 +11,7 @@ export class PipelineCoordinator {
   ) {}
 
   async scheduleDiscoveryJobs(organizationName: string) {
-    const repos = await this.repositoryExplorer.findRepositories(organizationName);
+    const repos = await this.repositoryExplorer.listRepositories(organizationName);
     const result = await this.jobScheduler?.queueRepositoryDiscoveryJobs(repos);
     return result;
   }

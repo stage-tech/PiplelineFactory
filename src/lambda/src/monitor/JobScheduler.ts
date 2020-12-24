@@ -1,12 +1,12 @@
 import AWS from 'aws-sdk';
 
-import { Repository } from './models';
+import { DiscoveryJob } from './models';
 
 export class JobScheduler {
   constructor(private queueUrl: string, private sqsClient: AWS.SQS) {}
-  public async queueRepositoryDiscoveryJobs(repos: Repository[]): Promise<(string | undefined)[]> {
+  public async queueRepositoryDiscoveryJobs(jobs: DiscoveryJob[]): Promise<(string | undefined)[]> {
     return Promise.all(
-      repos.map(async (r) => {
+      jobs.map(async (r) => {
         console.log(`Queueing repository ${JSON.stringify(r, null, 4)}`);
         const request: AWS.SQS.SendMessageRequest = {
           QueueUrl: this.queueUrl,

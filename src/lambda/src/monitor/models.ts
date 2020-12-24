@@ -1,7 +1,13 @@
 import { StackInformation } from './cloudformation-manager';
 
-export class RepositoryItem {
-  constructor(public owner: string, public name: string) {}
+export class DiscoveryJob {
+  repositoryName: string;
+  owner: string;
+  id: string;
+}
+export class Branch {
+  constructor(public branchName: string, public commitSha: string) {}
+  public pipelineStack: StackInformation;
 }
 
 export class Repository {
@@ -11,22 +17,20 @@ export class Repository {
   defaultBranch: string;
   topics: string[];
   repositoryId: string;
-  branches: { branchName: string; commitSha: string }[];
+  branches: Branch[];
+  settings: any;
 }
 
 export class RepositoryBuildConfiguration {
-  constructor(
-    public repository: Repository,
-    private branches: Branch[],
-    private configuredBranches: string[],
-    private settings?: any,
-  ) {}
+  constructor(public repository: Repository, private configuredBranches: string[]) {}
 
   requestedBranches(): Branch[] {
-    const monitoredBySettingsFile: string[] = this.settings?.monitoredBranches || [];
+    const monitoredBySettingsFile: string[] = this.repository.settings?.monitoredBranches || [];
     monitoredBySettingsFile.push(this.repository.defaultBranch);
     const allRequestedBranchNames = monitoredBySettingsFile.map((b) => b.toLowerCase());
-    return this.branches.filter((b) => allRequestedBranchNames.find((br) => br == b.branchName.toLowerCase()));
+    return this.repository.branches.filter((b) =>
+      allRequestedBranchNames.find((br) => br == b.branchName.toLowerCase()),
+    );
   }
 
   private isRequestedForMonitoring(branchName: string): boolean {
@@ -48,7 +52,7 @@ export class RepositoryBuildConfiguration {
   newMonitoredBranches(): Branch[] {
     const newRequestedBranches: Branch[] = [];
 
-    this.branches.forEach((branch) => {
+    this.repository.branches.forEach((branch) => {
       if (this.isRequestedForMonitoring(branch.branchName) && this.isNew(branch.branchName)) {
         newRequestedBranches.push(branch);
       }
@@ -59,7 +63,7 @@ export class RepositoryBuildConfiguration {
   obsoletePipelines(): Branch[] {
     const obsoleteBranches: Branch[] = [];
 
-    this.branches.forEach((branch) => {
+    this.repository.branches.forEach((branch) => {
       if (!this.isRequestedForMonitoring(branch.branchName) && this.isAlreadyMonitored(branch.branchName)) {
         obsoleteBranches.push(branch);
       }
@@ -67,9 +71,4 @@ export class RepositoryBuildConfiguration {
 
     return obsoleteBranches;
   }
-}
-
-export class Branch {
-  constructor(public branchName: string, public commitSha: string) {}
-  public pipelineStack: StackInformation;
 }

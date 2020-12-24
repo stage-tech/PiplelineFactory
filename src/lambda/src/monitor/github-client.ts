@@ -1,20 +1,12 @@
 import { Octokit } from '@octokit/rest';
 import { decode } from 'js-base64';
 
+import { Branch, Repository } from './models';
+
 export interface ISourceControlClient {
-  getRepository(
-    owner: string,
-    repositoryName: string,
-  ): Promise<{
-    defaultBranch: string;
-    topics: string[];
-    repositoryId: string;
-    branches: { branchName: string; commitSha: string }[];
-  }>;
+  getRepository(owner: string, repositoryName: string): Promise<Repository>;
 
   findRepositories(organization: string): Promise<{ repositoryName: string; owner: string; id: string }[]>;
-
-  getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any>;
 
   fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null>;
 }
@@ -26,15 +18,8 @@ export class GithubClient implements ISourceControlClient {
       auth: token,
     });
   }
-  async getRepository(
-    owner: string,
-    repositoryName: string,
-  ): Promise<{
-    defaultBranch: string;
-    topics: string[];
-    repositoryId: string;
-    branches: { branchName: string; commitSha: string }[];
-  }> {
+
+  async getRepository(owner: string, repositoryName: string): Promise<Repository> {
     const repo = await this.octokit.repos.get({
       owner: owner,
       repo: repositoryName,
@@ -45,16 +30,19 @@ export class GithubClient implements ISourceControlClient {
       owner: owner,
     });
 
+    const settingsFile = this.getPipelineFactorySettings(owner, repositoryName, repo.data.default_branch);
+
     return {
+      name: repo.data.name,
+      id: repo.data.id.toString(),
+      owner: owner,
       defaultBranch: repo.data.default_branch,
       repositoryId: repo.data.id.toString(),
       topics: repo.data.topics,
       branches: listBranchesResponse.data.map((branch) => {
-        return {
-          branchName: branch.name,
-          commitSha: branch.commit.sha,
-        };
+        return new Branch(branch.name, branch.commit.sha);
       }),
+      settings: settingsFile,
     };
   }
 
@@ -76,7 +64,7 @@ export class GithubClient implements ISourceControlClient {
       });
   }
 
-  public async getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any> {
+  private async getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any> {
     const settingsFileContent: any = await this.fetchFile(
       owner,
       repositoryName,
