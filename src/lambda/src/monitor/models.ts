@@ -1,7 +1,17 @@
 import { StackInformation } from './cloudformation-manager';
 
+export class RepositoryItem {
+  constructor(public owner: string, public name: string) {}
+}
+
 export class Repository {
-  constructor(public owner: string, public name: string, public defaultBranch: string) {}
+  name: string;
+  owner: string;
+  id: string;
+  defaultBranch: string;
+  topics: string[];
+  repositoryId: string;
+  branches: { branchName: string; commitSha: string }[];
 }
 
 export class RepositoryBuildConfiguration {

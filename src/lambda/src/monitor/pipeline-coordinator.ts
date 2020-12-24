@@ -11,7 +11,7 @@ export class PipelineCoordinator {
   ) {}
 
   async scheduleDiscoveryJobs(organizationName: string) {
-    const repos = await this.repositoryExplorer.findSubscribedRepositories(organizationName);
+    const repos = await this.repositoryExplorer.findRepositories(organizationName);
     const result = await this.jobScheduler?.queueRepositoryDiscoveryJobs(repos);
     return result;
   }

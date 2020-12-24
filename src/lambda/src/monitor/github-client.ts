@@ -2,11 +2,17 @@ import { Octokit } from '@octokit/rest';
 import { decode } from 'js-base64';
 
 export interface ISourceControlClient {
-  findBranches(owner: string, repositoryName: string): Promise<{ branchName: string; commitSha: string }[]>;
+  getRepository(
+    owner: string,
+    repositoryName: string,
+  ): Promise<{
+    defaultBranch: string;
+    topics: string[];
+    repositoryId: string;
+    branches: { branchName: string; commitSha: string }[];
+  }>;
 
-  findSubscribedRepositories(
-    organization: string,
-  ): Promise<{ repositoryName: string; owner: string; defaultBranch: string }[]>;
+  findRepositories(organization: string): Promise<{ repositoryName: string; owner: string; id: string }[]>;
 
   getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any>;
 
@@ -20,44 +26,54 @@ export class GithubClient implements ISourceControlClient {
       auth: token,
     });
   }
+  async getRepository(
+    owner: string,
+    repositoryName: string,
+  ): Promise<{
+    defaultBranch: string;
+    topics: string[];
+    repositoryId: string;
+    branches: { branchName: string; commitSha: string }[];
+  }> {
+    const repo = await this.octokit.repos.get({
+      owner: owner,
+      repo: repositoryName,
+    });
 
-  public async findSubscribedRepositories(
+    const listBranchesResponse = await this.octokit.repos.listBranches({
+      repo: repo.data.name,
+      owner: owner,
+    });
+
+    return {
+      defaultBranch: repo.data.default_branch,
+      repositoryId: repo.data.id.toString(),
+      topics: repo.data.topics,
+      branches: listBranchesResponse.data.map((branch) => {
+        return {
+          branchName: branch.name,
+          commitSha: branch.commit.sha,
+        };
+      }),
+    };
+  }
+
+  public async findRepositories(
     organization: string,
-  ): Promise<{ repositoryName: string; owner: string; defaultBranch: string }[]> {
+  ): Promise<{ repositoryName: string; owner: string; id: string }[]> {
     const repos = await this.octokit.paginate(this.octokit.repos.listForOrg, {
       org: organization,
     });
 
     return repos
-      .filter((r) => r.name.startsWith('stage'))
+      .filter((r) => true || r.name.startsWith('stage'))
       .map((r) => {
         return {
           repositoryName: r.name,
           owner: r.owner.login,
-          defaultBranch: r.default_branch,
+          id: r.id.toString(),
         };
       });
-  }
-
-  public async findBranches(
-    owner: string,
-    repositoryName: string,
-  ): Promise<{ branchName: string; commitSha: string }[]> {
-    const listBranchesResponse = await this.octokit.repos.listBranches({
-      repo: repositoryName,
-      owner: owner,
-    });
-
-    return (
-      listBranchesResponse.data
-        //   .filter((b) => b.name == 'master' || b.name == 'abdo')
-        .map((branch) => {
-          return {
-            branchName: branch.name,
-            commitSha: branch.commit.sha,
-          };
-        })
-    );
   }
 
   public async getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any> {
