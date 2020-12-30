@@ -12,7 +12,7 @@ export class MonitorRepositoriesHandlerProps {
 
 export class MonitorRepositoriesHandler {
   constructor(private props: MonitorRepositoriesHandlerProps) {}
-  public handler = async () => {
+  public handler = async (): Promise<void> => {
     const organizationInfo = await new OrganizationManager().get(this.props.organizationName);
     const githubClient = new GithubClient(organizationInfo.githubToken);
     const repositoryExplorer = new RepositoryExplorer(githubClient);

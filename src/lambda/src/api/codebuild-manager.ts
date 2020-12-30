@@ -32,7 +32,11 @@ export class PipelineManager {
     }
   }
 
-  public async findPipelineStack(repositoryOwner: string, repositoryName: string, branchName: string) {
+  public async findPipelineStack(
+    repositoryOwner: string,
+    repositoryName: string,
+    branchName: string,
+  ): Promise<AWS.CloudFormation.Stack | null> {
     const cloudFormationClient = new AWS.CloudFormation();
     const result = await cloudFormationClient.describeStacks({}).promise();
     const matchingStacks = result.Stacks?.filter(

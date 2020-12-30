@@ -1,10 +1,10 @@
-import { CloudFormationManager } from './cloudformation-manager';
+import { CloudFormationManager, PipeLineOperationResult } from './cloudformation-manager';
 import { RepositoryBuildConfiguration } from './models';
 
 export class PipelineCoordinator {
   constructor(private cloudFormationManager: CloudFormationManager) {}
 
-  async createNewPipelines(buildConfigurations: RepositoryBuildConfiguration) {
+  async createNewPipelines(buildConfigurations: RepositoryBuildConfiguration): Promise<void> {
     if (!buildConfigurations.shouldBeMonitored()) {
       console.log('repository is not configured for monitoring , skipping');
       return;
@@ -20,15 +20,18 @@ export class PipelineCoordinator {
     );
   }
 
-  async cleanObsoletePipelines(buildConfigurations: RepositoryBuildConfiguration) {
-    buildConfigurations.obsoletePipelines().map((branch) => {
-      console.log(`deleting ${JSON.stringify(branch, null, 4)}`);
+  async cleanObsoletePipelines(buildConfigurations: RepositoryBuildConfiguration): Promise<void> {
+    const obsoleteBranches = buildConfigurations.obsoletePipelines();
 
-      return this.cloudFormationManager.deletePipeLineStack(
-        buildConfigurations.repository.owner,
-        buildConfigurations.repository.name,
-        branch.branchName,
-      );
-    });
+    await Promise.all(
+      obsoleteBranches.map((branch) => {
+        console.log(`deleting ${JSON.stringify(branch, null, 4)}`);
+        return this.cloudFormationManager.deletePipeLineStack(
+          buildConfigurations.repository.owner,
+          buildConfigurations.repository.name,
+          branch.branchName,
+        );
+      }),
+    );
   }
 }
