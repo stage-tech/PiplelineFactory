@@ -9,6 +9,13 @@ export class Branch {
   public pipelineStack: StackInformation;
 }
 
+export class SettingsOverrides {
+  gitHubTokenSecretArn?: string;
+  buildSpecLocation?: string;
+  buildAsRoleArn?: string;
+  monitoredBranches?: string[];
+}
+
 export class Repository {
   name: string;
   owner: string;
@@ -16,7 +23,7 @@ export class Repository {
   topics: string[];
   repositoryId: string;
   branches: Branch[];
-  settings: any;
+  settings?: SettingsOverrides;
 }
 
 export class RepositoryBuildConfiguration {

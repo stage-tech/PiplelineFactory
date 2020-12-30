@@ -3,7 +3,7 @@ import * as lambda from 'aws-lambda';
 import { PipelineManager } from './codebuild-manager';
 import { PipeLinePropertiesBuilder } from './pipeline-properties-builder';
 class DeleteBranchHandler {
-  public handler = async (event: lambda.APIGatewayEvent, context: any) => {
+  public handler = async (event: lambda.APIGatewayEvent) => {
     const payload = JSON.parse(event.body || '');
 
     const pipelineProps = new PipeLinePropertiesBuilder().build(payload);

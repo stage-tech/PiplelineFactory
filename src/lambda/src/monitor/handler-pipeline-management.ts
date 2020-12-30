@@ -9,7 +9,7 @@ import { RepositoryExplorer } from './repository-explorer';
 
 export class PipelineManagementHandler {
   constructor(private factoryCodeBuildProjectName: string) {}
-  public handler = async (event: lambda.SQSEvent): Promise<any> => {
+  public handler = async (event: lambda.SQSEvent): Promise<void> => {
     event.Records.forEach(async (sqsMessage) => {
       const job = <DiscoveryJob>JSON.parse(sqsMessage.body);
       console.debug(JSON.stringify(job, null, 4));

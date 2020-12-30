@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { decode } from 'js-base64';
 
-import { Branch, Repository } from './models';
+import { Branch, Repository, SettingsOverrides } from './models';
 
 export interface ISourceControlClient {
   getRepository(owner: string, repositoryName: string): Promise<Repository>;
@@ -34,7 +34,7 @@ export class GithubClient implements ISourceControlClient {
       owner: owner,
     });
 
-    const settingsFile = this.getPipelineFactorySettings(owner, repositoryName, repo.data.default_branch);
+    const settingsFile = await this.getPipelineFactorySettings(owner, repositoryName, repo.data.default_branch);
 
     return {
       name: repo.data.name,
@@ -65,7 +65,11 @@ export class GithubClient implements ISourceControlClient {
       });
   }
 
-  private async getPipelineFactorySettings(owner: string, repositoryName: string, branchName: string): Promise<any> {
+  private async getPipelineFactorySettings(
+    owner: string,
+    repositoryName: string,
+    branchName: string,
+  ): Promise<SettingsOverrides> {
     const settingsFileContent: any = await this.fetchFile(
       owner,
       repositoryName,
@@ -73,7 +77,7 @@ export class GithubClient implements ISourceControlClient {
       'pipeline-factory.settings',
     );
 
-    const settingsFileJSON = JSON.parse(settingsFileContent);
+    const settingsFileJSON: SettingsOverrides = JSON.parse(settingsFileContent);
     return settingsFileJSON;
   }
 

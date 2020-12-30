@@ -34,6 +34,6 @@ xdescribe('Sample Test', () => {
     };
     const props = new PipeLinePropertiesBuilder().build(payload);
     const manager = new PipelineManager();
-    const result = await manager.deletePipeLine(props);
+    await manager.deletePipeLine(props);
   });
 });

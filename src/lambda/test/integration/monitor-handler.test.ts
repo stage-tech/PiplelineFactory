@@ -10,7 +10,6 @@ beforeEach(() => {
     ...OLD_ENV,
     AWS_PROFILE: 'admin-stage',
     AWS_SDK_LOAD_CONFIG: '1',
-    SQS_QUEUE_URL: 'https://sqs.eu-west-1.amazonaws.com/928065939415/repository_discovery_jobs',
   };
 
   const credentials = AuthHelper.LoadCredentials('stage-dev');
@@ -23,16 +22,16 @@ afterEach(() => {
   process.env = OLD_ENV;
 });
 
-describe('lambda Harness', () => {
-  xit('Monitor handler lambda', async () => {
+xdescribe('lambda Harness', () => {
+  it('Monitor handler lambda', async () => {
     const handler = new MonitorRepositoriesHandler({
       organizationName: 'stage-tech',
       queueUrl,
     });
-    const result = await handler.handler();
+    await handler.handler();
   });
 
-  xit('Manage Pipeline Handler', async () => {
+  it('Manage Pipeline Handler', async () => {
     const payload = '{"name":"pipeline-factory","owner":"stage-tech","id":"302112501"}';
 
     const sqsMessage = {
@@ -56,6 +55,6 @@ describe('lambda Harness', () => {
       ],
     };
     const handler = new PipelineManagementHandler('PipeLine-Factory');
-    const result = await handler.handler(sqsMessage);
+    await handler.handler(sqsMessage);
   });
 });

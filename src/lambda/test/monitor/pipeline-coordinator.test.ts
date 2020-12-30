@@ -1,14 +1,10 @@
 import { anyOfClass, anyString, instance, mock, verify } from 'ts-mockito';
 
 import { CloudFormationManager } from '../../src/monitor/cloudformation-manager';
-import { JobScheduler } from '../../src/monitor/JobScheduler';
 import { Branch, Repository, RepositoryBuildConfiguration } from '../../src/monitor/models';
 import { PipelineCoordinator } from '../../src/monitor/pipeline-coordinator';
-import { RepositoryExplorer } from '../../src/monitor/repository-explorer';
 
-let repositoryExplorerMock: RepositoryExplorer,
-  cloudFormationManagerMock: CloudFormationManager,
-  coordinator: PipelineCoordinator;
+let cloudFormationManagerMock: CloudFormationManager, coordinator: PipelineCoordinator;
 
 const repo: Repository = {
   branches: [
@@ -31,7 +27,6 @@ const alreadyMonitoredBranches = ['existing1', 'existinG2', 'IGnored1'];
 const buildConfigs = new RepositoryBuildConfiguration(repo, alreadyMonitoredBranches);
 
 beforeAll(() => {
-  repositoryExplorerMock = mock(RepositoryExplorer);
   cloudFormationManagerMock = mock(CloudFormationManager);
 
   coordinator = new PipelineCoordinator(instance(cloudFormationManagerMock));

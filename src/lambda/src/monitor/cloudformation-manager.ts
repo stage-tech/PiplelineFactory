@@ -48,7 +48,7 @@ export class CloudFormationManager {
       },
     ];
 
-    if (repo.settings.gitHubTokenSecretArn) {
+    if (repo.settings?.gitHubTokenSecretArn) {
       environmentOverRides.push({
         name: 'GITHUB_TOKEN_SECRET_ARN',
         value: repo.settings.gitHubTokenSecretArn,
@@ -56,7 +56,7 @@ export class CloudFormationManager {
       });
     }
 
-    if (repo.settings.buildSpecLocation) {
+    if (repo.settings?.buildSpecLocation) {
       environmentOverRides.push({
         name: 'BUILD_SPEC_RELATIVE_LOCATION',
         value: repo.settings.buildSpecLocation,
@@ -64,7 +64,7 @@ export class CloudFormationManager {
       });
     }
 
-    if (repo.settings.buildAsRoleArn) {
+    if (repo.settings?.buildAsRoleArn) {
       environmentOverRides.push({
         name: 'BUILD_AS_ROLE_ARN',
         value: repo.settings.buildAsRoleArn,

@@ -1,4 +1,4 @@
-import { CloudFormationManager, PipeLineOperationResult } from './cloudformation-manager';
+import { CloudFormationManager } from './cloudformation-manager';
 import { RepositoryBuildConfiguration } from './models';
 
 export class PipelineCoordinator {

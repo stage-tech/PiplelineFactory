@@ -1,12 +1,8 @@
 import AWS from 'aws-sdk';
 
-import { GithubClient } from '../../src/monitor/github-client';
 import { JobScheduler } from '../../src/monitor/JobScheduler';
-import { OrganizationInfo, OrganizationManager } from '../../src/monitor/organization-manager';
 import AuthHelper from '../auth-helper';
 const OLD_ENV = process.env;
-let organizationInfo: OrganizationInfo;
-let githubClient: GithubClient;
 beforeAll(async () => {
   jest.resetModules(); // this is important - it clears the cache
   process.env = {
@@ -17,8 +13,6 @@ beforeAll(async () => {
 
   const credentials = AuthHelper.LoadCredentials('stage-dev');
   console.log(credentials.accessKeyId);
-  organizationInfo = await new OrganizationManager().get('stage-tech');
-  githubClient = await new GithubClient(organizationInfo.githubToken);
 });
 
 beforeEach(() => {
