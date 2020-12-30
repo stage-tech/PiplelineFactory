@@ -8,7 +8,7 @@ export class RepositoryExplorer {
   }
 
   public async listRepositories(organization: string): Promise<{ name: string; owner: string; id: string }[]> {
-    const repos = await (await this.client.findRepositories(organization)).filter((f) => f.name == 'pipeline-factory');
+    const repos = await await this.client.findRepositories(organization); //.filter((f) => f.name == 'pipeline-factory');
     return repos;
   }
 }

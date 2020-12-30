@@ -3,8 +3,8 @@ import * as sqs from "@aws-cdk/aws-sqs";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as iam from "@aws-cdk/aws-iam";
-import * as events from '@aws-cdk/aws-events';
-import * as eventTargets from '@aws-cdk/aws-events-targets';
+import * as events from "@aws-cdk/aws-events";
+import * as eventTargets from "@aws-cdk/aws-events-targets";
 
 import { SqsEventSource } from "@aws-cdk/aws-lambda-event-sources";
 
@@ -48,6 +48,7 @@ export class Monitor extends cdk.Construct {
         "service-role/AWSLambdaBasicExecutionRole"
       )
     );
+
     lambdaRole.attachInlinePolicy(
       new iam.Policy(this, "SecretManagerPolicy", {
         statements: [
@@ -58,13 +59,17 @@ export class Monitor extends cdk.Construct {
               "arn:aws:secretsmanager:*:secret:/pipeline-factory/organization/*",
             ],
           }),
-        ],
-      })
-    );
-
-    lambdaRole.attachInlinePolicy(
-      new iam.Policy(this, "SqsPolicy", {
-        statements: [
+          new iam.PolicyStatement({
+            actions: ["cloudformation:DescribeStacks"],
+            effect: iam.Effect.ALLOW,
+            resources: ["*"],
+          }),
+          new iam.PolicyStatement({
+            resources: [
+              `arn:aws:codebuild:*:*:project/${props.PipelineFactoryBuildProjectName}`,
+            ],
+            actions: ["codebuild:StartBuild"],
+          }),
           new iam.PolicyStatement({
             actions: ["sqs:*"],
             effect: iam.Effect.ALLOW,
@@ -74,18 +79,22 @@ export class Monitor extends cdk.Construct {
       })
     );
 
-    const repositoryMonitor = new lambda.Function(this, "Lambda_Repository_Monitor", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      functionName: `${stackName}-Repository-Monitor`,
-      handler: "dist/monitor/handler-monitor-repositories.handler",
-      role: lambdaRole,
-      code: lambdaCode,
-      environment: {
-        SQS_QUEUE_URL: queue.queueUrl,
-        ORGANIZATION_NAME : props.organizationName
-      },
-      timeout: cdk.Duration.seconds(10),
-    });
+    const repositoryMonitor = new lambda.Function(
+      this,
+      "Lambda_Repository_Monitor",
+      {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        functionName: `${stackName}-Repository-Monitor`,
+        handler: "dist/monitor/handler-monitor-repositories.handler",
+        role: lambdaRole,
+        code: lambdaCode,
+        environment: {
+          SQS_QUEUE_URL: queue.queueUrl,
+          ORGANIZATION_NAME: props.organizationName,
+        },
+        timeout: cdk.Duration.seconds(10),
+      }
+    );
 
     new events.Rule(this, "Schedule", {
       ruleName: `${stackName}-trigger-repository-monitoring`,
@@ -103,7 +112,7 @@ export class Monitor extends cdk.Construct {
         role: lambdaRole,
         code: lambdaCode,
         environment: {
-          FACTORY_CODEBUILD_PROJECT_NAME : props.PipelineFactoryBuildProjectName
+          FACTORY_CODEBUILD_PROJECT_NAME: props.PipelineFactoryBuildProjectName,
         },
         timeout: cdk.Duration.seconds(10),
       }

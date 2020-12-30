@@ -70,14 +70,9 @@ export class GithubClient implements ISourceControlClient {
     repositoryName: string,
     branchName: string,
   ): Promise<SettingsOverrides> {
-    const settingsFileContent: any = await this.fetchFile(
-      owner,
-      repositoryName,
-      branchName,
-      'pipeline-factory.settings',
-    );
+    const settingsFileContent = await this.fetchFile(owner, repositoryName, branchName, 'pipeline-factory.settings');
 
-    const settingsFileJSON: SettingsOverrides = JSON.parse(settingsFileContent);
+    const settingsFileJSON: SettingsOverrides = settingsFileContent ? JSON.parse(settingsFileContent) : {};
     return settingsFileJSON;
   }
 
