@@ -17,7 +17,7 @@ export class PipelineManagementHandler {
       const githubClient = new GithubClient(organizationInfo.githubToken);
       const cloudFormationManager = new CloudFormationManager(this.factoryCodeBuildProjectName);
       const repositoryExplorer = new RepositoryExplorer(githubClient);
-      const coordinator = new PipelineCoordinator(repositoryExplorer, cloudFormationManager);
+      const coordinator = new PipelineCoordinator(cloudFormationManager);
       const repository = await repositoryExplorer.getRepository(job.owner, job.name);
       const existingBranches = await cloudFormationManager.getBranchesWithStacks(repository.owner, repository.name);
       const configuration = new RepositoryBuildConfiguration(repository, existingBranches);

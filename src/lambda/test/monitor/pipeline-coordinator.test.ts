@@ -36,11 +36,7 @@ beforeAll(() => {
   schedulerMock = mock(JobScheduler);
   cloudFormationManagerMock = mock(CloudFormationManager);
 
-  coordinator = new PipelineCoordinator(
-    instance(repositoryExplorerMock),
-    instance(cloudFormationManagerMock),
-    instance(schedulerMock),
-  );
+  coordinator = new PipelineCoordinator(instance(cloudFormationManagerMock));
 });
 
 describe('pipeline coordinator', () => {
