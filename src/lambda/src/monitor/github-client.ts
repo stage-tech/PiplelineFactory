@@ -25,6 +25,10 @@ export class GithubClient implements ISourceControlClient {
       repo: repositoryName,
     });
 
+    const topics = await this.octokit.repos.getAllTopics({
+      owner: owner,
+      repo: repositoryName,
+    });
     const listBranchesResponse = await this.octokit.repos.listBranches({
       repo: repo.data.name,
       owner: owner,
@@ -34,11 +38,10 @@ export class GithubClient implements ISourceControlClient {
 
     return {
       name: repo.data.name,
-      id: repo.data.id.toString(),
       owner: owner,
       defaultBranch: repo.data.default_branch,
       repositoryId: repo.data.id.toString(),
-      topics: repo.data.topics,
+      topics: topics.data.names,
       branches: listBranchesResponse.data.map((branch) => {
         return new Branch(branch.name, branch.commit.sha);
       }),

@@ -1,6 +1,6 @@
 import { CloudFormationManager } from './cloudformation-manager';
 import { ISourceControlClient } from './github-client';
-import { Branch, Repository, RepositoryBuildConfiguration } from './models';
+import { Repository, RepositoryBuildConfiguration } from './models';
 export class RepositoryExplorer {
   constructor(private client: ISourceControlClient, private cloudFormationManager: CloudFormationManager) {}
 
@@ -8,7 +8,7 @@ export class RepositoryExplorer {
     return await this.client.getRepository(owner, repositoryName);
   }
 
-  public async listRepositories(organization: string): Promise<{ name: string; owner: string; id: string }[]> {
+  public async listRepositories(organization: string): Promise<{ name: string; owner: string }[]> {
     const repos = await this.client.findRepositories(organization);
     return repos;
   }

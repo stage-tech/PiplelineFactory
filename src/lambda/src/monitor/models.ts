@@ -3,7 +3,6 @@ import { StackInformation } from './cloudformation-manager';
 export class DiscoveryJob {
   name: string;
   owner: string;
-  id: string;
 }
 export class Branch {
   constructor(public branchName: string, public commitSha: string) {}
@@ -13,7 +12,6 @@ export class Branch {
 export class Repository {
   name: string;
   owner: string;
-  id: string;
   defaultBranch: string;
   topics: string[];
   repositoryId: string;
@@ -22,7 +20,11 @@ export class Repository {
 }
 
 export class RepositoryBuildConfiguration {
-  constructor(public repository: Repository, private configuredBranches: string[]) {}
+  constructor(public repository: Repository, private branchesWithPipeline: string[]) {}
+
+  shouldBeMonitored(): boolean {
+    return this.repository.topics.filter((t) => t.toLowerCase() == 'pipeline-factory').length > 0;
+  }
 
   requestedBranches(): Branch[] {
     const monitoredBySettingsFile: string[] = this.repository.settings?.monitoredBranches || [];
@@ -40,23 +42,20 @@ export class RepositoryBuildConfiguration {
   }
 
   private isNew(branchName: string): boolean {
-    const result = this.configuredBranches.findIndex((b) => b.toLowerCase() == branchName.toLocaleLowerCase()) == -1;
+    const result =
+      this.branchesWithPipeline.filter((b) => b.toLowerCase() == branchName.toLocaleLowerCase()).length == 0;
     return result;
   }
 
   private isAlreadyMonitored(branchName: string): boolean {
-    const result = this.configuredBranches.findIndex((b) => b.toLowerCase() == branchName.toLocaleLowerCase()) > -1;
+    const result = this.branchesWithPipeline.findIndex((b) => b.toLowerCase() == branchName.toLocaleLowerCase()) > -1;
     return result;
   }
 
-  newMonitoredBranches(): Branch[] {
-    const newRequestedBranches: Branch[] = [];
+  branchesToAdd(): Branch[] {
+    const requestedBranches = this.requestedBranches();
+    const newRequestedBranches: Branch[] = requestedBranches.filter((b) => this.isNew(b.branchName));
 
-    this.repository.branches.forEach((branch) => {
-      if (this.isRequestedForMonitoring(branch.branchName) && this.isNew(branch.branchName)) {
-        newRequestedBranches.push(branch);
-      }
-    });
     return newRequestedBranches;
   }
 

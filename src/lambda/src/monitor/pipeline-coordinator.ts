@@ -17,8 +17,14 @@ export class PipelineCoordinator {
   }
 
   async createNewPipelines(buildConfigurations: RepositoryBuildConfiguration) {
+    if (!buildConfigurations.shouldBeMonitored()) {
+      console.log('repository is not configured for monitoring , skipping');
+      return;
+    }
+
+    const newBranches = buildConfigurations.branchesToAdd();
     await Promise.all(
-      buildConfigurations.newMonitoredBranches().map(async (branch) => {
+      newBranches.map(async (branch) => {
         return await this.cloudFormationManager.createPipeline(
           buildConfigurations.repository.owner,
           buildConfigurations.repository.name,

@@ -1,9 +1,9 @@
-import { CloudFormationManager } from '../../src/monitor/cloudformation-manager';
+import AWS from 'aws-sdk';
+
 import { GithubClient } from '../../src/monitor/github-client';
 import { MonitorRepositoriesHandler } from '../../src/monitor/handler-monitor-repositories';
-import { Branch, Repository } from '../../src/monitor/models';
+import { JobScheduler } from '../../src/monitor/JobScheduler';
 import { OrganizationInfo, OrganizationManager } from '../../src/monitor/organization-manager';
-import { RepositoryExplorer } from '../../src/monitor/repository-explorer';
 import AuthHelper from '../auth-helper';
 const OLD_ENV = process.env;
 let organizationInfo: OrganizationInfo;
@@ -31,21 +31,20 @@ afterEach(() => {
 });
 
 describe('Sample Test', () => {
-  xit('list all repos in organization ', async () => {
-    const explorer = new RepositoryExplorer(githubClient, new CloudFormationManager());
-    const repos = await explorer.listRepositories('stage-tech');
-
-    console.log(JSON.stringify(repos, null, 2));
-  });
-
-  it('find Details about repository', async () => {
-    const explorer = new RepositoryExplorer(githubClient, new CloudFormationManager());
-    const repo = await explorer.getRepository('stage-tech', 'pipeline-factory');
-
-    expect(repo.repositoryId).toEqual('257418515');
-    expect(repo.defaultBranch).toEqual('master');
-    expect(repo.name).toEqual('pipeline-factory');
-    expect(repo.owner).toEqual('stage-tech');
-    expect(repo.topics).toContain('pipeline-factory');
+  it('Should Create messages in the queue', async () => {
+    const queueUrl = 'https://sqs.eu-west-1.amazonaws.com/928065939415/repository_discovery_jobs';
+    const owner = 'stage-tech';
+    const scheduler = new JobScheduler(queueUrl, new AWS.SQS());
+    const result = await scheduler.queueRepositoryDiscoveryJobs([
+      {
+        name: 'repo1',
+        owner,
+      },
+      {
+        name: 'repo2',
+        owner,
+      },
+    ]);
+    expect(result).toHaveLength(2);
   });
 });

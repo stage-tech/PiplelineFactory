@@ -2,7 +2,7 @@ import lambda from 'aws-lambda';
 
 import { CloudFormationManager } from './cloudformation-manager';
 import { GithubClient } from './github-client';
-import { DiscoveryJob, Repository } from './models';
+import { DiscoveryJob } from './models';
 import { OrganizationManager } from './organization-manager';
 import { PipelineCoordinator } from './pipeline-coordinator';
 import { RepositoryExplorer } from './repository-explorer';
@@ -19,6 +19,7 @@ export class PipelineManagementHandler {
       const coordinator = new PipelineCoordinator(repositoryExplorer, cloudFormationManager);
       const repository = await repositoryExplorer.getRepository(job.owner, job.name);
       const configuration = await repositoryExplorer.getRepositoryBuildConfiguration(repository);
+
       await coordinator.createNewPipelines(configuration);
       await coordinator.cleanObsoletePipelines(configuration);
     });
