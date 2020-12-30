@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 import { MonitorRepositoriesHandler } from '../../src/monitor/handler-monitor-repositories';
 import { PipelineManagementHandler } from '../../src/monitor/handler-pipeline-management';
 import AuthHelper from '../auth-helper';
