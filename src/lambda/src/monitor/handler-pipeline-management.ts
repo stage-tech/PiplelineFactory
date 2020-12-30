@@ -13,7 +13,13 @@ export class PipelineManagementHandler {
     event.Records.forEach(async (sqsMessage) => {
       const job = <DiscoveryJob>JSON.parse(sqsMessage.body);
       console.debug(`SQS Payload ${JSON.stringify(job, null, 4)}`);
-      const organizationInfo = await new OrganizationManager().get(job.owner);
+      const organizationManager = new OrganizationManager();
+      const organizationInfo = await organizationManager.get(job.owner);
+      console.debug(`Retrieved Information for org ${JSON.stringify(organizationInfo.name, null, 4)}`);
+      console.debug(
+        `Retrieved Information for token ${JSON.stringify(organizationInfo.githubToken.substring(0, 5), null, 4)}`,
+      );
+
       const githubClient = new GithubClient(organizationInfo.githubToken);
       const cloudFormationManager = new CloudFormationManager(this.factoryCodeBuildProjectName);
       const repositoryExplorer = new RepositoryExplorer(githubClient);
