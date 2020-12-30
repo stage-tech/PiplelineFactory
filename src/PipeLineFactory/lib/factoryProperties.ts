@@ -11,4 +11,5 @@ export default class FactoryProperties implements cdk.StackProps {
   readonly tags?: { [key: string]: string };
   readonly env?: cdk.Environment;
   readonly existingBucketName?: string;
+  readonly organizationName: string;
  }

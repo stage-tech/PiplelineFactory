@@ -44,7 +44,9 @@ export class TriggerStack extends cdk.Stack {
     new Monitor(this , "Monitor", {
       triggerCodeS3Bucket : props.triggerCodeS3Bucket,
       triggerCodeS3Key: props.triggerCodeS3Key,
-      PipelineFactoryBuildProjectName : factory.buildProjectName
+      PipelineFactoryBuildProjectName : factory.buildProjectName,
+      organizationName : props.organizationName
+      
 
     })
   }

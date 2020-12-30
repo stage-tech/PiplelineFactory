@@ -32,11 +32,6 @@ if (!organizationName) {
   throw new Error(`process.env.ORGANIZATION_NAME is not provided`);
 }
 
-const factoryCodeBuildProjectName = process.env.FACTORY_CODEBUILD_PROJECT_NAME;
-if (!factoryCodeBuildProjectName) {
-  throw new Error(`process.env.FACTORY_CODEBUILD_PROJECT_NAME is not provided`);
-}
-
 export const handler = new MonitorRepositoriesHandler({
   queueUrl,
   organizationName,

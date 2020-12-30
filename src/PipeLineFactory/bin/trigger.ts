@@ -20,6 +20,7 @@ const factoryProperties: FactoryProperties = {
   triggerCodeS3Key: s3_lambda_object_key,
   apiDomainCertificateArn : app.node.tryGetContext("apiDomainCertificateArn"),
   apiDomainName : app.node.tryGetContext("apiDomainName"),
-  existingBucketName :  app.node.tryGetContext("existingBucketName")
+  existingBucketName :  app.node.tryGetContext("existingBucketName"),
+  organizationName : app.node.tryGetContext("organizationName")
 };
 new TriggerStack(app, projectName, factoryProperties);

@@ -9,6 +9,7 @@ import * as eventTargets from '@aws-cdk/aws-events-targets';
 import { SqsEventSource } from "@aws-cdk/aws-lambda-event-sources";
 
 export interface MonitorProps {
+  organizationName: string;
   triggerCodeS3Key: string;
   triggerCodeS3Bucket: string;
   PipelineFactoryBuildProjectName: string;
@@ -36,10 +37,6 @@ export class Monitor extends cdk.Construct {
       sourceCodeBucket,
       props.triggerCodeS3Key
     );
-
-    const environmentVariables: { [key: string]: string } = {
-      SQS_QUEUE_URL: queue.queueUrl,
-    };
 
     const lambdaRole = new iam.Role(this, "Role_LambdaFunction", {
       roleName: `PLF-${stackName}-Repository-Monitor`,
@@ -83,7 +80,10 @@ export class Monitor extends cdk.Construct {
       handler: "dist/monitor/handler-monitor-repositories.handler",
       role: lambdaRole,
       code: lambdaCode,
-      environment: environmentVariables,
+      environment: {
+        SQS_QUEUE_URL: queue.queueUrl,
+        ORGANIZATION_NAME : props.organizationName
+      },
       timeout: cdk.Duration.seconds(10),
     });
 
@@ -102,7 +102,9 @@ export class Monitor extends cdk.Construct {
         handler: "dist/monitor/handler-pipeline-management.handler",
         role: lambdaRole,
         code: lambdaCode,
-        environment: environmentVariables,
+        environment: {
+          FACTORY_CODEBUILD_PROJECT_NAME : props.PipelineFactoryBuildProjectName
+        },
         timeout: cdk.Duration.seconds(10),
       }
     );
