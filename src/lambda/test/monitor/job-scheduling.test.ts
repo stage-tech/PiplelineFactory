@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 
 import { GithubClient } from '../../src/monitor/github-client';
-import { MonitorRepositoriesHandler } from '../../src/monitor/handler-monitor-repositories';
 import { JobScheduler } from '../../src/monitor/JobScheduler';
 import { OrganizationInfo, OrganizationManager } from '../../src/monitor/organization-manager';
 import AuthHelper from '../auth-helper';

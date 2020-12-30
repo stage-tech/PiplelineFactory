@@ -1,7 +1,7 @@
 import * as lambda from 'aws-lambda';
 
 import { PipelineManager } from './api/codebuild-manager';
-import { PipeLinePropertiesBuilder } from './pipeline-properties-builder';
+import { PipeLinePropertiesBuilder } from './api/pipeline-properties-builder';
 class CreateBranchHandler {
   public handler = async (event: lambda.APIGatewayEvent, context: any) => {
     const payload = JSON.parse(event.body || '');

@@ -1,4 +1,4 @@
-import { anyOfClass, anyString, capture, instance, mock, verify } from 'ts-mockito';
+import { anyOfClass, anyString, instance, mock, verify } from 'ts-mockito';
 
 import { CloudFormationManager } from '../../src/monitor/cloudformation-manager';
 import { JobScheduler } from '../../src/monitor/JobScheduler';
@@ -7,7 +7,6 @@ import { PipelineCoordinator } from '../../src/monitor/pipeline-coordinator';
 import { RepositoryExplorer } from '../../src/monitor/repository-explorer';
 
 let repositoryExplorerMock: RepositoryExplorer,
-  schedulerMock: JobScheduler,
   cloudFormationManagerMock: CloudFormationManager,
   coordinator: PipelineCoordinator;
 
@@ -33,7 +32,6 @@ const buildConfigs = new RepositoryBuildConfiguration(repo, alreadyMonitoredBran
 
 beforeAll(() => {
   repositoryExplorerMock = mock(RepositoryExplorer);
-  schedulerMock = mock(JobScheduler);
   cloudFormationManagerMock = mock(CloudFormationManager);
 
   coordinator = new PipelineCoordinator(instance(cloudFormationManagerMock));

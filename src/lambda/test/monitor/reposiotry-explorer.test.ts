@@ -1,7 +1,4 @@
-import { CloudFormationManager } from '../../src/monitor/cloudformation-manager';
 import { GithubClient } from '../../src/monitor/github-client';
-import { MonitorRepositoriesHandler } from '../../src/monitor/handler-monitor-repositories';
-import { Branch, Repository } from '../../src/monitor/models';
 import { OrganizationInfo, OrganizationManager } from '../../src/monitor/organization-manager';
 import { RepositoryExplorer } from '../../src/monitor/repository-explorer';
 import AuthHelper from '../auth-helper';

@@ -17,7 +17,7 @@ export class MonitorRepositoriesHandler {
     const githubClient = new GithubClient(organizationInfo.githubToken);
     const repositoryExplorer = new RepositoryExplorer(githubClient);
     const jobScheduler = new JobScheduler(this.props.queueUrl, new AWS.SQS());
-    const repos = await repositoryExplorer.listRepositories(organizationName);
+    const repos = await repositoryExplorer.listRepositories(organizationInfo.name);
     await jobScheduler?.queueRepositoryDiscoveryJobs(repos);
   };
 }
