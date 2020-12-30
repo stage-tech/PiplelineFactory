@@ -12,7 +12,7 @@ export class PipelineManagementHandler {
   public handler = async (event: lambda.SQSEvent): Promise<void> => {
     event.Records.forEach(async (sqsMessage) => {
       const job = <DiscoveryJob>JSON.parse(sqsMessage.body);
-      console.debug(JSON.stringify(job, null, 4));
+      console.debug(`SQS Payload ${JSON.stringify(job, null, 4)}`);
       const organizationInfo = await new OrganizationManager().get(job.owner);
       const githubClient = new GithubClient(organizationInfo.githubToken);
       const cloudFormationManager = new CloudFormationManager(this.factoryCodeBuildProjectName);
