@@ -74,7 +74,7 @@ export default class Notifications extends cdk.Construct {
     const handler = new lambda.Function(this, "Lambda_PipelineNotification", {
       runtime: lambda.Runtime.NODEJS_10_X,
       functionName: `${projectName}-PipelineEvent-Notification`,
-      handler: "dist/pipeline-notifications-handler.handler",
+      handler: "dist/notifications/pipeline-notifications-handler.handler",
       role: lambdaRole,
       code: lambdaCode,
       environment: environmentVariables,

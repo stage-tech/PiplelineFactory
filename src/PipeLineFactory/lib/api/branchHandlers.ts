@@ -43,7 +43,7 @@ export default class BranchHandlers extends cdk.Construct {
         functionName: `${
           cdk.Stack.of(this).stackName
         }-API-BranchCreatedHandler`,
-        handler: "dist/create-branch-handler.handler",
+        handler: "dist/api/create-branch-handler.handler",
         role: lambdaRole.lambdaRole,
         code: lambdaCode,
         environment: environmentVariables,
@@ -59,7 +59,7 @@ export default class BranchHandlers extends cdk.Construct {
         functionName: `${
           cdk.Stack.of(this).stackName
         }-API-BranchDeletedHandler`,
-        handler: "dist/delete-branch-handler.handler",
+        handler: "dist/api/delete-branch-handler.handler",
         role: lambdaRole.lambdaRole,
         code: lambdaCode,
         environment: environmentVariables,
