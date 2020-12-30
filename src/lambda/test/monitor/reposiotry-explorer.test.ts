@@ -32,14 +32,14 @@ afterEach(() => {
 
 describe('Sample Test', () => {
   xit('list all repos in organization ', async () => {
-    const explorer = new RepositoryExplorer(githubClient, new CloudFormationManager());
+    const explorer = new RepositoryExplorer(githubClient);
     const repos = await explorer.listRepositories('stage-tech');
 
     console.log(JSON.stringify(repos, null, 2));
   });
 
   it('find Details about repository', async () => {
-    const explorer = new RepositoryExplorer(githubClient, new CloudFormationManager());
+    const explorer = new RepositoryExplorer(githubClient);
     const repo = await explorer.getRepository('stage-tech', 'pipeline-factory');
 
     expect(repo.repositoryId).toEqual('257418515');

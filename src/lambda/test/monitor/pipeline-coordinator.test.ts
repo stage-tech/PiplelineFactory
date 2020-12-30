@@ -1,4 +1,4 @@
-import { anyString, capture, instance, mock, verify } from 'ts-mockito';
+import { anyOfClass, anyString, capture, instance, mock, verify } from 'ts-mockito';
 
 import { CloudFormationManager } from '../../src/monitor/cloudformation-manager';
 import { JobScheduler } from '../../src/monitor/JobScheduler';
@@ -46,7 +46,7 @@ beforeAll(() => {
 describe('pipeline coordinator', () => {
   it('should create pipelines for new branches', async () => {
     await coordinator.createNewPipelines(buildConfigs).then(() => {
-      verify(cloudFormationManagerMock.createPipeline(anyString(), anyString(), anyString())).thrice();
+      verify(cloudFormationManagerMock.createPipeline(anyOfClass(RepositoryBuildConfiguration), anyString())).thrice();
     });
   });
 

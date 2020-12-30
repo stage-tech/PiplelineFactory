@@ -10,6 +10,7 @@ import { RepositoryExplorer } from './repository-explorer';
 export class MonitorRepositoriesHandlerProps {
   queueUrl: string;
   organizationName: string;
+  factoryCodeBuildProjectName: string;
 }
 
 export class MonitorRepositoriesHandler {
@@ -17,8 +18,8 @@ export class MonitorRepositoriesHandler {
   public handler = async () => {
     const organizationInfo = await new OrganizationManager().get(this.props.organizationName);
     const githubClient = new GithubClient(organizationInfo.githubToken);
-    const cloudFormationManager = new CloudFormationManager();
-    const repositoryExplorer = new RepositoryExplorer(githubClient, cloudFormationManager);
+    const cloudFormationManager = new CloudFormationManager(this.props.factoryCodeBuildProjectName);
+    const repositoryExplorer = new RepositoryExplorer(githubClient);
     const jobScheduler = new JobScheduler(this.props.queueUrl, new AWS.SQS());
     const coordinator = new PipelineCoordinator(repositoryExplorer, cloudFormationManager, jobScheduler);
     await coordinator.scheduleDiscoveryJobs(this.props.organizationName);
@@ -27,4 +28,13 @@ export class MonitorRepositoriesHandler {
 
 const queueUrl = process.env.SQS_QUEUE_URL || '';
 const organizationName = process.env.ORGANIZATION_NAME || 'stage-tech';
-export const handler = new MonitorRepositoriesHandler({ queueUrl, organizationName }).handler;
+
+if (!process.env.FACTORY_CODEBUILD_PROJECT_NAME) {
+  throw new Error(`process.env.FACTORY_CODEBUILD_PROJECT_NAME is not provided`);
+}
+
+export const handler = new MonitorRepositoriesHandler({
+  queueUrl,
+  organizationName,
+  factoryCodeBuildProjectName: process.env.FACTORY_CODEBUILD_PROJECT_NAME,
+}).handler;

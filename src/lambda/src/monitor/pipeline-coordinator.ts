@@ -25,11 +25,7 @@ export class PipelineCoordinator {
     const newBranches = buildConfigurations.branchesToAdd();
     await Promise.all(
       newBranches.map(async (branch) => {
-        return await this.cloudFormationManager.createPipeline(
-          buildConfigurations.repository.owner,
-          buildConfigurations.repository.name,
-          branch.branchName,
-        );
+        return await this.cloudFormationManager.createPipeline(buildConfigurations, branch.branchName);
       }),
     );
   }
