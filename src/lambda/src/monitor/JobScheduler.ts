@@ -12,6 +12,7 @@ export class JobScheduler {
           MessageBody: JSON.stringify(r),
         };
         const sqsMessage = await this.sqsClient.sendMessage(request).promise();
+        console.log(`queued ${JSON.stringify(request, null, 4)}`);
         return sqsMessage.MessageId;
       }),
     );
