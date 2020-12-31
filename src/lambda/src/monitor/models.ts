@@ -27,7 +27,7 @@ export class Repository {
 }
 
 export class RepositoryBuildConfiguration {
-  constructor(public repository: Repository, private branchesWithPipeline: string[]) {}
+  constructor(public repository: Repository, public branchesWithPipeline: string[]) {}
 
   shouldBeMonitored(): boolean {
     return this.repository.topics.filter((t) => t.toLowerCase() == 'pipeline-factory').length > 0;
