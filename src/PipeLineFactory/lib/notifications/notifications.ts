@@ -17,6 +17,7 @@ import NotificationsLambdaRole from "./lambda-role";
 export interface NotificationsProps {
   triggerCodeS3Key: string;
   triggerCodeS3Bucket: string | undefined;
+  slackToken: string;
 }
 
 export default class Notifications extends cdk.Construct {
@@ -68,9 +69,6 @@ export default class Notifications extends cdk.Construct {
       props.triggerCodeS3Key
     );
 
-    const environmentVariables: { [key: string]: string } = {
-    };
-
     const lambdaRole = new NotificationsLambdaRole(this , "LambdaRole" ).lambdaRole
 
     const handler = new lambda.Function(this, "Lambda_PipelineNotification", {
@@ -79,7 +77,9 @@ export default class Notifications extends cdk.Construct {
       handler: "dist/notifications/pipeline-notifications-handler.handler",
       role: lambdaRole,
       code: lambdaCode,
-      environment: environmentVariables,
+      environment: {
+        SLACK_TOKEN: props.slackToken
+      },
       timeout: cdk.Duration.seconds(10),
     });
 

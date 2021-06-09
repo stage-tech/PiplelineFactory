@@ -5,7 +5,7 @@ process.env.FACTORY_CODEBUILD_PROJECT_NAME = 'Pipeline-Factory';
 module.exports = {
   globals: {
     'ts-jest': {
-      tsConfig: 'tsconfig.json',
+      tsConfig: 'tsconfig.test.json',
     },
   },
   moduleFileExtensions: ['ts', 'js'],

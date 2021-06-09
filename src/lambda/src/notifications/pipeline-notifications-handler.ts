@@ -25,15 +25,15 @@ class PipelineNotificationsHandler {
 
     const notification: PipelineData | undefined = await notificationsManager.createEventNotification(payload);
     if (notification) {
-      applicableSettings.forEach(async () => {
-        await SlackManager.publishMessageToSlack(notification, 'test-channel');
+      applicableSettings.forEach(async (settings) => {
+        await SlackManager.publishMessageToSlack(notification, settings.channelId);
       });
     }
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify('artifactRevision'),
+      body: JSON.stringify(JSON.stringify(notification)),
     };
   };
 }

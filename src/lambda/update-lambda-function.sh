@@ -1,7 +1,7 @@
 
 #!/bin/bash
 PROFILE=$1 # aws profile
-PROJECT_NAME = "stage-door-task-tracker-lambda"
+PROJECT_NAME = "pipeline-factory"
 # If optional argument 'PROFILE' is provided - export it
 if [[ ! -z $PROFILE ]]; then
     export AWS_PROFILE=$PROFILE

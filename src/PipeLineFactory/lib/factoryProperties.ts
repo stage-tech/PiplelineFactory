@@ -13,4 +13,5 @@ export default class FactoryProperties implements cdk.StackProps {
   readonly existingBucketName?: string;
   readonly organizationName: string;
   readonly repositorySelector: string;
+  readonly slackToken: string;
  }
