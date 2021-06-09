@@ -71,6 +71,20 @@ export default class Notifications extends cdk.Construct {
 
     const lambdaRole = new NotificationsLambdaRole(this , "LambdaRole" ).lambdaRole
 
+    lambdaRole.attachInlinePolicy(
+      new iam.Policy(this, 'SecretManagerPolicy', {
+        statements: [
+          new iam.PolicyStatement({
+            actions: ["secretsmanager:GetSecretValue"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:secretsmanager:*:secret:/pipeline-factory/organization/*",
+            ],
+          })
+        ]
+      })
+    )
+
     const handler = new lambda.Function(this, "Lambda_PipelineNotification", {
       runtime: lambda.Runtime.NODEJS_10_X,
       functionName: `${projectName}-PipelineEvent-Notification`,

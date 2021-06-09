@@ -19,7 +19,7 @@
     "watch": "tsc -w",
     "test": "AWS_CONFIG_FILE=~/.aws/config AWS_SDK_LOAD_CONFIG=1 jest --forceExit --coverage --verbose --detectOpenHandles",
     "start": "tsc && node 'dist/index.js'",
-    "lint": "tsc && eslint '*/**/*.{js,ts,tsx}' --fix --no-verify",
+    "lint": "tsc && eslint '*/**/*.{js,ts,tsx}' --fix",
     "lambda:pack": "mkdir packages; hash=$(git rev-parse --short HEAD); zip -r \"./packages/pipeline-factory-lambda-${hash}.zip\" . -x '*.ENV' '*.eslintrc*' './packages/*' './src/*' './test/*' './coverage/*' '*.git*' '*.n*rc' '*.DS_Store' 'yarn.lock' '.prettierrc.js' 'tsconfig.json' '.eslintignore' '.vscode/*' 'jest.config.js'"
   },
   "dependencies": {

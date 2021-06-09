@@ -19,4 +19,4 @@ mkdir $PWD/packages -p;
 package_file_path="$PWD/packages/${package_file_name}"
 
 zip -r $package_file_path . -x '*.ENV' '*.eslintrc*' './packages/*' './src/*' './test/*' './coverage/*' '*.git*' '*.n*rc' '*.DS_Store' 'yarn.lock' '.prettierrc.js' 'tsconfig.json' '.eslintignore' '.vscode/*' 'jest.config.js'
-aws s3 cp $package_file_path $s3_package_path
+# aws s3 cp $package_file_path $s3_package_path

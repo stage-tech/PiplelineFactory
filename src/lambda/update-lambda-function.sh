@@ -15,7 +15,7 @@ die()
 }
 
 hash=$(git rev-parse --short HEAD)
-./build.sh $hash 
+./build.sh "${PROJECT_NAME}-$hash"
 echo "enter function name you want to update"
 read function_name
 code_file="./packages/${PROJECT_NAME}-${hash}.zip"
