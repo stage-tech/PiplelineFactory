@@ -22,7 +22,8 @@ export class NotificationTargetsManager {
 
     console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
     const repositoryName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
-    const repo = await this.githubClient.getRepository('stage-tech', repositoryName);
+    const organizationName = 'stage-tech';
+    const repo = await this.githubClient.getRepository(organizationName, repositoryName);
 
     const commitBranch = await this.githubClient.getCommitBranch('stage-tech', repo.name, artifactRevision.revisionId);
 

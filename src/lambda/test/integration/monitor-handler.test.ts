@@ -14,6 +14,7 @@ beforeEach(() => {
     ...OLD_ENV,
     AWS_PROFILE: 'admin-stage',
     AWS_SDK_LOAD_CONFIG: '1',
+    REPOSITORY_SELECTOR: 'pipeline-factory-928065939415',
   };
 
   const credentials = AuthHelper.LoadCredentials('stage-dev');

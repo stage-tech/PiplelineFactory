@@ -3,7 +3,7 @@ import { anything, instance, mock, verify, when } from 'ts-mockito';
 import { AWSClient } from '../../src/clients/aws-client';
 import { GithubClient } from '../../src/clients/github-client';
 import { PipelineState, StageName } from '../../src/models';
-import { NotificationsManager } from '../../src/notifications/notifications-manager';
+import { NotificationsPayloadBuilder } from '../../src/notifications/notifications-payload-builder';
 import { mockData } from './mockData';
 
 describe('NotificationsManager tests', () => {
@@ -11,7 +11,7 @@ describe('NotificationsManager tests', () => {
   const gitHubClientMock = mock(GithubClient);
 
   it('getEventDetail should return correct data', async () => {
-    const notificationsManager = new NotificationsManager(awsClientMock, gitHubClientMock);
+    const notificationsManager = new NotificationsPayloadBuilder(awsClientMock, gitHubClientMock);
     const eventDetails = notificationsManager.getEventDetails(mockData.pipelineEvent);
     expect(eventDetails.pipeline).toEqual('stage-door-datasync-execution-lambda-master');
     expect(eventDetails.executionId).toEqual('42bb849b-c35c-4548-b0b7-767921c4e6c9');
@@ -19,13 +19,13 @@ describe('NotificationsManager tests', () => {
   });
 
   it('getEventDetail should throw error', async () => {
-    const notificationsManager = new NotificationsManager(awsClientMock, gitHubClientMock);
+    const notificationsManager = new NotificationsPayloadBuilder(awsClientMock, gitHubClientMock);
     expect(notificationsManager.getEventDetails).toThrow(Error);
   });
 
   it('getFailedStageActionExecution should return correct ActionExecution', async () => {
     when(awsClientMock.getActionExecutions(anything(), anything())).thenResolve(mockData.actionExecutionData);
-    const notificationsManager = new NotificationsManager(instance(awsClientMock), gitHubClientMock);
+    const notificationsManager = new NotificationsPayloadBuilder(instance(awsClientMock), gitHubClientMock);
     const failedActionExecutuion = await notificationsManager.getFailedStageActionExecution('test', 'test');
     expect(failedActionExecutuion.status).toBe('Failed');
     expect(failedActionExecutuion.stageName).toBe('Build');
@@ -35,7 +35,7 @@ describe('NotificationsManager tests', () => {
   it('getAuthor returns correct author name', async () => {
     const gitHubMock = mock(GithubClient);
     when(gitHubMock.getCommitAuthor(anything(), anything(), anything())).thenResolve('testAuthor');
-    const notificationsManager = new NotificationsManager(awsClientMock, instance(gitHubMock));
+    const notificationsManager = new NotificationsPayloadBuilder(awsClientMock, instance(gitHubMock));
     await notificationsManager.getAuthor(mockData.pipelineData.pipelineExecution.artifactRevisions[0]);
     verify(
       gitHubMock.getCommitAuthor(
@@ -48,7 +48,7 @@ describe('NotificationsManager tests', () => {
 
   it('getBuildInfo return correct build', async () => {
     when(awsClientMock.getBuild(anything())).thenResolve(mockData.build);
-    const notificationsManager = new NotificationsManager(instance(awsClientMock), gitHubClientMock);
+    const notificationsManager = new NotificationsPayloadBuilder(instance(awsClientMock), gitHubClientMock);
     const buildInfo = await notificationsManager.getBuildInfo(mockData.actionExecutionData.actionExecutionDetails[0]);
     verify(awsClientMock.getBuild('testExecutionId')).once();
     expect(buildInfo.buildLogs).toBe('https://test-link.co.uk/');
@@ -63,8 +63,8 @@ describe('NotificationsManager tests', () => {
     when(awsClientMock.getBuild(anything())).thenResolve(mockData.build);
     when(localGitHubMock.getCommitAuthor(anything(), anything(), anything())).thenResolve('testAuthor');
 
-    const notificationsManager = new NotificationsManager(instance(awsClientMock), instance(localGitHubMock));
-    const failedPipelineData = await notificationsManager.createEventNotification({
+    const notificationsManager = new NotificationsPayloadBuilder(instance(awsClientMock), instance(localGitHubMock));
+    const failedPipelineData = await notificationsManager.buildNotificationPayload({
       pipeline: 'testPipeline',
       executionId: 'testExecutionId',
       state: PipelineState.FAILED,
@@ -102,8 +102,8 @@ describe('NotificationsManager tests', () => {
     when(awsClientMock.getPipelineExecution(anything(), anything())).thenResolve(mockData.successPipelineData);
     when(localGitHubMock.getCommitAuthor(anything(), anything(), anything())).thenResolve('testAuthor');
 
-    const notificationsManager = new NotificationsManager(instance(awsClientMock), instance(localGitHubMock));
-    const succeededPipelineData = await notificationsManager.createEventNotification({
+    const notificationsManager = new NotificationsPayloadBuilder(instance(awsClientMock), instance(localGitHubMock));
+    const succeededPipelineData = await notificationsManager.buildNotificationPayload({
       pipeline: 'testPipeline',
       executionId: 'testExecutionId',
       state: PipelineState.SUCCEEDED,
