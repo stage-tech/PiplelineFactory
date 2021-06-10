@@ -9,9 +9,10 @@ import { NotificationsPayloadBuilder } from './notifications-payload-builder';
 import { SlackManager } from './slack-manager';
 
 export class PipelineNotificationsHandler {
+  constructor(private organizationName: string) {}
   public handler = async (event: lambda.SNSEvent) => {
     const payload = JSON.parse(event.Records[0].Sns.Message || '') as PipelineExecutionEvent;
-    const token = await new OrganizationManager().get('stage-tech');
+    const token = await new OrganizationManager().get(this.organizationName);
     const githubClient = new GithubClient(token.githubToken);
     const awsClient = new AWSClient();
     const notificationsPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
@@ -42,4 +43,8 @@ export class PipelineNotificationsHandler {
   };
 }
 
-export const handler = new PipelineNotificationsHandler().handler;
+if (!process.env.ORGANIZATION_NAME) {
+  throw new Error(`process.env.ORGANIZATION_NAME is not provided`);
+}
+
+export const handler = new PipelineNotificationsHandler(process.env.ORGANIZATION_NAME).handler;

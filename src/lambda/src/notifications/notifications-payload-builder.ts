@@ -97,13 +97,19 @@ export class NotificationsPayloadBuilder {
   }
 
   async getAuthor(artifactRevision: any): Promise<string | void> {
-    const repo = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
-    return (await this.githubClient.getCommitAuthor('stage-tech', repo, artifactRevision.revisionId)) || '';
+    const repoName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
+    const organization = NotificationsPayloadBuilder.getOrganizationNameFromArtifactRevision(artifactRevision);
+    return (await this.githubClient.getCommitAuthor(organization, repoName, artifactRevision.revisionId)) || '';
   }
 
   static getRepoFromArtifactRevision(artifactRevision: any): string {
     const commitUrl = artifactRevision.revisionUrl?.split('/');
     return commitUrl[commitUrl.length - 3];
+  }
+
+  static getOrganizationNameFromArtifactRevision(artifactRevision: any): string {
+    const commitUrl = artifactRevision.revisionUrl?.split('/');
+    return commitUrl[commitUrl.length - 4];
   }
 
   getEventDetails(event: PipelineExecutionEvent): PipelineEventDetail {

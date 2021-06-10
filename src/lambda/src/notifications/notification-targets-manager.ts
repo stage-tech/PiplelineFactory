@@ -22,10 +22,14 @@ export class NotificationTargetsManager {
 
     console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
     const repositoryName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
-    const organizationName = 'stage-tech';
+    const organizationName = NotificationsPayloadBuilder.getOrganizationNameFromArtifactRevision(artifactRevision);
     const repo = await this.githubClient.getRepository(organizationName, repositoryName);
 
-    const commitBranch = await this.githubClient.getCommitBranch('stage-tech', repo.name, artifactRevision.revisionId);
+    const commitBranch = await this.githubClient.getCommitBranch(
+      organizationName,
+      repo.name,
+      artifactRevision.revisionId,
+    );
 
     if (!commitBranch || commitBranch.data?.length < 1) {
       throw Error('No commit branch was received');
