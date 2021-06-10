@@ -6,13 +6,13 @@ import { NotificationPayload } from '../models';
 export class SlackManager {
   public static publishMessageToSlack = async (data: NotificationPayload, channel: string): Promise<void> => {
     try {
-      const ssm = new AWS.SSM();
+      const ssm = new AWS.SecretsManager();
       const parameterReadResponse = await ssm
-        .getParameter({
-          Name: `/pipeline-factory/notifications/slack/${channel}/webhook`,
+        .getSecretValue({
+          SecretId: `/pipeline-factory/notifications/slack/${channel}/webhook`,
         })
         .promise();
-      const token = parameterReadResponse.Parameter?.Value;
+      const token = parameterReadResponse.SecretString;
       const slackClient = new WebClient(token);
       await slackClient.chat.postMessage({
         mrkdwn: true,
@@ -21,6 +21,7 @@ export class SlackManager {
       });
     } catch (error) {
       console.error(`Error while publishing message to Slack: ${error}`);
+      throw error;
     }
   };
 

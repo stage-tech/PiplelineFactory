@@ -25,9 +25,9 @@ afterEach(() => {
   process.env = OLD_ENV;
 });
 
-xdescribe('notification lambda Harness', () => {
+describe('notification lambda Harness', () => {
   it('notification handler lambda', async () => {
-    const handler = new PipelineNotificationsHandler();
+    const handler = new PipelineNotificationsHandler('stage-tech');
     const notificationPayLoad = JSON.stringify({
       version: '0',
       id: '86577b36-74ff-149c-4de1-08920c3d9a21',
