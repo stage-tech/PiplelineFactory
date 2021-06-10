@@ -55,7 +55,7 @@ export interface PipelineEventDetail {
   state: PipelineState;
 }
 
-export interface PipelineData {
+export interface NotificationPayload {
   pipelineName: string;
   pipelineState: PipelineState;
   pipelineExecutionId: string;

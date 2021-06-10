@@ -1,15 +1,15 @@
 import { AWSClient } from '../clients/aws-client';
 import { GithubClient } from '../clients/github-client';
-import { PipelineData, PipelineEventDetail, PipelineExecutionEvent, PipelineState, StageName } from '../models';
+import { NotificationPayload, PipelineEventDetail, PipelineExecutionEvent, PipelineState, StageName } from '../models';
 
-export class NotificationsManager {
+export class NotificationsPayloadBuilder {
   private awsClient: AWSClient;
   private githubClient: GithubClient;
   constructor(awsClient: AWSClient, gitHubClient: GithubClient) {
     this.awsClient = awsClient;
     this.githubClient = gitHubClient;
   }
-  async createEventNotification(event: PipelineEventDetail): Promise<PipelineData | undefined> {
+  async buildNotificationPayload(event: PipelineEventDetail): Promise<NotificationPayload | undefined> {
     const { pipeline, executionId, state } = event;
     const pipelineData = this.getPipelineData(state, pipeline, executionId);
     return pipelineData;
@@ -19,7 +19,7 @@ export class NotificationsManager {
     state: PipelineState,
     pipeline: string,
     executionId: string,
-  ): Promise<PipelineData | undefined> {
+  ): Promise<NotificationPayload | undefined> {
     try {
       switch (state) {
         case PipelineState.STARTED:
@@ -27,7 +27,7 @@ export class NotificationsManager {
         case PipelineState.SUCCEEDED:
           return await this.getPipelineStartOrSuccessData(pipeline, executionId);
         case PipelineState.FAILED:
-          return await this.getPipelineFailiorData(pipeline, executionId);
+          return await this.getPipelineFailureData(pipeline, executionId);
         default:
           return undefined;
       }
@@ -37,7 +37,7 @@ export class NotificationsManager {
     }
   }
 
-  async getPipelineStartOrSuccessData(pipeline: string, executionId: string): Promise<PipelineData> {
+  async getPipelineStartOrSuccessData(pipeline: string, executionId: string): Promise<NotificationPayload> {
     const pipelineExecution = (await this.awsClient.getPipelineExecution(pipeline, executionId)).pipelineExecution;
     //@ts-ignore
     const artifactRevision = pipelineExecution?.artifactRevisions[0];
@@ -51,7 +51,7 @@ export class NotificationsManager {
     };
   }
 
-  async getPipelineFailiorData(pipeline: string, executionId: string): Promise<PipelineData> {
+  async getPipelineFailureData(pipeline: string, executionId: string): Promise<NotificationPayload> {
     const executionDetails = this.required(await this.getFailedStageActionExecution(pipeline, executionId));
     const artifactRevision = (await this.awsClient.getPipelineExecution(pipeline, executionId)).pipelineExecution
       ?.artifactRevisions[0];
@@ -97,7 +97,7 @@ export class NotificationsManager {
   }
 
   async getAuthor(artifactRevision: any): Promise<string | void> {
-    const repo = NotificationsManager.getRepoFromArtifactRevision(artifactRevision);
+    const repo = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
     return (await this.githubClient.getCommitAuthor('stage-tech', repo, artifactRevision.revisionId)) || '';
   }
 

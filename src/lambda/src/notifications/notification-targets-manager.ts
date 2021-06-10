@@ -1,9 +1,9 @@
 import { AWSClient } from '../clients/aws-client';
 import { GithubClient } from '../clients/github-client';
 import { NotificationSettings } from '../models';
-import { NotificationsManager } from './notifications-manager';
+import { NotificationsPayloadBuilder } from './notifications-payload-builder';
 
-export class FactorySettingsManager {
+export class NotificationTargetsManager {
   private awsClient: AWSClient;
   private githubClient: GithubClient;
 
@@ -12,47 +12,40 @@ export class FactorySettingsManager {
     this.githubClient = githubClient;
   }
 
-  public getApplicableSettings = async (
+  public getRequiredNotificationTargets = async (
     pipeline: string,
     executionId: string,
     eventState: string,
   ): Promise<NotificationSettings[]> => {
-    const artifactRevision = (await this.awsClient.getPipelineExecution(pipeline, executionId)).pipelineExecution
-      .artifactRevisions[0];
+    const pipeLineExecutionResponse = await this.awsClient.getPipelineExecution(pipeline, executionId);
+    const artifactRevision = pipeLineExecutionResponse.pipelineExecution.artifactRevisions[0];
 
     console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
-    const repo = await this.githubClient.getRepository(
-      'stage-tech',
-      NotificationsManager.getRepoFromArtifactRevision(artifactRevision),
-    );
+    const repositoryName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
+    const repo = await this.githubClient.getRepository('stage-tech', repositoryName);
 
     const commitBranch = await this.githubClient.getCommitBranch('stage-tech', repo.name, artifactRevision.revisionId);
 
-    if (!commitBranch) {
+    if (!commitBranch || commitBranch.data?.length < 1) {
       throw Error('No commit branch was received');
     }
 
-    const factorySettings = await this.githubClient.getPipelineFactorySettings(
-      'stage-tech',
-      repo.name,
-      commitBranch.data[0].name,
-    );
-
-    if (!factorySettings.notifications) {
-      throw Error(`No notifications configuriation found for ${repo.name}`);
+    const factorySettings = repo.settings;
+    if (!factorySettings?.notifications) {
+      throw Error(`No notifications configuration found for ${repo.name}`);
     }
 
-    const applicableSettings = factorySettings.notifications.filter((setting) => {
+    const notificationTargets = factorySettings.notifications.filter((setting) => {
       return setting.event === eventState && setting.branches.includes(commitBranch.data[0].name);
     });
 
-    if (!applicableSettings.length) {
+    if (!notificationTargets.length) {
       throw Error(
         `No applicable notifications configurations found: ${JSON.stringify(
-          applicableSettings,
+          notificationTargets,
         )} commit branch: ${JSON.stringify(commitBranch)} factorySettings: ${JSON.stringify(factorySettings)}`,
       );
     }
-    return applicableSettings;
+    return notificationTargets;
   };
 }

@@ -2,33 +2,35 @@ import * as lambda from 'aws-lambda';
 
 import { AWSClient } from '../clients/aws-client';
 import { GithubClient } from '../clients/github-client';
-import { PipelineData, PipelineExecutionEvent } from '../models';
+import { NotificationPayload, PipelineExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
-import { FactorySettingsManager } from './factory-settings-manager';
-import { NotificationsManager } from './notifications-manager';
+import { NotificationTargetsManager } from './notification-targets-manager';
+import { NotificationsPayloadBuilder } from './notifications-payload-builder';
 import { SlackManager } from './slack-manager';
 
-class PipelineNotificationsHandler {
+export class PipelineNotificationsHandler {
   public handler = async (event: lambda.SNSEvent) => {
     const payload = JSON.parse(event.Records[0].Sns.Message || '') as PipelineExecutionEvent;
     const token = await new OrganizationManager().get('stage-tech');
     const githubClient = new GithubClient(token.githubToken);
     const awsClient = new AWSClient();
-    const notificationsManager = new NotificationsManager(awsClient, githubClient);
-    const eventDetails = notificationsManager.getEventDetails(payload);
-    const factorySettingsManager = new FactorySettingsManager(awsClient, githubClient);
+    const notificationsPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
+    const eventDetails = notificationsPayloadBuilder.getEventDetails(payload);
+    const factorySettingsManager = new NotificationTargetsManager(awsClient, githubClient);
     console.log(payload);
 
-    const applicableSettings = await factorySettingsManager.getApplicableSettings(
+    const notificationTargets = await factorySettingsManager.getRequiredNotificationTargets(
       eventDetails.pipeline,
       eventDetails.executionId,
       eventDetails.state,
     );
 
-    const notification: PipelineData | undefined = await notificationsManager.createEventNotification(eventDetails);
-    if (notification) {
-      applicableSettings.forEach(async (settings) => {
-        await SlackManager.publishMessageToSlack(notification, settings.channelId);
+    const notificationPayload:
+      | NotificationPayload
+      | undefined = await notificationsPayloadBuilder.buildNotificationPayload(eventDetails);
+    if (notificationPayload) {
+      notificationTargets.forEach(async (settings) => {
+        await SlackManager.publishMessageToSlack(notificationPayload, settings.channelId);
       });
     }
 

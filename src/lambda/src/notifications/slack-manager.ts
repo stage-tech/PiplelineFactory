@@ -1,11 +1,18 @@
 import { WebClient } from '@slack/web-api';
+import AWS from 'aws-sdk';
 
-import { PipelineData } from '../models';
+import { NotificationPayload } from '../models';
 
 export class SlackManager {
-  public static publishMessageToSlack = async (data: PipelineData, channel: string): Promise<void> => {
+  public static publishMessageToSlack = async (data: NotificationPayload, channel: string): Promise<void> => {
     try {
-      const token = process.env.SLACK_TOKEN;
+      const ssm = new AWS.SSM();
+      const parameterReadResponse = await ssm
+        .getParameter({
+          Name: `/pipeline-factory/notifications/slack/${channel}/webhook`,
+        })
+        .promise();
+      const token = parameterReadResponse.Parameter?.Value;
       const slackClient = new WebClient(token);
       await slackClient.chat.postMessage({
         mrkdwn: true,
@@ -17,7 +24,7 @@ export class SlackManager {
     }
   };
 
-  private static formatSlackMessage = (data: PipelineData): string => {
+  private static formatSlackMessage = (data: NotificationPayload): string => {
     return Object.keys(data)
       .map((key) => {
         return `${key}: ${data[key]}`;
