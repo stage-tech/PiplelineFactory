@@ -1,6 +1,7 @@
 {
   "name": "trigger",
   "version": "0.1.0",
+  "license": "MIT",
   "bin": {
     "trigger": "bin/trigger.js"
   },

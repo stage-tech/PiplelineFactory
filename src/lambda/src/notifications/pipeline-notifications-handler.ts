@@ -15,15 +15,17 @@ class PipelineNotificationsHandler {
     const githubClient = new GithubClient(token.githubToken);
     const awsClient = new AWSClient();
     const notificationsManager = new NotificationsManager(awsClient, githubClient);
+    const eventDetails = notificationsManager.getEventDetails(payload);
     const factorySettingsManager = new FactorySettingsManager(awsClient, githubClient);
+    console.log(payload);
 
     const applicableSettings = await factorySettingsManager.getApplicableSettings(
-      payload.detail.state,
-      payload.detail.pipeline,
-      payload.detail['execution-id'],
+      eventDetails.pipeline,
+      eventDetails.executionId,
+      eventDetails.state,
     );
 
-    const notification: PipelineData | undefined = await notificationsManager.createEventNotification(payload);
+    const notification: PipelineData | undefined = await notificationsManager.createEventNotification(eventDetails);
     if (notification) {
       applicableSettings.forEach(async (settings) => {
         await SlackManager.publishMessageToSlack(notification, settings.channelId);
@@ -33,7 +35,7 @@ class PipelineNotificationsHandler {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(JSON.stringify(notification)),
+      body: JSON.stringify(JSON.stringify('notification')),
     };
   };
 }

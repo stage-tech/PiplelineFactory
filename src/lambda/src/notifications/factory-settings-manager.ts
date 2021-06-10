@@ -13,19 +13,25 @@ export class FactorySettingsManager {
   }
 
   public getApplicableSettings = async (
-    eventState: string,
     pipeline: string,
     executionId: string,
+    eventState: string,
   ): Promise<NotificationSettings[]> => {
     const artifactRevision = (await this.awsClient.getPipelineExecution(pipeline, executionId)).pipelineExecution
       .artifactRevisions[0];
 
+    console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
     const repo = await this.githubClient.getRepository(
       'stage-tech',
       NotificationsManager.getRepoFromArtifactRevision(artifactRevision),
     );
 
     const commitBranch = await this.githubClient.getCommitBranch('stage-tech', repo.name, artifactRevision.revisionId);
+
+    if (!commitBranch) {
+      throw Error('No commit branch was received');
+    }
+
     const factorySettings = await this.githubClient.getPipelineFactorySettings(
       'stage-tech',
       repo.name,
@@ -41,7 +47,11 @@ export class FactorySettingsManager {
     });
 
     if (!applicableSettings.length) {
-      throw Error('No applicable notifications configurations found');
+      throw Error(
+        `No applicable notifications configurations found: ${JSON.stringify(
+          applicableSettings,
+        )} commit branch: ${JSON.stringify(commitBranch)} factorySettings: ${JSON.stringify(factorySettings)}`,
+      );
     }
     return applicableSettings;
   };

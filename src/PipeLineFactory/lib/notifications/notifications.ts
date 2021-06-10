@@ -80,6 +80,13 @@ export default class Notifications extends cdk.Construct {
             resources: [
               "arn:aws:secretsmanager:*:secret:/pipeline-factory/organization/*",
             ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["codepipeline:GetPipelineExecution"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:codepipeline:*:*",
+            ],
           })
         ]
       })

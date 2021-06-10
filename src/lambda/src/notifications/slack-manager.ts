@@ -5,12 +5,11 @@ import { PipelineData } from '../models';
 export class SlackManager {
   public static publishMessageToSlack = async (data: PipelineData, channel: string): Promise<void> => {
     try {
-      //   const token = process.env.SLACK_TOKEN;
-      const token = 'xoxb-188064068641-2145348889846-v7Dtwv4oVq7LlBNTgUksMszw';
+      const token = process.env.SLACK_TOKEN;
       const slackClient = new WebClient(token);
       await slackClient.chat.postMessage({
         mrkdwn: true,
-        text: SlackManager.formatSlackMessage(data),
+        text: typeof data === 'string' ? data : SlackManager.formatSlackMessage(data),
         channel: channel,
       });
     } catch (error) {

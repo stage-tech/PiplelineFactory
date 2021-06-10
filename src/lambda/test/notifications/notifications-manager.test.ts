@@ -65,12 +65,9 @@ describe('NotificationsManager tests', () => {
 
     const notificationsManager = new NotificationsManager(instance(awsClientMock), instance(localGitHubMock));
     const failedPipelineData = await notificationsManager.createEventNotification({
-      'detail-type': 'CodePipeline Pipeline Execution State Change',
-      detail: {
-        pipeline: 'testPipeline',
-        'execution-id': 'testExecutionId',
-        state: PipelineState.FAILED,
-      },
+      pipeline: 'testPipeline',
+      executionId: 'testExecutionId',
+      state: PipelineState.FAILED,
     });
 
     verify(awsClientMock.getActionExecutions('testPipeline', 'testExecutionId')).once();
@@ -107,12 +104,9 @@ describe('NotificationsManager tests', () => {
 
     const notificationsManager = new NotificationsManager(instance(awsClientMock), instance(localGitHubMock));
     const succeededPipelineData = await notificationsManager.createEventNotification({
-      'detail-type': 'CodePipeline Pipeline Execution State Change',
-      detail: {
-        pipeline: 'testPipeline',
-        'execution-id': 'testExecutionId',
-        state: PipelineState.SUCCEEDED,
-      },
+      pipeline: 'testPipeline',
+      executionId: 'testExecutionId',
+      state: PipelineState.SUCCEEDED,
     });
     verify(awsClientMock.getPipelineExecution('testPipeline', 'testExecutionId')).once();
     verify(

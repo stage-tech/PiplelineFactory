@@ -9,8 +9,8 @@ export class NotificationsManager {
     this.awsClient = awsClient;
     this.githubClient = gitHubClient;
   }
-  async createEventNotification(event: PipelineExecutionEvent): Promise<PipelineData | undefined> {
-    const { pipeline, executionId, state } = this.getEventDetails(event);
+  async createEventNotification(event: PipelineEventDetail): Promise<PipelineData | undefined> {
+    const { pipeline, executionId, state } = event;
     const pipelineData = this.getPipelineData(state, pipeline, executionId);
     return pipelineData;
   }
