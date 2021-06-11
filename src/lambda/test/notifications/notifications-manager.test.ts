@@ -6,13 +6,20 @@ import { PipelineState, StageName } from '../../src/models';
 import { NotificationsPayloadBuilder } from '../../src/notifications/notifications-payload-builder';
 import { mockData } from './mockData';
 
+const required = <T>(input: T | undefined | null | void) => {
+  if (input === null || input === undefined) {
+    throw new Error('Field is required and should never be null, undefined or void');
+  }
+  return input;
+};
+
 describe('NotificationsManager tests', () => {
   const awsClientMock = mock(AWSClient);
   const gitHubClientMock = mock(GithubClient);
 
   it('getEventDetail should return correct data', async () => {
     const notificationsManager = new NotificationsPayloadBuilder(awsClientMock, gitHubClientMock);
-    const eventDetails = notificationsManager.getEventDetails(mockData.pipelineEvent);
+    const eventDetails = required(notificationsManager.getEventDetails(mockData.pipelineEvent));
     expect(eventDetails.pipeline).toEqual('stage-door-datasync-execution-lambda-master');
     expect(eventDetails.executionId).toEqual('42bb849b-c35c-4548-b0b7-767921c4e6c9');
     expect(eventDetails.state).toEqual('FAILED');

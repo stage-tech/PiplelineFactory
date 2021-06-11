@@ -17,40 +17,39 @@ export class NotificationTargetsManager {
     executionId: string,
     eventState: string,
   ): Promise<NotificationSettings[]> => {
-    const pipeLineExecutionResponse = await this.awsClient.getPipelineExecution(pipeline, executionId);
-    const artifactRevision = pipeLineExecutionResponse.pipelineExecution.artifactRevisions[0];
+    try {
+      const pipeLineExecutionResponse = await this.awsClient.getPipelineExecution(pipeline, executionId);
+      console.log(`PLE response: ${JSON.stringify(pipeLineExecutionResponse)}`);
+      const artifactRevision = pipeLineExecutionResponse.pipelineExecution.artifactRevisions[0];
 
-    console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
-    const repositoryName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
-    const organizationName = NotificationsPayloadBuilder.getOrganizationNameFromArtifactRevision(artifactRevision);
-    const repo = await this.githubClient.getRepository(organizationName, repositoryName);
+      console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
+      const repositoryName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
+      const organizationName = NotificationsPayloadBuilder.getOrganizationNameFromArtifactRevision(artifactRevision);
+      const repo = await this.githubClient.getRepository(organizationName, repositoryName);
 
-    const commitBranch = await this.githubClient.getCommitBranch(
-      organizationName,
-      repo.name,
-      artifactRevision.revisionId,
-    );
-
-    if (!commitBranch || commitBranch.data?.length < 1) {
-      throw Error('No commit branch was received');
-    }
-
-    const factorySettings = repo.settings;
-    if (!factorySettings?.notifications) {
-      throw Error(`No notifications configuration found for ${repo.name}`);
-    }
-
-    const notificationTargets = factorySettings.notifications.filter((setting) => {
-      return setting.event === eventState && setting.branches.includes(commitBranch.data[0].name);
-    });
-
-    if (!notificationTargets.length) {
-      throw Error(
-        `No applicable notifications configurations found: ${JSON.stringify(
-          notificationTargets,
-        )} commit branch: ${JSON.stringify(commitBranch)} factorySettings: ${JSON.stringify(factorySettings)}`,
+      const commitBranch = await this.githubClient.getCommitBranch(
+        organizationName,
+        repo.name,
+        artifactRevision.revisionId,
       );
+
+      if (!commitBranch || commitBranch.data?.length < 1) {
+        throw Error('No commit branch was received');
+      }
+
+      const factorySettings = repo.settings;
+      if (!factorySettings?.notifications) {
+        throw Error(`No notifications configuration found for ${repo.name}`);
+      }
+
+      const notificationTargets = factorySettings.notifications.filter((setting) => {
+        return setting.event === eventState && setting.branches.includes(commitBranch.data[0].name);
+      });
+      console.log(`Information for debuging: ${commitBranch}\n${factorySettings}`);
+      return notificationTargets;
+    } catch (error) {
+      console.log(`Error while retrieving notification targets ${error}`);
+      throw error;
     }
-    return notificationTargets;
   };
 }

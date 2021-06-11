@@ -39,7 +39,7 @@ export class TriggerStack extends cdk.Stack {
     new Notifications(this, "PipelineNotifications", {
       triggerCodeS3Bucket: props.triggerCodeS3Bucket,
       triggerCodeS3Key: props.triggerCodeS3Key,
-      slackToken: props.slackToken,
+      organizationName: props.organizationName,
     });
   
  

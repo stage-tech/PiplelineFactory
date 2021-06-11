@@ -11,11 +11,10 @@ beforeEach(() => {
   jest.resetModules(); // this is important - it clears the cache
   process.env = {
     ...OLD_ENV,
-    AWS_PROFILE: 'admin-stage',
     AWS_SDK_LOAD_CONFIG: '1',
   };
 
-  const credentials = AuthHelper.LoadCredentials('stage-dev');
+  const credentials = AuthHelper.LoadCredentials('salt-dev');
   console.log(credentials.accessKeyId);
 
   delete process.env.NODE_ENV;

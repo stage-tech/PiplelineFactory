@@ -17,7 +17,7 @@ import NotificationsLambdaRole from "./lambda-role";
 export interface NotificationsProps {
   triggerCodeS3Key: string;
   triggerCodeS3Bucket: string | undefined;
-  slackToken: string;
+  organizationName: string;
 }
 
 export default class Notifications extends cdk.Construct {
@@ -87,6 +87,20 @@ export default class Notifications extends cdk.Construct {
             resources: [
               "arn:aws:codepipeline:*:*",
             ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["codepipeline:ListActionExecutions"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:codepipeline:*:*",
+            ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["codebuild:BatchGetBuilds"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:codebuild:*:*",
+            ],
           })
         ]
       })
@@ -99,7 +113,7 @@ export default class Notifications extends cdk.Construct {
       role: lambdaRole,
       code: lambdaCode,
       environment: {
-        SLACK_TOKEN: props.slackToken
+        ORGANIZATION_NAME: props.organizationName,
       },
       timeout: cdk.Duration.seconds(10),
     });

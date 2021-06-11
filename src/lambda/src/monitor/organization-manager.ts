@@ -8,7 +8,6 @@ export interface OrganizationInfo {
 export class OrganizationManager {
   public async get(organizationName: string): Promise<OrganizationInfo> {
     const githubSecretName = `/pipeline-factory/organization/${organizationName}/githubToken`;
-    console.log(`loading secret value for ${githubSecretName}`);
     try {
       const secretManagerClient = new AWS.SecretsManager({ region: 'eu-west-1' });
       const githubTokenSecret = await secretManagerClient

@@ -112,7 +112,7 @@ export class NotificationsPayloadBuilder {
     return commitUrl[commitUrl.length - 4];
   }
 
-  getEventDetails(event: PipelineExecutionEvent): PipelineEventDetail {
+  getEventDetails(event: PipelineExecutionEvent): PipelineEventDetail | undefined {
     const DETAIL_TYPE = 'CodePipeline Pipeline Execution State Change';
     if (event['detail-type'] == DETAIL_TYPE) {
       return {
@@ -121,7 +121,7 @@ export class NotificationsPayloadBuilder {
         state: this.getState(event.detail.state),
       } as PipelineEventDetail;
     }
-    throw new Error('Recieved event is not Pipeine Execution event and will be ignored');
+    return undefined;
   }
 
   async getFailedStageActionExecution(pipeline: string, executionId: string): Promise<any> {

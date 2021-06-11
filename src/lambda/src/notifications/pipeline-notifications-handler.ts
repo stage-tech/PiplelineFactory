@@ -17,14 +17,22 @@ export class PipelineNotificationsHandler {
     const awsClient = new AWSClient();
     const notificationsPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
     const eventDetails = notificationsPayloadBuilder.getEventDetails(payload);
+    if (!eventDetails) {
+      console.log('Received event is not Pipeline Execution event and will be ignored');
+      return;
+    }
     const factorySettingsManager = new NotificationTargetsManager(awsClient, githubClient);
-    console.log(payload);
 
     const notificationTargets = await factorySettingsManager.getRequiredNotificationTargets(
       eventDetails.pipeline,
       eventDetails.executionId,
       eventDetails.state,
     );
+
+    if (!notificationTargets.length) {
+      console.log('No applicable notifications configurations found');
+      return;
+    }
 
     const notificationPayload:
       | NotificationPayload
@@ -38,7 +46,7 @@ export class PipelineNotificationsHandler {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(JSON.stringify('notification')),
+      body: JSON.stringify(notificationPayload),
     };
   };
 }

@@ -5,7 +5,6 @@
     "apiDomainName" : "pipeline-factory.tools.salt-dev.ws" ,
     "existingBucketName" : "salt-deployment-packages",
     "organizationName" : "stage-tech",
-    "slackToken": "xoxb-188064068641-2145348889846-v7Dtwv4oVq7LlBNTgUksMszw",
     "s3_lambda_object_key": "pipeline-factory/master/pipeline-factory-lambda-22344f8.zip",
     "s3_bucket_name": "plf-code-928065939415"
   }
