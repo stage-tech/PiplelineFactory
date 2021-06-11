@@ -85,5 +85,9 @@ export interface NotificationSettings {
   branches: string[];
   event: PipelineState;
   channelId: string;
-  channelType: string;
+  channelType: ChannelType;
+}
+
+export enum ChannelType {
+  SLACK = 'SLACK',
 }

@@ -6,7 +6,7 @@ import { NotificationPayload, PipelineExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
 import { NotificationTargetsManager } from './notification-targets-manager';
 import { NotificationsPayloadBuilder } from './notifications-payload-builder';
-import { SlackManager } from './slack-manager';
+import { SlackNotificationDeliveryClient } from './slack-manager';
 
 export class PipelineNotificationsHandler {
   constructor(private organizationName: string) {}
@@ -17,6 +17,7 @@ export class PipelineNotificationsHandler {
     const awsClient = new AWSCodePipelineClient();
     const notificationPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
     const eventDetails = notificationPayloadBuilder.getEventDetails(payload);
+    const slackNotificationClient = new SlackNotificationDeliveryClient();
     if (!eventDetails) {
       console.log('Received event is not Pipeline Execution event and will be ignored');
       return;
@@ -39,7 +40,8 @@ export class PipelineNotificationsHandler {
       | undefined = await notificationPayloadBuilder.buildNotificationPayload(eventDetails);
     if (notificationPayload) {
       for (let i = 0; i < notificationTargets.length; i++) {
-        await SlackManager.publishMessageToSlack(notificationPayload, notificationTargets[i].channelId);
+        slackNotificationClient.supportedChannel(notificationTargets[i].channelId, notificationTargets[i].channelType);
+        await slackNotificationClient.send(notificationPayload);
       }
     }
 
