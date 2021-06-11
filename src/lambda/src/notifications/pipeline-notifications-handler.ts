@@ -1,6 +1,6 @@
 import * as lambda from 'aws-lambda';
 
-import { AWSClient } from '../clients/aws-client';
+import { AWSCodePipelineClient } from '../clients/aws-client';
 import { GithubClient } from '../clients/github-client';
 import { NotificationPayload, PipelineExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
@@ -14,7 +14,7 @@ export class PipelineNotificationsHandler {
     const payload = JSON.parse(event.Records[0].Sns.Message || '') as PipelineExecutionEvent;
     const token = await new OrganizationManager().get(this.organizationName);
     const githubClient = new GithubClient(token.githubToken);
-    const awsClient = new AWSClient();
+    const awsClient = new AWSCodePipelineClient();
     const notificationPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
     const eventDetails = notificationPayloadBuilder.getEventDetails(payload);
     if (!eventDetails) {

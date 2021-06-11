@@ -1,13 +1,13 @@
-import { AWSClient } from '../clients/aws-client';
+import { AWSCodePipelineClient } from '../clients/aws-client';
 import { GithubClient } from '../clients/github-client';
 import { NotificationSettings } from '../models';
 import { NotificationsPayloadBuilder } from './notifications-payload-builder';
 
 export class NotificationTargetsManager {
-  private awsClient: AWSClient;
+  private awsClient: AWSCodePipelineClient;
   private githubClient: GithubClient;
 
-  constructor(awsClient: AWSClient, githubClient: GithubClient) {
+  constructor(awsClient: AWSCodePipelineClient, githubClient: GithubClient) {
     this.awsClient = awsClient;
     this.githubClient = githubClient;
   }

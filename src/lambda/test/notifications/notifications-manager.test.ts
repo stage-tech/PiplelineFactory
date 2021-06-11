@@ -1,6 +1,6 @@
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 
-import { AWSClient } from '../../src/clients/aws-client';
+import { AWSCodePipelineClient } from '../../src/clients/aws-client';
 import { GithubClient } from '../../src/clients/github-client';
 import { PipelineState, StageName } from '../../src/models';
 import { NotificationsPayloadBuilder } from '../../src/notifications/notifications-payload-builder';
@@ -14,7 +14,7 @@ const required = <T>(input: T | undefined | null | void) => {
 };
 
 describe('NotificationsManager tests', () => {
-  const awsClientMock = mock(AWSClient);
+  const awsClientMock = mock(AWSCodePipelineClient);
   const gitHubClientMock = mock(GithubClient);
 
   it('getEventDetail should return correct data', async () => {
@@ -64,7 +64,7 @@ describe('NotificationsManager tests', () => {
 
   it('createEventNotification data for failed pipeline build event', async () => {
     const localGitHubMock = mock(GithubClient);
-    const awsClientMock = mock(AWSClient);
+    const awsClientMock = mock(AWSCodePipelineClient);
     when(awsClientMock.getActionExecutions(anything(), anything())).thenResolve(mockData.actionExecutionData);
     when(awsClientMock.getPipelineExecution(anything(), anything())).thenResolve(mockData.pipelineData);
     when(awsClientMock.getBuild(anything())).thenResolve(mockData.build);
@@ -105,7 +105,7 @@ describe('NotificationsManager tests', () => {
 
   it('createEventNotification data for failed pipeline build event', async () => {
     const localGitHubMock = mock(GithubClient);
-    const awsClientMock = mock(AWSClient);
+    const awsClientMock = mock(AWSCodePipelineClient);
     when(awsClientMock.getPipelineExecution(anything(), anything())).thenResolve(mockData.successPipelineData);
     when(localGitHubMock.getCommitAuthor(anything(), anything(), anything())).thenResolve('testAuthor');
 

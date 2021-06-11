@@ -9,7 +9,7 @@ export class OrganizationManager {
   public async get(organizationName: string): Promise<OrganizationInfo> {
     const githubSecretName = `/pipeline-factory/organization/${organizationName}/githubToken`;
     try {
-      const secretManagerClient = new AWS.SecretsManager({ region: 'eu-west-1' });
+      const secretManagerClient = new AWS.SecretsManager();
       const githubTokenSecret = await secretManagerClient
         .getSecretValue({
           SecretId: githubSecretName,
