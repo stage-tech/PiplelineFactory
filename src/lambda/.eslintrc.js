@@ -1,6 +1,5 @@
 module.exports = {
   root: true,
-  
   plugins: ['@typescript-eslint', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
@@ -13,7 +12,6 @@ module.exports = {
     project: ['tsconfig.json', 'tsconfig.test.json'],
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
-    
   },
   rules: {
     'simple-import-sort/sort': 'error', // Enforce import sorting

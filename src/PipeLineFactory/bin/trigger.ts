@@ -27,6 +27,5 @@ const factoryProperties: FactoryProperties = {
   existingBucketName :  app.node.tryGetContext("existingBucketName"),
   organizationName : app.node.tryGetContext("organizationName"),
   repositorySelector : `pipeline-factory-${env.account}`,
-  slackToken: app.node.tryGetContext('slackToken'),
 };
 new TriggerStack(app, projectName, factoryProperties);
