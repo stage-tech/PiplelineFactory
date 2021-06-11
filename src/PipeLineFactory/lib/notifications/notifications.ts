@@ -82,6 +82,13 @@ export default class Notifications extends cdk.Construct {
             ],
           }),
           new iam.PolicyStatement({
+            actions: ["secretsmanager:GetSecretValue"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:secretsmanager:*:secret:/pipeline-factory/notifications/*",
+            ],
+          }),
+          new iam.PolicyStatement({
             actions: ["codepipeline:GetPipelineExecution"],
             effect: iam.Effect.ALLOW,
             resources: [

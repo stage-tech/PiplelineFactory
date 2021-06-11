@@ -15,15 +15,15 @@ export class PipelineNotificationsHandler {
     const token = await new OrganizationManager().get(this.organizationName);
     const githubClient = new GithubClient(token.githubToken);
     const awsClient = new AWSClient();
-    const notificationsPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
-    const eventDetails = notificationsPayloadBuilder.getEventDetails(payload);
+    const notificationPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
+    const eventDetails = notificationPayloadBuilder.getEventDetails(payload);
     if (!eventDetails) {
       console.log('Received event is not Pipeline Execution event and will be ignored');
       return;
     }
-    const factorySettingsManager = new NotificationTargetsManager(awsClient, githubClient);
+    const notificationTargetsManager = new NotificationTargetsManager(awsClient, githubClient);
 
-    const notificationTargets = await factorySettingsManager.getRequiredNotificationTargets(
+    const notificationTargets = await notificationTargetsManager.getNotificationTargets(
       eventDetails.pipeline,
       eventDetails.executionId,
       eventDetails.state,
@@ -36,11 +36,11 @@ export class PipelineNotificationsHandler {
 
     const notificationPayload:
       | NotificationPayload
-      | undefined = await notificationsPayloadBuilder.buildNotificationPayload(eventDetails);
+      | undefined = await notificationPayloadBuilder.buildNotificationPayload(eventDetails);
     if (notificationPayload) {
-      notificationTargets.forEach(async (settings) => {
-        await SlackManager.publishMessageToSlack(notificationPayload, settings.channelId);
-      });
+      for (let i = 0; i < notificationTargets.length; i++) {
+        await SlackManager.publishMessageToSlack(notificationPayload, notificationTargets[i].channelId);
+      }
     }
 
     return {

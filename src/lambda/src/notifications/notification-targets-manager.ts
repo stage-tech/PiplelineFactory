@@ -12,7 +12,7 @@ export class NotificationTargetsManager {
     this.githubClient = githubClient;
   }
 
-  public getRequiredNotificationTargets = async (
+  public getNotificationTargets = async (
     pipeline: string,
     executionId: string,
     eventState: string,
@@ -45,7 +45,6 @@ export class NotificationTargetsManager {
       const notificationTargets = factorySettings.notifications.filter((setting) => {
         return setting.event === eventState && setting.branches.includes(commitBranch.data[0].name);
       });
-      console.log(`Information for debuging: ${commitBranch}\n${factorySettings}`);
       return notificationTargets;
     } catch (error) {
       console.log(`Error while retrieving notification targets ${error}`);
