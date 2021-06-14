@@ -17,6 +17,7 @@ import NotificationsLambdaRole from "./lambda-role";
 export interface NotificationsProps {
   triggerCodeS3Key: string;
   triggerCodeS3Bucket: string | undefined;
+  organizationName: string;
 }
 
 export default class Notifications extends cdk.Construct {
@@ -68,10 +69,49 @@ export default class Notifications extends cdk.Construct {
       props.triggerCodeS3Key
     );
 
-    const environmentVariables: { [key: string]: string } = {
-    };
-
     const lambdaRole = new NotificationsLambdaRole(this , "LambdaRole" ).lambdaRole
+
+    lambdaRole.attachInlinePolicy(
+      new iam.Policy(this, 'SecretManagerPolicy', {
+        statements: [
+          new iam.PolicyStatement({
+            actions: ["secretsmanager:GetSecretValue"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:secretsmanager:*:secret:/pipeline-factory/organization/*",
+            ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["secretsmanager:GetSecretValue"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:secretsmanager:*:secret:/pipeline-factory/notifications/*",
+            ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["codepipeline:GetPipelineExecution"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:codepipeline:*:*",
+            ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["codepipeline:ListActionExecutions"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:codepipeline:*:*",
+            ],
+          }),
+          new iam.PolicyStatement({
+            actions: ["codebuild:BatchGetBuilds"],
+            effect: iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:codebuild:*:*",
+            ],
+          })
+        ]
+      })
+    )
 
     const handler = new lambda.Function(this, "Lambda_PipelineNotification", {
       runtime: lambda.Runtime.NODEJS_10_X,
@@ -79,7 +119,9 @@ export default class Notifications extends cdk.Construct {
       handler: "dist/notifications/pipeline-notifications-handler.handler",
       role: lambdaRole,
       code: lambdaCode,
-      environment: environmentVariables,
+      environment: {
+        ORGANIZATION_NAME: props.organizationName,
+      },
       timeout: cdk.Duration.seconds(10),
     });
 

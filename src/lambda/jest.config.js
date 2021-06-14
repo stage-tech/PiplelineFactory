@@ -1,11 +1,11 @@
 process.env.SQS_QUEUE_URL = 'https://sqs.eu-west-1.amazonaws.com/928065939415/repository_discovery_jobs';
-process.env.ORGANIZATION_NAME  = 'stage-tech';
+process.env.ORGANIZATION_NAME = 'stage-tech';
 process.env.FACTORY_CODEBUILD_PROJECT_NAME = 'Pipeline-Factory';
 
 module.exports = {
   globals: {
     'ts-jest': {
-      tsConfig: 'tsconfig.json',
+      tsConfig: 'tsconfig.test.json',
     },
   },
   moduleFileExtensions: ['ts', 'js'],

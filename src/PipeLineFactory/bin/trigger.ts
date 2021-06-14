@@ -26,6 +26,6 @@ const factoryProperties: FactoryProperties = {
   apiDomainName : app.node.tryGetContext("apiDomainName"),
   existingBucketName :  app.node.tryGetContext("existingBucketName"),
   organizationName : app.node.tryGetContext("organizationName"),
-  repositorySelector : `pipeline-factory-${env.account}`
+  repositorySelector : `pipeline-factory-${env.account}`,
 };
 new TriggerStack(app, projectName, factoryProperties);

@@ -1,30 +1,4 @@
-import { StackInformation } from './cloudformation-manager';
-
-export class DiscoveryJob {
-  name: string;
-  owner: string;
-}
-export class Branch {
-  constructor(public branchName: string, public commitSha: string) {}
-  public pipelineStack: StackInformation;
-}
-
-export class SettingsOverrides {
-  gitHubTokenSecretArn?: string;
-  buildSpecLocation?: string;
-  buildAsRoleArn?: string;
-  monitoredBranches?: string[];
-}
-
-export class Repository {
-  name: string;
-  owner: string;
-  defaultBranch: string;
-  topics: string[];
-  repositoryId: string;
-  branches: Branch[];
-  settings?: SettingsOverrides;
-}
+import { Branch, Repository } from '../models';
 
 export class RepositoryBuildConfiguration {
   constructor(public repository: Repository, public branchesWithPipeline: string[]) {}

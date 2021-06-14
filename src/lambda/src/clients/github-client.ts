@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { decode } from 'js-base64';
 
-import { Branch, Repository, SettingsOverrides } from './models';
+import { Branch, Repository, SettingsOverrides } from '../models';
 
 export interface ISourceControlClient {
   getRepository(owner: string, repositoryName: string): Promise<Repository>;
@@ -65,17 +65,6 @@ export class GithubClient implements ISourceControlClient {
       });
   }
 
-  private async getPipelineFactorySettings(
-    owner: string,
-    repositoryName: string,
-    branchName: string,
-  ): Promise<SettingsOverrides> {
-    const settingsFileContent = await this.fetchFile(owner, repositoryName, branchName, 'pipeline-factory.settings');
-
-    const settingsFileJSON: SettingsOverrides = settingsFileContent ? JSON.parse(settingsFileContent) : {};
-    return settingsFileJSON;
-  }
-
   public async fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null> {
     let settingsFileContent;
     return await this.octokit.repos
@@ -99,5 +88,45 @@ export class GithubClient implements ISourceControlClient {
         }
         return null;
       });
+  }
+
+  public async getCommitAuthor(owner: string, repo: string, commit_sha: string): Promise<string | void> {
+    return await this.octokit.git
+      .getCommit({
+        owner: owner,
+        repo: repo,
+        commit_sha: commit_sha,
+      })
+      .then((commitData) => {
+        return commitData.data.author.name;
+      })
+      .catch((e) => {
+        console.error(`Error while fetching commit data: ${e}`);
+      });
+  }
+
+  public async getCommitBranch(owner: string, repo: string, commit_sha: string): Promise<any> {
+    /**This is experimental endpoint that will change it's form in time,
+     *  more info can be found at:
+     *  https://docs.github.com/en/rest/reference/repos#list-branches-for-head-commit
+     */
+    return await this.octokit.request(`GET /repos/${owner}/${repo}/commits/${commit_sha}/branches-where-head`, {
+      owner: owner,
+      repo: repo,
+      commit_sha: commit_sha,
+      headers: {
+        accept: 'application/vnd.github.groot-preview+json',
+      },
+    });
+  }
+
+  public async getPipelineFactorySettings(
+    owner: string,
+    repositoryName: string,
+    branchName: string,
+  ): Promise<SettingsOverrides> {
+    const settingsFileContent = await this.fetchFile(owner, repositoryName, branchName, 'pipeline-factory.settings');
+    const settingsFileJSON: SettingsOverrides = settingsFileContent ? JSON.parse(settingsFileContent) : {};
+    return settingsFileJSON;
   }
 }

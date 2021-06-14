@@ -1,10 +1,11 @@
 import lambda from 'aws-lambda';
 
+import { GithubClient } from '../clients/github-client';
+import { DiscoveryJob } from '../models';
 import { CloudFormationManager } from './cloudformation-manager';
-import { GithubClient } from './github-client';
-import { DiscoveryJob, RepositoryBuildConfiguration } from './models';
 import { OrganizationManager } from './organization-manager';
 import { PipelineCoordinator } from './pipeline-coordinator';
+import { RepositoryBuildConfiguration } from './repository-build-configuration';
 import { RepositoryExplorer } from './repository-explorer';
 
 export class PipelineManagementHandler {
