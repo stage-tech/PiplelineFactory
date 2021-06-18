@@ -1,5 +1,6 @@
 import * as cdk from "@aws-cdk/core";
 import * as sns from "@aws-cdk/aws-sns";
+import * as kms from "@aws-cdk/aws-kms";
 import * as ssm from "@aws-cdk/aws-ssm";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as eventTargets from "@aws-cdk/aws-events-targets";
@@ -18,14 +19,16 @@ export interface NotificationsProps {
   triggerCodeS3Key: string;
   triggerCodeS3Bucket: string | undefined;
   organizationName: string;
+  kmsEncryptionKey: kms.Key;
 }
 
 export default class Notifications extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: NotificationsProps) {
     super(scope, id);
-    const projectName = cdk.Stack.of(this).stackName
+    const projectName = cdk.Stack.of(this).stackName;
     const pipelineEventsTopic = new sns.Topic(this, "PipelineEventsTopic", {
       topicName: "pipeline-factory-events",
+      masterKey:  props.kmsEncryptionKey
     });
 
     const snsEventTarget = new eventTargets.SnsTopic(pipelineEventsTopic);
