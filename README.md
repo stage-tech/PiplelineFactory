@@ -21,7 +21,7 @@ To manually deploy a pipeline for a given repository to an account.
 1. In AWS console go to API Keys and retrieve `PipeLine-Factory-access-key` key value
 1. Execute the following REST API call with settings updated:
 
-```JSON
+```JSONC
 curl --location --request POST 'https://{API_GATEWAY_PROD_STAGE_URL}/branch-created' \
 --header 'x-api-key: {API_KEY}' \
 --header 'Content-Type: application/json' \
@@ -45,7 +45,7 @@ To automatically bootstrap the pipelines for a repository apply the following co
 1. [Add a GitHub topic](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/classifying-your-repository-with-topics) to the repository matching the pattern: `pipeline-factory-{AWS_ACCOUNT_NUMBER}`
 1. Add a configuration file to the root of the repository called `pipeline-factory.settings` using the following template:
 
-```jsonc
+```JSONC
 {
   // name of s3 bucket to store build artifacts , if omitted default PLF bucket is used
   "artifactsBucketName": "s3 bucket name",
