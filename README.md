@@ -45,7 +45,7 @@ To automatically bootstrap the pipelines for a repository apply the following co
 1. [Add a GitHub topic](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/classifying-your-repository-with-topics) to the repository matching the pattern: `pipeline-factory-{AWS_ACCOUNT_NUMBER}`
 1. Add a configuration file to the root of the repository called `pipeline-factory.settings` using the following template:
 
-```json
+```jsonc
 {
   // name of s3 bucket to store build artifacts , if omitted default PLF bucket is used
   "artifactsBucketName": "s3 bucket name",
