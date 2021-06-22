@@ -15,7 +15,7 @@ yarn lint
 rm -rf node_modules
 yarn --prod
 yarn lambda:pack
-mkdir $PWD/packages -p; 
+mkdir -p $PWD/packages; 
 package_file_path="$PWD/packages/${package_file_name}"
 
 zip -r $package_file_path . -x '*.ENV' '*.eslintrc*' './packages/*' './src/*' './test/*' './coverage/*' '*.git*' '*.n*rc' '*.DS_Store' 'yarn.lock' '.prettierrc.js' 'tsconfig.json' '.eslintignore' '.vscode/*' 'jest.config.js'
