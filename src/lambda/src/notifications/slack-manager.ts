@@ -15,7 +15,7 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
       const ssm = new AWS.SecretsManager();
       const parameterReadResponse = await ssm
         .getSecretValue({
-          SecretId: `/pipeline-factory/notifications/slack/${this.channel}/webhook`,
+          SecretId: `/pipeline-factory/notifications/slack/webhook`,
         })
         .promise();
       const token = parameterReadResponse.SecretString;
