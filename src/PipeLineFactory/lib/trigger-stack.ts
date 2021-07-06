@@ -6,6 +6,7 @@ import Notifications from "./notifications/notifications";
 import Api from "./api";
 import * as kms from "@aws-cdk/aws-kms";
 import * as iam from "@aws-cdk/aws-iam";
+import * as cdkConstants from 'cdk-constants'
 import DefaultBuildAsRole from "./default-build-as-role";
 import DefaultBuckets from "./default-buckets";
 import { Monitor } from "./monitor/monitor";
@@ -29,7 +30,13 @@ export class TriggerStack extends cdk.Stack {
     kmsEncryptionKey.grantEncryptDecrypt(
       new iam.ArnPrincipal(buildRole.roleArn)
     );
-
+    kmsEncryptionKey.grantEncryptDecrypt(
+      new iam.ServicePrincipal(cdkConstants.ServicePrincipals.EVENTS)
+    );
+    kmsEncryptionKey.grantEncryptDecrypt(
+      new iam.ServicePrincipal(cdkConstants.ServicePrincipals.SNS)
+    );
+    
     new DefaultBuckets(this, "defaultBuckets" , {
       existingBucketName : props.existingBucketName,
       buildRole,

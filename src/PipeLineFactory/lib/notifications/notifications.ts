@@ -44,17 +44,15 @@ export default class Notifications extends cdk.Construct {
 
     const logGroupTarget = new CloudWatchLogsTarget(pipelineCloudWatchLogGroup);
 
-    const rule = new events.Rule(this , "pipelineEvents" , {
-      description : "Forward code pipeline events to sns topic" ,
-      enabled : true,
-      ruleName : "Pipeline-Factory-SNS" ,
-      targets : [snsEventTarget , logGroupTarget],
-      eventPattern : {
-        source :  [
-          "aws.codepipeline"
-        ]
-      }
-    })
+    const rule = new events.Rule(this, "pipelineEvents", {
+      description: "Forward code pipeline events to sns topic",
+      enabled: true,
+      ruleName: "Pipeline-Factory-SNS",
+      targets: [snsEventTarget, logGroupTarget],
+      eventPattern: {
+        source: ["aws.codepipeline"],
+      },
+    });
 
     new ssm.StringParameter(this, "EventsTopicArn", {
       parameterName: "/pipeline-factory/events-sns-topic",
@@ -72,10 +70,11 @@ export default class Notifications extends cdk.Construct {
       props.triggerCodeS3Key
     );
 
-    const lambdaRole = new NotificationsLambdaRole(this , "LambdaRole" ).lambdaRole
+    const lambdaRole = new NotificationsLambdaRole(this, "LambdaRole")
+      .lambdaRole;
 
     lambdaRole.attachInlinePolicy(
-      new iam.Policy(this, 'SecretManagerPolicy', {
+      new iam.Policy(this, "SecretManagerPolicy", {
         statements: [
           new iam.PolicyStatement({
             actions: ["secretsmanager:GetSecretValue"],
@@ -94,27 +93,21 @@ export default class Notifications extends cdk.Construct {
           new iam.PolicyStatement({
             actions: ["codepipeline:GetPipelineExecution"],
             effect: iam.Effect.ALLOW,
-            resources: [
-              "arn:aws:codepipeline:*:*",
-            ],
+            resources: ["arn:aws:codepipeline:*:*"],
           }),
           new iam.PolicyStatement({
             actions: ["codepipeline:ListActionExecutions"],
             effect: iam.Effect.ALLOW,
-            resources: [
-              "arn:aws:codepipeline:*:*",
-            ],
+            resources: ["arn:aws:codepipeline:*:*"],
           }),
           new iam.PolicyStatement({
             actions: ["codebuild:BatchGetBuilds"],
             effect: iam.Effect.ALLOW,
-            resources: [
-              "arn:aws:codebuild:*:*",
-            ],
-          })
-        ]
+            resources: ["arn:aws:codebuild:*:*"],
+          }),
+        ],
       })
-    )
+    );
 
     const handler = new lambda.Function(this, "Lambda_PipelineNotification", {
       runtime: lambda.Runtime.NODEJS_10_X,

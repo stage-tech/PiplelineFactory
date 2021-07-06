@@ -5,7 +5,6 @@ import AuthHelper from '../auth-helper';
 
 dotenv.config();
 const OLD_ENV = process.env;
-const queueUrl = 'https://sqs.eu-west-1.amazonaws.com/928065939415/repository_discovery_jobs';
 jest.setTimeout(30 * 60 * 1000);
 beforeEach(() => {
   jest.resetModules(); // this is important - it clears the cache
@@ -24,7 +23,7 @@ afterEach(() => {
   process.env = OLD_ENV;
 });
 
-describe('notification lambda Harness', () => {
+xdescribe('notification lambda Harness', () => {
   it('notification handler lambda', async () => {
     const handler = new PipelineNotificationsHandler('stage-tech');
     const notificationPayLoad = JSON.stringify({
@@ -38,7 +37,7 @@ describe('notification lambda Harness', () => {
       resources: ['arn:aws:codepipeline:eu-west-1:928065939415:stage-door-datasync-execution-lambda-master'],
       detail: {
         pipeline: 'stage-door-events-old-master',
-        'execution-id': '71d704eb-cb70-4b2a-98a2-2f80b97f6eaa',
+        'execution-id': '1a6dc8b7-21f5-4fb7-b4ea-4a8736d96654',
         state: 'FAILED',
         version: 1,
       },
