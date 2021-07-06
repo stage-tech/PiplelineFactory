@@ -1,7 +1,7 @@
 import { WebClient } from '@slack/web-api';
 import AWS from 'aws-sdk';
 
-import { ChannelType, NotificationPayload } from '../models';
+import { ChannelType, NotificationPayload, PipelineState } from '../models';
 
 export interface INotificationDeliveryClient {
   supportedChannel(channel: string, channelType: ChannelType): void;
@@ -31,13 +31,26 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
     }
   };
 
-  private static formatSlackMessage = (data: NotificationPayload): string => {
-    return Object.keys(data)
-      .map((key) => {
-        return `${key}: ${data[key]}`;
-      })
-      .join('\n');
-  };
+  private static humanizeText(text: string): string {
+    const result = text.replace(/([A-Z])/g, ' $1');
+    const humanizedText = result.charAt(0).toUpperCase() + result.slice(1);
+    return humanizedText;
+  }
+
+  private static formatSlackMessage(data: NotificationPayload): string {
+    const messages: string[] = [];
+    const emoji = data.pipelineState == PipelineState.SUCCEEDED ? ':white_check_mark:' : ':warning:';
+    messages.push(
+      `${emoji} Pipeline *${data.pipelineName}* finished with *${data.pipelineState}* <${data.buildLogs}|Logs> `,
+    );
+    messages.push(
+      `While processing the commit by *${data.commitAuthor}* (${data.commitMessage}) <${data.commitUrl}|View Code>`,
+    );
+    if (data.pipelineState != PipelineState.SUCCEEDED) {
+      messages.push(`failure happened during the phase ${data.pipelineFailureStage} (${data.buildFailurePhase})`);
+    }
+    return messages.join('\n');
+  }
 
   public supportedChannel(channel: string, channelType: ChannelType) {
     if (channelType !== 'SLACK') {

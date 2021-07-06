@@ -69,9 +69,9 @@ export class NotificationsPayloadBuilder {
         commitUrl: artifactRevision.revisionUrl || '',
         commitMessage: artifactRevision.revisionSummary || '',
         commitAuthor: this.required(commitAuthor),
-        pipelineFailiorStage: executionDetails.stageName,
+        pipelineFailureStage: executionDetails.stageName,
         buildLogs: buildInfo.buildLogs,
-        buildFailiorPhase: buildInfo.failedPhase,
+        buildFailurePhase: buildInfo.failedPhase,
       };
     } else {
       return {
@@ -81,7 +81,7 @@ export class NotificationsPayloadBuilder {
         commitUrl: artifactRevision.revisionUrl || '',
         commitMessage: artifactRevision.revisionSummary || '',
         commitAuthor: this.required(commitAuthor),
-        pipelineFailiorStage: this.getStageName(this.required(executionDetails.stageName)),
+        pipelineFailureStage: this.getStageName(this.required(executionDetails.stageName)),
       };
     }
   }

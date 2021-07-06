@@ -62,9 +62,9 @@ export interface NotificationPayload {
   commitUrl: string;
   commitMessage: string;
   commitAuthor: string;
-  pipelineFailiorStage?: StageName;
+  pipelineFailureStage?: StageName;
   buildLogs?: string;
-  buildFailiorPhase?: string;
+  buildFailurePhase?: string;
 }
 
 export enum PipelineState {
