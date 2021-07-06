@@ -95,9 +95,9 @@ describe('NotificationsManager tests', () => {
       );
       expect(failedPipelineData.commitMessage).toBe('Merge pull request #177 from stage-tech/SPX-973');
       expect(failedPipelineData.commitAuthor).toBe('testAuthor');
-      expect(failedPipelineData.pipelineFailiorStage).toBe(StageName.BUILD);
+      expect(failedPipelineData.pipelineFailureStage).toBe(StageName.BUILD);
       expect(failedPipelineData.buildLogs).toBe('https://test-link.co.uk/');
-      expect(failedPipelineData.buildFailiorPhase).toBe('POST_BUILD');
+      expect(failedPipelineData.buildFailurePhase).toBe('POST_BUILD');
     } else {
       throw Error('No required pipeline data can be found');
     }
