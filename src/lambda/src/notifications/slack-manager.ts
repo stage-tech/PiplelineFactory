@@ -41,11 +41,9 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
     const messages: string[] = [];
     const emoji = data.pipelineState == PipelineState.SUCCEEDED ? ':white_check_mark:' : ':warning:';
     messages.push(
-      `${emoji} Pipeline *${data.pipelineName}* finished with *${data.pipelineState}* <${data.buildLogs}|Logs> `,
+      `${emoji} Pipeline *${data.pipelineName}* finished with *${data.pipelineState}* <${data.buildLogs}|logs :aws: > `,
     );
-    messages.push(
-      `While processing the commit by *${data.commitAuthor}* (${data.commitMessage}) <${data.commitUrl}|View Code>`,
-    );
+    messages.push(`commit by *${data.commitAuthor}* "_${data.commitMessage}_" <${data.commitUrl}|view code :github:>`);
     if (data.pipelineState != PipelineState.SUCCEEDED) {
       messages.push(`failure happened during the phase ${data.pipelineFailureStage} (${data.buildFailurePhase})`);
     }
