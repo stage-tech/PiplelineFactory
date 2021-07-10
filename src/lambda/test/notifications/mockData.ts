@@ -1,13 +1,22 @@
 export const mockData = {
-  actionExecutionData: {
-    $metadata: {
-      httpStatusCode: 200,
-      requestId: '53c4539e-f8db-4af4-9301-5ee79a01230f',
-      extendedRequestId: undefined,
-      cfId: undefined,
-      attempts: 1,
-      totalRetryDelay: 0,
+  failedActionExecutionDetail: {
+    actionExecutionId: 'f9e6d5e2-0472-4044-b498-c36b29b78b2a',
+    actionName: 'RunBuildSpec',
+    input: {},
+    lastUpdateTime: new Date('2021-05-31T07:04:13.099Z'),
+    output: {
+      executionResult: {
+        externalExecutionId: 'testExecutionId',
+      },
     },
+    pipelineExecutionId: '42bb849b-c35c-4548-b0b7-767921c4e6c9',
+    pipelineVersion: 1,
+    stageName: 'Build',
+    startTime: new Date('2021-05-31T07:04:13.099Z'),
+    status: 'Failed',
+  },
+
+  actionExecutionData: {
     actionExecutionDetails: [
       {
         actionExecutionId: 'f9e6d5e2-0472-4044-b498-c36b29b78b2a',

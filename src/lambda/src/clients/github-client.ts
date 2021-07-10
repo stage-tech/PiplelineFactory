@@ -59,7 +59,7 @@ export class GithubClient implements ISourceControlClient {
       .map((r) => {
         return {
           name: r.name,
-          owner: r.owner.login,
+          owner: r.owner?.login || organization,
           id: r.id.toString(),
         };
       });
@@ -67,57 +67,36 @@ export class GithubClient implements ISourceControlClient {
 
   public async fetchFile(owner: string, repo: string, branchName: string, filePath: string): Promise<string | null> {
     let settingsFileContent;
-    return await this.octokit.repos
-      .getContent({
-        owner: owner,
-        repo: repo,
-        ref: branchName,
-        path: filePath,
-      })
-      .then((settingsFileResponse) => {
-        if (settingsFileResponse.status == 200) {
-          settingsFileContent = decode(settingsFileResponse.data.content);
-          return settingsFileContent;
-        } else {
-          return null;
-        }
-      })
-      .catch((e) => {
-        if (e.status != '404') {
-          console.error(JSON.stringify(e, null, 4));
-        }
-        return null;
-      });
+    const settingsFileResponse = await this.octokit.repos.getContent({
+      owner: owner,
+      repo: repo,
+      ref: branchName,
+      path: filePath,
+    });
+    if (settingsFileResponse.status == 200) {
+      settingsFileContent = decode(settingsFileResponse.data['content']);
+      return settingsFileContent;
+    } else {
+      return null;
+    }
   }
 
-  public async getCommitAuthor(owner: string, repo: string, commit_sha: string): Promise<string | void> {
-    return await this.octokit.git
-      .getCommit({
-        owner: owner,
-        repo: repo,
-        commit_sha: commit_sha,
-      })
-      .then((commitData) => {
-        return commitData.data.author.name;
-      })
-      .catch((e) => {
-        console.error(`Error while fetching commit data: ${e}`);
-      });
-  }
-
-  public async getCommitBranch(owner: string, repo: string, commit_sha: string): Promise<any> {
-    /**This is experimental endpoint that will change it's form in time,
-     *  more info can be found at:
-     *  https://docs.github.com/en/rest/reference/repos#list-branches-for-head-commit
-     */
-    return await this.octokit.request(`GET /repos/${owner}/${repo}/commits/${commit_sha}/branches-where-head`, {
+  public async getCommitInfo(
+    owner: string,
+    repo: string,
+    commit_sha: string,
+  ): Promise<{ author: string; message: string; url: string; date: string }> {
+    const commitInfo = await this.octokit.git.getCommit({
       owner: owner,
       repo: repo,
       commit_sha: commit_sha,
-      headers: {
-        accept: 'application/vnd.github.groot-preview+json',
-      },
     });
+    return {
+      author: commitInfo.data.author.name,
+      message: commitInfo.data.message,
+      url: commitInfo.data['html_url'],
+      date: commitInfo.data.author.date,
+    };
   }
 
   public async getPipelineFactorySettings(

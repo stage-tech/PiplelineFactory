@@ -4,12 +4,11 @@ import AWS from 'aws-sdk';
 import { ChannelType, NotificationPayload, PipelineState } from '../models';
 
 export interface INotificationDeliveryClient {
-  supportedChannel(channel: string, channelType: ChannelType): void;
+  supportedChannel(): ChannelType;
   send(data: NotificationPayload): void;
 }
 
 export class SlackNotificationDeliveryClient implements INotificationDeliveryClient {
-  private channel: string;
   public send = async (data: NotificationPayload): Promise<void> => {
     try {
       const ssm = new AWS.SecretsManager();
@@ -23,7 +22,7 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
       await slackClient.chat.postMessage({
         mrkdwn: true,
         text: typeof data === 'string' ? data : SlackNotificationDeliveryClient.formatSlackMessage(data),
-        channel: this.channel,
+        channel: 'test-channel', // this.channel,
       });
     } catch (error) {
       console.error(`Error while publishing message to Slack: ${error}`);
@@ -39,21 +38,23 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
 
   private static formatSlackMessage(data: NotificationPayload): string {
     const messages: string[] = [];
-    const emoji = data.pipelineState == PipelineState.SUCCEEDED ? ':white_check_mark:' : ':warning:';
-    messages.push(
-      `${emoji} Pipeline *${data.pipelineName}* finished with *${data.pipelineState}* <${data.buildLogs}|logs :aws: > `,
-    );
-    messages.push(`commit by *${data.commitAuthor}* "_${data.commitMessage}_" <${data.commitUrl}|view code :github:>`);
-    if (data.pipelineState != PipelineState.SUCCEEDED) {
-      messages.push(`failure happened during the phase ${data.pipelineFailureStage} (${data.buildFailurePhase})`);
+    if (data.pipelineState == PipelineState.SUCCEEDED) {
+      messages.push(`:white_check_mark: Pipeline *${data.pipelineName}* has *${data.pipelineState.toLowerCase()}*. `);
+    } else {
+      messages.push(`:warning: Pipeline *${data.pipelineName}* has *${data.pipelineState.toLowerCase()}*`);
+      messages.push(
+        `Failure message was "${data.failureSummary}" while executing  ${data.failurePhase} <${data.failureLogs}|logs :aws: > `,
+      );
     }
+    const commitTimeInEpoch = Math.floor(+Date.parse(data.commitDate) / 1000);
+
+    messages.push(
+      `commit by *${data.commitAuthor}* on <!date^${commitTimeInEpoch}^{date_short} {time_secs}|${data.commitDate}> "_${data.commitMessage}_" <${data.commitUrl}|view code :github:>`,
+    );
     return messages.join('\n');
   }
 
-  public supportedChannel(channel: string, channelType: ChannelType) {
-    if (channelType !== 'SLACK') {
-      throw new Error(`Expected channelType of SLACK but retrieved was: ${channelType}`);
-    }
-    this.channel = channel;
+  public supportedChannel(): ChannelType {
+    return ChannelType.SLACK;
   }
 }

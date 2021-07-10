@@ -1,49 +1,29 @@
-import { AWSCodePipelineClient } from '../clients/aws-client';
+import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
 import { GithubClient } from '../clients/github-client';
 import { NotificationSettings } from '../models';
-import { NotificationsPayloadBuilder } from './notifications-payload-builder';
 
 export class NotificationTargetsManager {
-  private awsClient: AWSCodePipelineClient;
+  private awsClient: AWSDevToolsClient;
   private githubClient: GithubClient;
 
-  constructor(awsClient: AWSCodePipelineClient, githubClient: GithubClient) {
+  constructor(awsClient: AWSDevToolsClient, githubClient: GithubClient) {
     this.awsClient = awsClient;
     this.githubClient = githubClient;
   }
 
-  public getNotificationTargets = async (
-    pipeline: string,
-    executionId: string,
-    eventState: string,
-  ): Promise<NotificationSettings[]> => {
+  public getNotificationTargets = async (pipelineName: string, eventState: string): Promise<NotificationSettings[]> => {
     try {
-      const pipeLineExecutionResponse = await this.awsClient.getPipelineExecution(pipeline, executionId);
-      console.log(`PLE response: ${JSON.stringify(pipeLineExecutionResponse)}`);
-      const artifactRevision = pipeLineExecutionResponse.pipelineExecution.artifactRevisions[0];
+      const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
 
-      console.log(`Artifact revision: ${JSON.stringify(artifactRevision)}`);
-      const repositoryName = NotificationsPayloadBuilder.getRepoFromArtifactRevision(artifactRevision);
-      const organizationName = NotificationsPayloadBuilder.getOrganizationNameFromArtifactRevision(artifactRevision);
-      const repo = await this.githubClient.getRepository(organizationName, repositoryName);
-
-      const commitBranch = await this.githubClient.getCommitBranch(
-        organizationName,
-        repo.name,
-        artifactRevision.revisionId,
-      );
-
-      if (!commitBranch || commitBranch.data?.length < 1) {
-        throw Error('No commit branch was received');
-      }
+      const repo = await this.githubClient.getRepository(githubConfigs.owner, githubConfigs.repository);
 
       const factorySettings = repo.settings;
       if (!factorySettings?.notifications) {
-        throw Error(`No notifications configuration found for ${repo.name}`);
+        return [];
       }
 
       const notificationTargets = factorySettings.notifications.filter((setting) => {
-        return setting.event === eventState && setting.branches.includes(commitBranch.data[0].name);
+        return setting.event === eventState && setting.branches.includes(githubConfigs.branch);
       });
       return notificationTargets;
     } catch (error) {

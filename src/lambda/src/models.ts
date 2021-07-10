@@ -50,21 +50,22 @@ export interface PipelineExecutionEvent {
 }
 
 export interface PipelineEventDetail {
-  pipeline: string;
+  pipelineName: string;
   executionId: string;
   state: PipelineState;
 }
 
 export interface NotificationPayload {
   pipelineName: string;
-  pipelineState: PipelineState;
+  pipelineState: string;
   pipelineExecutionId: string;
   commitUrl: string;
   commitMessage: string;
   commitAuthor: string;
-  pipelineFailureStage?: StageName;
-  buildLogs?: string;
-  buildFailurePhase?: string;
+  commitDate: string;
+  failureLogs?: string;
+  failureSummary?: string;
+  failurePhase?: string;
 }
 
 export enum PipelineState {
