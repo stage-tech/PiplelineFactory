@@ -75,16 +75,14 @@ export enum PipelineState {
   UNKNOWN = 'UNKNOWN',
 }
 
-export enum StageName {
-  FETCH = 'Fetch',
-  BUILD = 'Build',
-  DEPLOY = 'Deploy',
-  UNKNOWN = 'UNKNOWN',
-}
-
 export interface NotificationSettings {
   branches: string[];
   event: PipelineState;
+  channelId: string;
+  channelType: ChannelType;
+}
+
+export interface NotificationTarget {
   channelId: string;
   channelType: ChannelType;
 }

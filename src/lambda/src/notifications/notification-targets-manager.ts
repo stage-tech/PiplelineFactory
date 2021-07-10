@@ -1,6 +1,6 @@
 import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
 import { GithubClient } from '../clients/github-client';
-import { NotificationSettings } from '../models';
+import { NotificationTarget } from '../models';
 
 export class NotificationTargetsManager {
   private awsClient: AWSDevToolsClient;
@@ -11,7 +11,7 @@ export class NotificationTargetsManager {
     this.githubClient = githubClient;
   }
 
-  public getNotificationTargets = async (pipelineName: string, eventState: string): Promise<NotificationSettings[]> => {
+  public getNotificationTargets = async (pipelineName: string, eventState: string): Promise<NotificationTarget[]> => {
     try {
       const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
 
@@ -25,7 +25,25 @@ export class NotificationTargetsManager {
       const notificationTargets = factorySettings.notifications.filter((setting) => {
         return setting.event === eventState && setting.branches.includes(githubConfigs.branch);
       });
-      return notificationTargets;
+      const matchingTargets = notificationTargets.map((t) => ({
+        channelId: t.channelId,
+        channelType: t.channelType,
+      }));
+
+      const uniqueTargets: NotificationTarget[] = [];
+      matchingTargets.forEach((t) => {
+        if (
+          uniqueTargets.find(
+            (ut) => ut.channelId.toLowerCase() == t.channelId.toLowerCase() && t.channelType == ut.channelType,
+          )
+        ) {
+          return;
+        } else {
+          uniqueTargets.push(t);
+        }
+      });
+
+      return uniqueTargets;
     } catch (error) {
       console.log(`Error while retrieving notification targets ${error}`);
       throw error;

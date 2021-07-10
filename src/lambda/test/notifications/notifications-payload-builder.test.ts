@@ -4,18 +4,11 @@ import { AWSDevToolsClient } from '../../src/clients/aws-dev-tools-client';
 import { GithubClient } from '../../src/clients/github-client';
 import { NotificationsPayloadBuilder } from '../../src/notifications/notifications-payload-builder';
 
-const required = <T>(input: T | undefined | null | void) => {
-  if (input === null || input === undefined) {
-    throw new Error('Field is required and should never be null, undefined or void');
-  }
-  return input;
-};
-
-describe('NotificationsManager tests', () => {
+describe('Notification Payload Builder', () => {
   const awsClientMock = mock(AWSDevToolsClient);
   const gitHubClientMock = mock(GithubClient);
 
-  it('get failure reason from codebuild', async () => {
+  it('get failure data from codebuild', async () => {
     when(awsClientMock.getPipelineSourceConfigurations(anything())).thenResolve({
       branch: 'some_branch',
       owner: 'some_owner',
