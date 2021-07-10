@@ -1,6 +1,6 @@
 import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
 import { GithubClient } from '../clients/github-client';
-import { NotificationPayload, PipelineEventDetail, PipelineState } from '../models';
+import { NotificationPayload } from '../models';
 
 export class NotificationsPayloadBuilder {
   constructor(private awsClient: AWSDevToolsClient, private gitHubClient: GithubClient) {}
@@ -21,7 +21,7 @@ export class NotificationsPayloadBuilder {
     );
 
     let failureDetails: { link?: string; summary?: string; step?: string } | undefined;
-    if (pipelineExecution.status?.toUpperCase() == PipelineState.FAILED) {
+    if (pipelineExecution.status?.toUpperCase() == 'FAILED') {
       const failedExecution = await this.awsClient.getFailedAction(pipelineName, executionId);
       failureDetails = {
         link: failedExecution?.output?.executionResult?.externalExecutionUrl,

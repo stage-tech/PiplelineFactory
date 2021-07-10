@@ -52,7 +52,7 @@ export interface PipelineExecutionEvent {
 export interface PipelineEventDetail {
   pipelineName: string;
   executionId: string;
-  state: PipelineState;
+  state: string;
 }
 
 export interface NotificationPayload {
@@ -68,16 +68,9 @@ export interface NotificationPayload {
   failurePhase?: string;
 }
 
-export enum PipelineState {
-  STARTED = 'STARTED',
-  SUCCEEDED = 'SUCCEEDED',
-  FAILED = 'FAILED',
-  UNKNOWN = 'UNKNOWN',
-}
-
 export interface NotificationSettings {
   branches: string[];
-  event: PipelineState;
+  event: string;
   channelId: string;
   channelType: ChannelType;
 }

@@ -1,7 +1,7 @@
 import { WebClient } from '@slack/web-api';
 import AWS from 'aws-sdk';
 
-import { ChannelType, NotificationPayload, PipelineState } from '../models';
+import { ChannelType, NotificationPayload } from '../models';
 
 export interface INotificationDeliveryClient {
   supportedChannel(): ChannelType;
@@ -38,7 +38,7 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
 
   private static formatSlackMessage(data: NotificationPayload): string {
     const messages: string[] = [];
-    if (data.pipelineState == PipelineState.SUCCEEDED) {
+    if (data.pipelineState == 'SUCCEEDED') {
       messages.push(`:white_check_mark: Pipeline *${data.pipelineName}* has *${data.pipelineState.toLowerCase()}*. `);
     } else {
       messages.push(`:warning: Pipeline *${data.pipelineName}* has *${data.pipelineState.toLowerCase()}*`);

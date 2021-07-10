@@ -1,10 +1,8 @@
-import { equal } from 'assert/strict';
-import exp from 'constants';
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 
 import { AWSDevToolsClient } from '../../src/clients/aws-dev-tools-client';
 import { GithubClient } from '../../src/clients/github-client';
-import { ChannelType, PipelineState } from '../../src/models';
+import { ChannelType } from '../../src/models';
 import { NotificationTargetsManager } from '../../src/notifications/notification-targets-manager';
 
 describe('Notification Targets Manager', () => {
@@ -49,37 +47,37 @@ describe('Notification Targets Manager', () => {
         notifications: [
           {
             branches: ['master'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'master-problems',
           },
           {
             branches: ['master'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'master-problems',
           },
           {
             branches: ['feature'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'feature-problems',
           },
           {
             branches: ['feature', 'master'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'global-problems',
           },
           {
             branches: ['master'],
-            event: PipelineState.SUCCEEDED,
+            event: 'SUCCEEDED',
             channelType: ChannelType.SLACK,
             channelId: 'master-success',
           },
           {
             branches: ['feature'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'feature-problems',
           },
@@ -118,13 +116,13 @@ describe('Notification Targets Manager', () => {
         notifications: [
           {
             branches: ['master'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'master-problems',
           },
           {
             branches: ['master', 'feature'],
-            event: PipelineState.FAILED,
+            event: 'FAILED',
             channelType: ChannelType.SLACK,
             channelId: 'master-problems',
           },
