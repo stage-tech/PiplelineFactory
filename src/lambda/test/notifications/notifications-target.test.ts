@@ -141,4 +141,25 @@ describe('Notification Targets Manager', () => {
       channelId: 'master-problems',
     });
   });
+
+  it('handles no targets gracefully', async () => {
+    when(awsClientMock.getPipelineSourceConfigurations(anything())).thenResolve({
+      branch: 'master',
+      owner: 'some_owner',
+      repository: 'some_repository',
+    });
+
+    when(gitHubClientMock.getRepository(anything(), anything())).thenResolve({
+      branches: [],
+      defaultBranch: 'dev',
+      name: 'myRepo',
+      owner: 'myOrg',
+      repositoryId: 'myId',
+      topics: [],
+    });
+    const targetsManager = new NotificationTargetsManager(instance(awsClientMock), instance(gitHubClientMock));
+    const targets = await targetsManager.getNotificationTargets('some_pipeline', 'FAILED');
+
+    expect(targets).toHaveLength(0);
+  });
 });
