@@ -91,12 +91,7 @@ export default class Notifications extends cdk.Construct {
             ],
           }),
           new iam.PolicyStatement({
-            actions: ["codepipeline:GetPipelineExecution"],
-            effect: iam.Effect.ALLOW,
-            resources: ["arn:aws:codepipeline:*:*"],
-          }),
-          new iam.PolicyStatement({
-            actions: ["codepipeline:ListActionExecutions"],
+            actions: ["codepipeline:ListActionExecutions" , "codepipeline:GetPipelineExecution", "codepipeline:GetPipeline"],
             effect: iam.Effect.ALLOW,
             resources: ["arn:aws:codepipeline:*:*"],
           }),

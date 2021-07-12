@@ -24,6 +24,7 @@ export class PipelineNotificationsHandler {
   }
   public handler = async (event: lambda.SNSEvent) => {
     const payload = JSON.parse(event.Records[0].Sns.Message || '') as PipelineExecutionEvent;
+    console.log(JSON.stringify(payload, null, 4));
     const eventDetails = this.getEventDetails(payload);
     if (!eventDetails) {
       console.log('Received event is not Pipeline Execution event and will be ignored');
