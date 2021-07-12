@@ -28,17 +28,17 @@ xdescribe('notification lambda Harness', () => {
     const handler = new PipelineNotificationsHandler('stage-tech');
     const notificationPayLoad = JSON.stringify({
       version: '0',
-      id: '86577b36-74ff-149c-4de1-08920c3d9a21',
+      id: '19b64e2c-005d-4f1b-b0bd-0eca9227799e',
       'detail-type': 'CodePipeline Pipeline Execution State Change',
       source: 'aws.codepipeline',
       account: '928065939415',
-      time: '2021-05-31T07:06:17Z',
+      time: '2021-01-14T11:32:08Z',
       region: 'eu-west-1',
-      resources: ['arn:aws:codepipeline:eu-west-1:928065939415:stage-door-datasync-execution-lambda-master'],
+      resources: ['arn:aws:codepipeline:eu-west-1:928065939415:stage-door-cdk-master'],
       detail: {
-        pipeline: 'stage-door-events-old-master',
-        'execution-id': '1a6dc8b7-21f5-4fb7-b4ea-4a8736d96654',
-        state: 'FAILED',
+        pipeline: 'stage-door-cdk-master',
+        'execution-id': '19b64e2c-005d-4f1b-b0bd-0eca9227799e',
+        state: 'SUCCEEDED',
         version: 1,
       },
     });

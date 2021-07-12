@@ -50,40 +50,32 @@ export interface PipelineExecutionEvent {
 }
 
 export interface PipelineEventDetail {
-  pipeline: string;
+  pipelineName: string;
   executionId: string;
-  state: PipelineState;
+  state: string;
 }
 
 export interface NotificationPayload {
   pipelineName: string;
-  pipelineState: PipelineState;
+  pipelineState: string;
   pipelineExecutionId: string;
   commitUrl: string;
   commitMessage: string;
   commitAuthor: string;
-  pipelineFailureStage?: StageName;
-  buildLogs?: string;
-  buildFailurePhase?: string;
-}
-
-export enum PipelineState {
-  STARTED = 'STARTED',
-  SUCCEEDED = 'SUCCEEDED',
-  FAILED = 'FAILED',
-  UNKNOWN = 'UNKNOWN',
-}
-
-export enum StageName {
-  FETCH = 'Fetch',
-  BUILD = 'Build',
-  DEPLOY = 'Deploy',
-  UNKNOWN = 'UNKNOWN',
+  commitDate: string;
+  failureLogs?: string;
+  failureSummary?: string;
+  failurePhase?: string;
 }
 
 export interface NotificationSettings {
   branches: string[];
-  event: PipelineState;
+  event: string;
+  channelId: string;
+  channelType: ChannelType;
+}
+
+export interface NotificationTarget {
   channelId: string;
   channelType: ChannelType;
 }
