@@ -2,7 +2,7 @@ import * as lambda from 'aws-lambda';
 
 import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
 import { GithubClient } from '../clients/github-client';
-import { NotificationPayload, PipelineEventDetail, PipelineExecutionEvent } from '../models';
+import { PipelineEventDetail, PipelineExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
 import { NotificationTargetsManager } from './notification-targets-manager';
 import { NotificationsPayloadBuilder } from './notifications-payload-builder';
@@ -50,7 +50,7 @@ export class PipelineNotificationsHandler {
     const notificationPayload = await notificationPayloadBuilder.buildNotificationPayload(eventDetails);
     if (notificationPayload) {
       for (let i = 0; i < notificationTargets.length; i++) {
-        await slackNotificationClient.send(notificationPayload);
+        await slackNotificationClient.send(notificationPayload, notificationTargets[i]);
       }
     }
 

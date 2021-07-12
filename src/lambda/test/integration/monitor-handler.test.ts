@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 
+dotenv.config();
 import { MonitorRepositoriesHandler } from '../../src/monitor/handler-monitor-repositories';
 import { PipelineManagementHandler } from '../../src/monitor/handler-pipeline-management';
 import AuthHelper from '../auth-helper';
 
-dotenv.config();
 const OLD_ENV = process.env;
 const queueUrl = 'https://sqs.eu-west-1.amazonaws.com/928065939415/repository_discovery_jobs';
 
@@ -36,7 +36,7 @@ xdescribe('lambda Harness', () => {
     await handler.handler();
   });
 
-  it('Manage Pipeline Handler', async () => {
+  xit('Manage Pipeline Handler', async () => {
     const payload = '{"name":"pipeline-factory","owner":"stage-tech","id":"302112501"}';
 
     const sqsMessage = {

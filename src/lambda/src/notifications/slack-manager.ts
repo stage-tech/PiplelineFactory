@@ -1,15 +1,15 @@
 import { WebClient } from '@slack/web-api';
 import AWS from 'aws-sdk';
 
-import { ChannelType, NotificationPayload } from '../models';
+import { ChannelType, NotificationPayload, NotificationTarget } from '../models';
 
 export interface INotificationDeliveryClient {
   supportedChannel(): ChannelType;
-  send(data: NotificationPayload): void;
+  send(data: NotificationPayload, target: NotificationTarget): void;
 }
 
 export class SlackNotificationDeliveryClient implements INotificationDeliveryClient {
-  public send = async (data: NotificationPayload): Promise<void> => {
+  public send = async (data: NotificationPayload, target: NotificationTarget): Promise<void> => {
     try {
       const ssm = new AWS.SecretsManager();
       const parameterReadResponse = await ssm
@@ -22,7 +22,7 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
       await slackClient.chat.postMessage({
         mrkdwn: true,
         text: typeof data === 'string' ? data : SlackNotificationDeliveryClient.formatSlackMessage(data),
-        channel: 'test-channel', // this.channel,
+        channel: target.channelId,
       });
     } catch (error) {
       console.error(`Error while publishing message to Slack: ${error}`);
