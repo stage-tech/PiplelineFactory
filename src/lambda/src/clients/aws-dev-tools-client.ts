@@ -8,6 +8,7 @@ export class AWSDevToolsClient {
     this.codepipeline = new CodePipeline({ region: 'eu-west-1' });
     this.codebuild = new CodeBuild({ region: 'eu-west-1' });
   }
+
   public async getPipelineSourceConfigurations(pipelineName: string): Promise<{
     owner: string;
     repository: string;
@@ -26,6 +27,7 @@ export class AWSDevToolsClient {
     };
     return githubConfigs;
   }
+
   public async getPipelineExecution(pipelineName: string, executionId: string): Promise<PipelineExecution> {
     const response = await this.codepipeline.getPipelineExecution({
       pipelineExecutionId: executionId,
@@ -49,14 +51,5 @@ export class AWSDevToolsClient {
       (actionExecution) => actionExecution.status === 'Failed',
     );
     return failedExecution;
-  }
-
-  async getBuild(buildId: string): Promise<Build | undefined> {
-    const response = await this.codebuild.batchGetBuilds({
-      ids: [buildId],
-    });
-
-    const buildInfo = response.builds ? response.builds[0] : undefined;
-    return buildInfo;
   }
 }
