@@ -12,10 +12,10 @@
     "cdk-confirmed": "cdk deploy --require-approval never"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.133.0",
+    "@aws-cdk/assert": "^2.8.0",
     "@types/jest": "26.0.24",
     "@types/node": "15.12.4",
-    "aws-cdk": "1.133.0",
+    "aws-cdk": "2.8.0",
     "husky": "6.0.0",
     "jest": "^27.4.7",
     "ts-jest": "^27.1.3",
