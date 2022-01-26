@@ -11,8 +11,8 @@
       },
       "build": {
         "commands": [
-          "npm run build",
-          "npm run cdk-confirmed"
+          "yarn build",
+          "yarn cdk-confirmed"
         ]
       }
     },
