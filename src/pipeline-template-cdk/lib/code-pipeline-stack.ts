@@ -15,6 +15,7 @@ export class CodePipelineStackProps implements cdk.StackProps {
   artifactsBucket?: string;
   buildAsRoleArn?: string;
   gitHubTokenSecretArn?: string;
+  deployViaGitHubActions?: boolean;
 }
 
 export class CodePipelineStack extends cdk.Stack {
@@ -69,17 +70,20 @@ export class CodePipelineStack extends cdk.Stack {
       projectName: props.projectName,
       buildSpecLocationOverride: props.buildSpecFileRelativeLocation,
       buildAsRoleArn: props.buildAsRoleArn,
+      deployViaGitHubActions: props.deployViaGitHubActions || false,
     });
 
-    new CodePipeline(this, "CodePipeline", {
-      artifactsBucketName: props.artifactsBucket,
-      gitHubTokenSecretArn: props.gitHubTokenSecretArn,
-      githubRepositoryBranch: props.githubRepositoryBranch,
-      githubRepositoryName: props.githubRepositoryName,
-      githubRepositoryOwner: props.githubRepositoryOwner,
-      projectName: props.projectName,
-      buildAsRoleArn: props.buildAsRoleArn,
-      buildProject: builder.buildProject,
-    });
+    if (!props.deployViaGitHubActions) {
+      new CodePipeline(this, "CodePipeline", {
+        artifactsBucketName: props.artifactsBucket,
+        gitHubTokenSecretArn: props.gitHubTokenSecretArn,
+        githubRepositoryBranch: props.githubRepositoryBranch,
+        githubRepositoryName: props.githubRepositoryName,
+        githubRepositoryOwner: props.githubRepositoryOwner,
+        projectName: props.projectName,
+        buildAsRoleArn: props.buildAsRoleArn,
+        buildProject: builder.buildProject,
+      });
+      }
   }
 }

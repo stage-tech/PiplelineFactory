@@ -1,12 +1,14 @@
 {
   "jest.debugCodeLens.showWhenTestStateIn": ["skip", "pass", "fail", "unknown"],
   "cSpell.words": [
+    "backoff",
+    "buildspec",
     "Chainable",
+    "endregion",
     "EVENTBRIDGE",
     "FARGATE",
     "Initialiser",
-    "backoff",
-    "endregion",
+    "Oidc",
     "stepfunction",
     "stepfunctions"
   ],

@@ -2,6 +2,12 @@ import * as cdk from "@aws-cdk/core";
 import * as codebuild from "@aws-cdk/aws-codebuild";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as iam from "@aws-cdk/aws-iam";
+import {
+  GithubActionsIdentityProvider,
+  GithubActionsRole,
+} from "aws-cdk-github-oidc";
+import { Effect, PolicyStatement } from "@aws-cdk/aws-iam";
+
 
 export interface CodeBuildProjectProps {
   buildAsRoleArn: string;
@@ -11,19 +17,23 @@ export interface CodeBuildProjectProps {
   githubRepositoryBranch: string;
   projectName: string;
   artifactsBucketName: string;
+  deployViaGitHubActions: boolean;
   buildSpecLocationOverride?: string;
 }
 export class CodeBuildProject extends cdk.Construct {
   buildProject: codebuild.Project;
   constructor(scope: cdk.Construct, id: string, props: CodeBuildProjectProps) {
     super(scope, id);
-    var buildSpecFile = props.buildSpecLocationOverride ?? "buildspec.yml";
+    this.buildProject = this.configureCodeBuildProject(props);
+    if (props.deployViaGitHubActions) {
+      this.configureGitHubOidcAuth(props);
+    }
+  }
 
-    const gitHubSource = codebuild.Source.gitHub({
-      owner: props.githubRepositoryOwner,
-      repo: props.githubRepositoryName,
-      webhook: false,
-    });
+  private configureCodeBuildProject(
+    props: CodeBuildProjectProps
+  ) {
+    var buildSpecFile = props.buildSpecLocationOverride ?? "buildspec.yml";
 
     if (!props.artifactsBucketName) {
       throw new Error(`props.artifactsBucketName is empty`);
@@ -37,13 +47,19 @@ export class CodeBuildProject extends cdk.Construct {
       }
     );
 
+    const gitHubSource = codebuild.Source.gitHub({
+      owner: props.githubRepositoryOwner,
+      repo: props.githubRepositoryName,
+      webhook: false,
+    });
+
     const buildAsRole = iam.Role.fromRoleArn(
       this,
       "BuildAsRole",
       props.buildAsRoleArn
     );
 
-    const codeBuildProject = new codebuild.Project(this, "codebuildProject", {
+    return new codebuild.Project(this, "codebuildProject", {
       buildSpec: codebuild.BuildSpec.fromSourceFilename(buildSpecFile),
       role: buildAsRole,
       source: gitHubSource,
@@ -70,7 +86,7 @@ export class CodeBuildProject extends cdk.Construct {
           value: props.gitHubTokenSecretArn,
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
         },
-        GITHUB_TOKEN_SECRETNAME : {
+        GITHUB_TOKEN_SECRETNAME: {
           value: props.gitHubTokenSecretArn,
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
         },
@@ -94,7 +110,35 @@ export class CodeBuildProject extends cdk.Construct {
         packageZip: true,
       }),
     });
+  }
 
-    this.buildProject = codeBuildProject;
+  private configureGitHubOidcAuth(props: CodeBuildProjectProps) {
+    const provider = GithubActionsIdentityProvider.fromAccount(
+      this,
+      "GitHubProvider"
+    );
+    const executionRole = new GithubActionsRole(this, `${props.projectName}-github-oidc-role`, {
+      roleName: `${props.projectName}-github-oidc-role`,
+      provider,
+      owner: props.githubRepositoryOwner,
+      repo: props.githubRepositoryName,
+      filter: `ref:refs/heads/${props.githubRepositoryBranch}`,
+    });
+    executionRole.addToPolicy(
+      new PolicyStatement({
+        sid: "CodeBuildPolicy",
+        effect: Effect.ALLOW,
+        actions: ['codebuild:StartBuild', 'codebuild:BatchGetBuilds'],
+        resources: [this.buildProject.projectArn],
+      })
+    );
+    executionRole.addToPolicy(
+      new PolicyStatement({
+        sid: "LogPolicy",
+        effect: Effect.ALLOW,
+        actions: ['logs:GetLogEvents'],
+        resources: [`arn:aws:logs:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:log-group:/aws/codebuild/${this.buildProject.projectName}:*`],
+      })
+    );
   }
 }
