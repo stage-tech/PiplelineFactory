@@ -2,10 +2,12 @@ import * as lambda from 'aws-lambda';
 
 import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
 import { GithubClient } from '../clients/github-client';
-import { PipelineEventDetail, PipelineExecutionEvent } from '../models';
+import { BuildEventSource, PipelineEventDetail, PipelineExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
 import { NotificationTargetsManager } from './notification-targets-manager';
-import { NotificationsPayloadBuilder } from './notifications-payload-builder';
+import { CodeBuildNotificationsPayloadBuilder } from './payload-builder/code-build';
+import { CodePipelineNotificationsPayloadBuilder } from './payload-builder/code-pipeline';
+import { INotificationsPayloadBuilder } from './payload-builder/interface';
 import { SlackNotificationDeliveryClient } from './slack-manager';
 
 export class PipelineNotificationsHandler {
@@ -18,6 +20,7 @@ export class PipelineNotificationsHandler {
         pipelineName: event.detail.pipeline,
         executionId: event.detail['execution-id'],
         state: event.detail.state,
+        source: BuildEventSource.AWS_CODE_PIPELINE,
       } as PipelineEventDetail;
     }
     return undefined;
@@ -34,7 +37,15 @@ export class PipelineNotificationsHandler {
     const token = await new OrganizationManager().get(this.organizationName);
     const githubClient = new GithubClient(token.githubToken);
     const awsClient = new AWSDevToolsClient();
-    const notificationPayloadBuilder = new NotificationsPayloadBuilder(awsClient, githubClient);
+    let notificationPayloadBuilder: INotificationsPayloadBuilder;
+    if (eventDetails.source == BuildEventSource.AWS_CODE_PIPELINE) {
+      notificationPayloadBuilder = new CodePipelineNotificationsPayloadBuilder(awsClient, githubClient, eventDetails);
+    } else if (eventDetails.source == BuildEventSource.AWS_CODE_BUILD) {
+      notificationPayloadBuilder = new CodeBuildNotificationsPayloadBuilder(awsClient, githubClient, eventDetails);
+    } else {
+      throw new Error('No notification builder found ');
+    }
+
     const slackNotificationClient = new SlackNotificationDeliveryClient();
     const notificationTargetsManager = new NotificationTargetsManager(awsClient, githubClient);
 
@@ -48,7 +59,7 @@ export class PipelineNotificationsHandler {
       return;
     }
 
-    const notificationPayload = await notificationPayloadBuilder.buildNotificationPayload(eventDetails);
+    const notificationPayload = await notificationPayloadBuilder.buildNotificationPayload();
     if (notificationPayload) {
       for (let i = 0; i < notificationTargets.length; i++) {
         await slackNotificationClient.send(notificationPayload, notificationTargets[i]);

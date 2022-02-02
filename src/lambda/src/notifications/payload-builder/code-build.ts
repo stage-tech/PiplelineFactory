@@ -1,12 +1,17 @@
-import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
-import { GithubClient } from '../clients/github-client';
-import { NotificationPayload } from '../models';
+import { AWSDevToolsClient } from '../../clients/aws-dev-tools-client';
+import { GithubClient } from '../../clients/github-client';
+import { NotificationPayload } from '../../models';
+import { INotificationsPayloadBuilder } from './interface';
 
-export class NotificationsPayloadBuilder {
-  constructor(private awsClient: AWSDevToolsClient, private gitHubClient: GithubClient) {}
+export class CodeBuildNotificationsPayloadBuilder implements INotificationsPayloadBuilder {
+  constructor(
+    private awsClient: AWSDevToolsClient,
+    private gitHubClient: GithubClient,
+    private event: { pipelineName: string; executionId: string },
+  ) {}
 
-  async buildNotificationPayload(event: { pipelineName: string; executionId: string }): Promise<NotificationPayload> {
-    const { pipelineName, executionId } = event;
+  async buildNotificationPayload(): Promise<NotificationPayload> {
+    const { pipelineName, executionId } = this.event;
     const pipelineExecution = await this.awsClient.getPipelineExecution(pipelineName, executionId);
     const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
     const artifactRevision = pipelineExecution.artifactRevisions ? pipelineExecution?.artifactRevisions[0] : undefined;
