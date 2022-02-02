@@ -42,7 +42,7 @@ export class PipelineNotificationsHandler {
     console.log(JSON.stringify(payload, null, 4));
     const eventDetails = this.getEventDetails(payload);
     if (!eventDetails) {
-      console.log('Received event is not Pipeline Execution event and will be ignored');
+      console.log('Received event is not Pipeline Execution or Code Build State Change event and will be ignored');
       return;
     }
 
