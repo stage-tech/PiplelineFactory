@@ -13,7 +13,7 @@ export class CodeBuildNotificationsPayloadBuilder implements INotificationsPaylo
   async buildNotificationPayload(): Promise<NotificationPayload> {
     const { pipelineName, executionId } = this.event;
     const pipelineExecution = await this.awsClient.getPipelineExecution(pipelineName, executionId);
-    const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
+    const githubConfigs = await this.awsClient.getBuildSourceConfigurations(pipelineName);
     const artifactRevision = pipelineExecution.artifactRevisions ? pipelineExecution?.artifactRevisions[0] : undefined;
     if (!artifactRevision?.revisionId) {
       throw new Error('cannot get version information');
@@ -35,9 +35,9 @@ export class CodeBuildNotificationsPayloadBuilder implements INotificationsPaylo
       };
     }
     return {
-      pipelineName: pipelineName,
-      pipelineState: pipelineExecution.status?.toUpperCase() || '',
-      pipelineExecutionId: executionId,
+      name: pipelineName,
+      state: pipelineExecution.status?.toUpperCase() || '',
+      executionId: executionId,
       commitUrl: commitInfo.url || '',
       commitMessage: commitInfo.message || '',
       commitAuthor: commitInfo.author || '',

@@ -38,10 +38,10 @@ export class SlackNotificationDeliveryClient implements INotificationDeliveryCli
 
   private static formatSlackMessage(data: NotificationPayload): string {
     const messages: string[] = [];
-    if (data.pipelineState == 'SUCCEEDED') {
-      messages.push(`:white_check_mark: Pipeline *${data.pipelineName}* has *${data.pipelineState.toLowerCase()}*. `);
+    if (data.state == 'SUCCEEDED') {
+      messages.push(`:white_check_mark: Pipeline *${data.name}* has *${data.state.toLowerCase()}*. `);
     } else {
-      messages.push(`:warning: Pipeline *${data.pipelineName}* has *${data.pipelineState.toLowerCase()}*`);
+      messages.push(`:warning: Pipeline *${data.name}* has *${data.state.toLowerCase()}*`);
       messages.push(
         `Failure message was "${data.failureSummary}" while executing  ${data.failurePhase} <${data.failureLogs}|logs :aws: > `,
       );

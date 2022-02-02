@@ -45,7 +45,7 @@ export class StackInformation {
   }
 }
 
-export interface PipelineExecutionEvent {
+export interface ExecutionEvent {
   'detail-type': string;
   detail: any;
 }
@@ -56,16 +56,16 @@ export enum BuildEventSource {
 }
 
 export interface PipelineEventDetail {
-  pipelineName: string;
+  name: string;
   executionId: string;
   state: string;
   source: BuildEventSource;
 }
 
 export interface NotificationPayload {
-  pipelineName: string;
-  pipelineState: string;
-  pipelineExecutionId: string;
+  name: string;
+  state: string;
+  executionId: string;
   commitUrl: string;
   commitMessage: string;
   commitAuthor: string;

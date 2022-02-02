@@ -35,9 +35,9 @@ export class CodePipelineNotificationsPayloadBuilder implements INotificationsPa
       };
     }
     return {
-      pipelineName: pipelineName,
-      pipelineState: pipelineExecution.status?.toUpperCase() || '',
-      pipelineExecutionId: executionId,
+      name: pipelineName,
+      state: pipelineExecution.status?.toUpperCase() || '',
+      executionId: executionId,
       commitUrl: commitInfo.url || '',
       commitMessage: commitInfo.message || '',
       commitAuthor: commitInfo.author || '',
