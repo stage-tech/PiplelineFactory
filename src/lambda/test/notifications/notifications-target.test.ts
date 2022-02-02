@@ -10,12 +10,6 @@ describe('Notification Targets Manager', () => {
   const gitHubClientMock = mock(GithubClient);
 
   it('fetches setting from github', async () => {
-    when(awsClientMock.getPipelineSourceConfigurations(anything())).thenResolve({
-      branch: 'some_branch',
-      owner: 'some_owner',
-      repository: 'some_repository',
-    });
-
     when(gitHubClientMock.getRepository(anything(), anything())).thenResolve({
       branches: [],
       defaultBranch: 'dev',
@@ -26,17 +20,18 @@ describe('Notification Targets Manager', () => {
       topics: ['topic1'],
     });
     const targetsManager = new NotificationTargetsManager(instance(awsClientMock), instance(gitHubClientMock));
-    const payload = await targetsManager.getNotificationTargets('some_pipeline', 'FAILED');
+    const payload = await targetsManager.getNotificationTargets(
+      {
+        branch: 'some_branch',
+        owner: 'some_owner',
+        repository: 'some_repository',
+      },
+      'FAILED',
+    );
     verify(gitHubClientMock.getRepository('some_owner', 'some_repository')).once();
   });
 
   it('resolve targets on single and multiple branches', async () => {
-    when(awsClientMock.getPipelineSourceConfigurations(anything())).thenResolve({
-      branch: 'master',
-      owner: 'some_owner',
-      repository: 'some_repository',
-    });
-
     when(gitHubClientMock.getRepository(anything(), anything())).thenResolve({
       branches: [],
       defaultBranch: 'dev',
@@ -86,7 +81,14 @@ describe('Notification Targets Manager', () => {
       topics: [],
     });
     const targetsManager = new NotificationTargetsManager(instance(awsClientMock), instance(gitHubClientMock));
-    const targets = await targetsManager.getNotificationTargets('some_pipeline', 'FAILED');
+    const targets = await targetsManager.getNotificationTargets(
+      {
+        branch: 'master',
+        owner: 'some_owner',
+        repository: 'some_repository',
+      },
+      'FAILED',
+    );
 
     expect(targets).toContainEqual({
       channelType: ChannelType.SLACK,
@@ -100,12 +102,6 @@ describe('Notification Targets Manager', () => {
   });
 
   it('return only distinct targets', async () => {
-    when(awsClientMock.getPipelineSourceConfigurations(anything())).thenResolve({
-      branch: 'master',
-      owner: 'some_owner',
-      repository: 'some_repository',
-    });
-
     when(gitHubClientMock.getRepository(anything(), anything())).thenResolve({
       branches: [],
       defaultBranch: 'dev',
@@ -131,7 +127,14 @@ describe('Notification Targets Manager', () => {
       topics: [],
     });
     const targetsManager = new NotificationTargetsManager(instance(awsClientMock), instance(gitHubClientMock));
-    const targets = await targetsManager.getNotificationTargets('some_pipeline', 'FAILED');
+    const targets = await targetsManager.getNotificationTargets(
+      {
+        branch: 'master',
+        owner: 'some_owner',
+        repository: 'some_repository',
+      },
+      'FAILED',
+    );
 
     expect(targets).toHaveLength(1);
     expect(targets).toContainEqual({
@@ -141,12 +144,6 @@ describe('Notification Targets Manager', () => {
   });
 
   it('handles no targets gracefully', async () => {
-    when(awsClientMock.getPipelineSourceConfigurations(anything())).thenResolve({
-      branch: 'master',
-      owner: 'some_owner',
-      repository: 'some_repository',
-    });
-
     when(gitHubClientMock.getRepository(anything(), anything())).thenResolve({
       branches: [],
       defaultBranch: 'dev',
@@ -156,7 +153,14 @@ describe('Notification Targets Manager', () => {
       topics: [],
     });
     const targetsManager = new NotificationTargetsManager(instance(awsClientMock), instance(gitHubClientMock));
-    const targets = await targetsManager.getNotificationTargets('some_pipeline', 'FAILED');
+    const targets = await targetsManager.getNotificationTargets(
+      {
+        branch: 'master',
+        owner: 'some_owner',
+        repository: 'some_repository',
+      },
+      'FAILED',
+    );
 
     expect(targets).toHaveLength(0);
   });

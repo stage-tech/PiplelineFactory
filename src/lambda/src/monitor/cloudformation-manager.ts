@@ -54,6 +54,14 @@ export class CloudFormationManager {
       });
     }
 
+    if(repo.settings?.deployViaGithubActions === true) {
+      environmentOverRides.push({
+        name: 'DEPLOY_VIA_GITHUB_ACTIONS',
+        value: "true",
+        type: 'PLAINTEXT',
+      });
+    }
+
     const params: AWS.CodeBuild.StartBuildInput = {
       projectName: this.factoryCodeBuildProjectName,
       environmentVariablesOverride: environmentOverRides,

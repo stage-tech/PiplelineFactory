@@ -45,12 +45,12 @@ export default class Notifications extends cdk.Construct {
     const logGroupTarget = new CloudWatchLogsTarget(pipelineCloudWatchLogGroup);
 
     const rule = new events.Rule(this, "pipelineEvents", {
-      description: "Forward code pipeline events to sns topic",
+      description: "Forward code pipeline and build events to sns topic",
       enabled: true,
       ruleName: "Pipeline-Factory-SNS",
       targets: [snsEventTarget, logGroupTarget],
       eventPattern: {
-        source: ["aws.codepipeline"],
+        source: ["aws.codepipeline", "aws.codebuild"],
       },
     });
 

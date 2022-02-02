@@ -28,6 +28,37 @@ export class AWSDevToolsClient {
     return githubConfigs;
   }
 
+  public async getBuildSourceConfigurations(buildId: string): Promise<{
+    owner: string;
+    repository: string;
+    branch: string;
+    commitSha: string;
+  }> {
+    const response = await this.codebuild.batchGetBuilds({ids: [buildId]});
+    const build = response.builds?.[0];
+    if (!build) {
+      throw new Error('cannot find build by id');
+    }
+
+    const environmentVars = build?.exportedEnvironmentVariables || [];
+
+    const repo = environmentVars.find((i) => i.name === 'GITHUB_REPOSITORY')?.value?.split('/');
+    const branch = environmentVars.find((i) => i.name === 'GITHUB_REPOSITORY_BRANCH')?.value;
+    const commitSha = environmentVars.find((i) => i.name === 'GITHUB_SHA')?.value;
+
+    const githubConfigs = {
+      owner:  repo?.[0] || 'undefined',
+      repository: repo?.[1] || 'undefined',
+      branch: branch || 'undefined',
+      commitSha: commitSha || 'undefined'
+    };
+
+    build.currentPhase
+    this.codebuild.listReports
+
+    return githubConfigs;
+  }
+
   public async getPipelineExecution(pipelineName: string, executionId: string): Promise<PipelineExecution> {
     const response = await this.codepipeline.getPipelineExecution({
       pipelineExecutionId: executionId,

@@ -3,6 +3,7 @@ export class SettingsOverrides {
   buildSpecLocation?: string;
   buildAsRoleArn?: string;
   monitoredBranches?: string[];
+  deployViaGithubActions?: boolean;
   notifications?: NotificationSettings[];
 }
 
@@ -44,21 +45,29 @@ export class StackInformation {
   }
 }
 
-export interface PipelineExecutionEvent {
+export interface ExecutionEvent {
   'detail-type': string;
   detail: any;
 }
 
+export enum BuildEventSource {
+  AWS_CODE_PIPELINE = 'AWS_CODE_PIPELINE',
+  AWS_CODE_BUILD = 'AWS_CODE_BUILD',
+}
+
 export interface PipelineEventDetail {
-  pipelineName: string;
+  name: string;
   executionId: string;
   state: string;
+  source: BuildEventSource;
+  link?: string;
+  phase?: string;
 }
 
 export interface NotificationPayload {
-  pipelineName: string;
-  pipelineState: string;
-  pipelineExecutionId: string;
+  name: string;
+  state: string;
+  executionId: string;
   commitUrl: string;
   commitMessage: string;
   commitAuthor: string;
@@ -66,6 +75,11 @@ export interface NotificationPayload {
   failureLogs?: string;
   failureSummary?: string;
   failurePhase?: string;
+  codeInformation: {
+    repository: string;
+    owner: string;
+    branch: string;
+  };
 }
 
 export interface NotificationSettings {

@@ -8,6 +8,7 @@ export interface PipelineProperties {
   repository_owner: string;
   repository_name: string;
   branchName: string;
+  deployViaGithubActions: boolean;
 }
 
 export class PipeLinePropertiesBuilder {
@@ -30,6 +31,7 @@ export class PipeLinePropertiesBuilder {
       repository_owner: flattenedPayLoad.repository_owner,
       repository_name: flattenedPayLoad.repository_name,
       monitoredBranches: flattenedPayLoad.monitoredBranches,
+      deployViaGithubActions: flattenedPayLoad.deployViaGithubActions,
     };
 
     return props;
