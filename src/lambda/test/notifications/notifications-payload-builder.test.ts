@@ -1,9 +1,8 @@
 import { anything, instance, mock, when } from 'ts-mockito';
-
+import { CodePipelineNotificationsPayloadBuilder } from '../../src/notifications/payload-builder/code-pipeline';
 import { AWSDevToolsClient } from '../../src/clients/aws-dev-tools-client';
 import { GithubClient } from '../../src/clients/github-client';
-import { NotificationsPayloadBuilder } from '../../src/notifications/notifications-payload-builder';
-
+import { BuildEventSource } from '../../src/models';
 describe('Notification Payload Builder', () => {
   const awsClientMock = mock(AWSDevToolsClient);
   const gitHubClientMock = mock(GithubClient);
@@ -50,11 +49,18 @@ describe('Notification Payload Builder', () => {
       startTime: new Date('2021-05-31T07:04:13.099Z'),
       status: 'Failed',
     });
-    const notificationsManager = new NotificationsPayloadBuilder(instance(awsClientMock), gitHubClientMock);
-    const payload = await notificationsManager.buildNotificationPayload({
+    const event = {
       executionId: 'executionId',
       pipelineName: '',
-    });
+      source: BuildEventSource.AWS_CODE_PIPELINE,
+    };
+    const notificationsManager = new CodePipelineNotificationsPayloadBuilder(
+      instance(awsClientMock),
+      gitHubClientMock,
+      event,
+    );
+
+    const payload = await notificationsManager.buildNotificationPayload();
     expect(payload.failureLogs).toBe('some_url');
     expect(payload.failureSummary).toBe('some_summary');
   });
@@ -90,11 +96,15 @@ describe('Notification Payload Builder', () => {
       message: 'some_message',
       url: 'some_url',
     });
-    const notificationsManager = new NotificationsPayloadBuilder(instance(awsClientMock), instance(gitHubMock));
-    const payload = await notificationsManager.buildNotificationPayload({
-      executionId: 'executionId',
-      pipelineName: '',
-    });
+    const notificationsManager = new CodePipelineNotificationsPayloadBuilder(
+      instance(awsClientMock),
+      instance(gitHubMock),
+      {
+        executionId: 'executionId',
+        pipelineName: '',
+      },
+    );
+    const payload = await notificationsManager.buildNotificationPayload();
     expect(payload.commitAuthor).toBe('some_author');
     expect(payload.commitDate).toBe('some_date');
     expect(payload.commitMessage).toBe('some_message');
