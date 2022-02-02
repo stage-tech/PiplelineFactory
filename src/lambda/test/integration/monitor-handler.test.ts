@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 xdescribe('lambda Harness', () => {
-  it('Monitor handler lambda', async () => {
+  xit('Monitor handler lambda', async () => {
     const handler = new MonitorRepositoriesHandler({
       organizationName: 'stage-tech',
       queueUrl,

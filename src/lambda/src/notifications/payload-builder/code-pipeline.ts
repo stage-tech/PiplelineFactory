@@ -12,7 +12,7 @@ export class CodePipelinePayloadBuilder implements INotificationsPayloadBuilder 
 
   async buildNotificationPayload(): Promise<NotificationPayload> {
     const pipelineExecution = await this.awsClient.getPipelineExecution(this.event.name, this.event.executionId);
-    const githubConfigs = await this.awsClient.getBuildSourceConfigurations(this.event.name);
+    const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(this.event.name);
     const artifactRevision = pipelineExecution.artifactRevisions ? pipelineExecution?.artifactRevisions[0] : undefined;
     if (!artifactRevision?.revisionId) {
       throw new Error('cannot get version information');

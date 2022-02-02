@@ -53,9 +53,9 @@ export class PipelineNotificationsHandler {
     const awsClient = new AWSDevToolsClient();
     let notificationPayloadBuilder: INotificationsPayloadBuilder;
     if (eventDetails.source === BuildEventSource.AWS_CODE_PIPELINE) {
-      notificationPayloadBuilder = new CodeBuildPayloadBuilder(awsClient, githubClient, eventDetails);
-    } else if (eventDetails.source === BuildEventSource.AWS_CODE_BUILD) {
       notificationPayloadBuilder = new CodePipelinePayloadBuilder(awsClient, githubClient, eventDetails);
+    } else if (eventDetails.source === BuildEventSource.AWS_CODE_BUILD) {
+      notificationPayloadBuilder = new CodeBuildPayloadBuilder(githubClient, eventDetails);
     } else {
       throw new Error('No notification builder found ');
     }

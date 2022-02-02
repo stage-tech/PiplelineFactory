@@ -1,5 +1,5 @@
 import { anything, instance, mock, when } from 'ts-mockito';
-import { CodePipelineNotificationsPayloadBuilder } from '../../src/notifications/payload-builder/code-pipeline';
+import { CodePipelinePayloadBuilder } from '../../src/notifications/payload-builder/code-pipeline';
 import { AWSDevToolsClient } from '../../src/clients/aws-dev-tools-client';
 import { GithubClient } from '../../src/clients/github-client';
 import { BuildEventSource } from '../../src/models';
@@ -53,8 +53,13 @@ describe('Notification Payload Builder', () => {
       executionId: 'executionId',
       name: '',
       source: BuildEventSource.AWS_CODE_PIPELINE,
-    };
-    const notificationsManager = new CodePipelineNotificationsPayloadBuilder(
+      state: 'FAILED',
+      sourceEvent: {
+        "detail-type": BuildEventSource.AWS_CODE_PIPELINE,
+        detail: {}
+      }
+  };
+    const notificationsManager = new CodePipelinePayloadBuilder(
       instance(awsClientMock),
       gitHubClientMock,
       event,
@@ -96,12 +101,18 @@ describe('Notification Payload Builder', () => {
       message: 'some_message',
       url: 'some_url',
     });
-    const notificationsManager = new CodePipelineNotificationsPayloadBuilder(
+    const notificationsManager = new CodePipelinePayloadBuilder(
       instance(awsClientMock),
       instance(gitHubMock),
       {
         executionId: 'executionId',
         name: '',
+        state: 'FAILED',
+        source: BuildEventSource.AWS_CODE_PIPELINE,
+        sourceEvent: {
+          "detail-type": BuildEventSource.AWS_CODE_PIPELINE,
+          detail: {}
+        }
       },
     );
     const payload = await notificationsManager.buildNotificationPayload();

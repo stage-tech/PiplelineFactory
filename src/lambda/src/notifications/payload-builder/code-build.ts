@@ -6,7 +6,6 @@ import { INotificationsPayloadBuilder } from './interface';
 
 export class CodeBuildPayloadBuilder implements INotificationsPayloadBuilder {
   constructor(
-    private awsClient: AWSDevToolsClient,
     private gitHubClient: GithubClient,
     private event: PipelineEventDetail,
   ) {}
