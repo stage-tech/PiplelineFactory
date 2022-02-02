@@ -54,10 +54,10 @@ export class CloudFormationManager {
       });
     }
 
-    if(repo.settings?.deployViaGithubActions === true) {
+    if (repo.settings?.deployViaGithubActions === true) {
       environmentOverRides.push({
         name: 'DEPLOY_VIA_GITHUB_ACTIONS',
-        value: "true",
+        value: 'true',
         type: 'PLAINTEXT',
       });
     }

@@ -34,7 +34,7 @@ export class AWSDevToolsClient {
     branch: string;
     commitSha: string;
   }> {
-    const response = await this.codebuild.batchGetBuilds({ids: [buildId]});
+    const response = await this.codebuild.batchGetBuilds({ ids: [buildId] });
     const build = response.builds?.[0];
     if (!build) {
       throw new Error('cannot find build by id');
@@ -47,14 +47,14 @@ export class AWSDevToolsClient {
     const commitSha = environmentVars.find((i) => i.name === 'GITHUB_SHA')?.value;
 
     const githubConfigs = {
-      owner:  repo?.[0] || 'undefined',
+      owner: repo?.[0] || 'undefined',
       repository: repo?.[1] || 'undefined',
       branch: branch || 'undefined',
-      commitSha: commitSha || 'undefined'
+      commitSha: commitSha || 'undefined',
     };
 
-    build.currentPhase
-    this.codebuild.listReports
+    build.currentPhase;
+    this.codebuild.listReports;
 
     return githubConfigs;
   }

@@ -2,11 +2,11 @@ import * as lambda from 'aws-lambda';
 
 import { AWSDevToolsClient } from '../clients/aws-dev-tools-client';
 import { GithubClient } from '../clients/github-client';
-import { BuildEventSource, PipelineEventDetail, ExecutionEvent } from '../models';
+import { BuildEventSource, ExecutionEvent, PipelineEventDetail } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
 import { NotificationTargetsManager } from './notification-targets-manager';
-import { CodePipelinePayloadBuilder } from './payload-builder/code-pipeline';
 import { CodeBuildPayloadBuilder } from './payload-builder/code-build';
+import { CodePipelinePayloadBuilder } from './payload-builder/code-pipeline';
 import { INotificationsPayloadBuilder } from './payload-builder/interface';
 import { SlackNotificationDeliveryClient } from './slack-manager';
 
@@ -32,7 +32,7 @@ export class PipelineNotificationsHandler {
         name: event.detail['project-name'],
         executionId: event.detail['build-id'],
         state: event.detail['build-status'],
-        sourceEvent: event
+        sourceEvent: event,
       } as PipelineEventDetail;
     }
 
