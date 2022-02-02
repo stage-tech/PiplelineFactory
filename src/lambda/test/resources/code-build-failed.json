@@ -1,0 +1,339 @@
+{
+    "version": "0",
+    "id": "8c72e903-a9cd-631a-518a-cf6d95854725",
+    "detail-type": "CodeBuild Build State Change",
+    "source": "aws.codebuild",
+    "account": "928065939415",
+    "time": "2022-02-02T17:22:14Z",
+    "region": "eu-west-1",
+    "resources": [
+        "arn:aws:codebuild:eu-west-1:928065939415:build/PLF-stage-door-cdk-master:2eccad97-d5ae-48cd-96d5-9ede518a90bc"
+    ],
+    "detail": {
+        "build-status": "FAILED",
+        "project-name": "PLF-stage-door-cdk-master",
+        "build-id": "arn:aws:codebuild:eu-west-1:928065939415:build/PLF-stage-door-cdk-master:2eccad97-d5ae-48cd-96d5-9ede518a90bc",
+        "additional-information": {
+            "cache": {
+                "type": "NO_CACHE"
+            },
+            "build-number": 79,
+            "timeout-in-minutes": 60,
+            "build-complete": true,
+            "initiator": "stage-door-cdk-master-github-oidc-role/GitHubActions",
+            "build-start-time": "Feb 2, 2022 5:02:37 PM",
+            "source": {
+                "report-build-status": true,
+                "buildspec": "buildspec.yml",
+                "location": "https://github.com/stage-tech/stage-door-cdk.git",
+                "type": "GITHUB"
+            },
+            "source-version": "6835dda7825df0c4cf1c2cde170df46591c9dc62",
+            "artifact": {
+                "md5sum": "20045694b2a98fc2aa6a470144100632",
+                "sha256sum": "4b3c36aae8b2698ad3bb4385d099f90f00b5f923e6cc78589817c31c80218b5f",
+                "location": "arn:aws:s3:::salt-deployment-packages/2eccad97-d5ae-48cd-96d5-9ede518a90bc/stage-door-cdk"
+            },
+            "environment": {
+                "image": "aws/codebuild/standard:5.0",
+                "privileged-mode": true,
+                "image-pull-credentials-type": "CODEBUILD",
+                "compute-type": "BUILD_GENERAL1_SMALL",
+                "type": "LINUX_CONTAINER",
+                "environment-variables": [
+                    {
+                        "name": "GITHUB_REPOSITORY",
+                        "type": "PLAINTEXT",
+                        "value": "stage-tech/stage-door-cdk"
+                    },
+                    {
+                        "name": "GITHUB_PATH",
+                        "type": "PLAINTEXT",
+                        "value": "/home/runner/work/_temp/_runner_file_commands/add_path_677da572-9cc0-47ce-bba8-e0c35f00b281"
+                    },
+                    {
+                        "name": "GITHUB_REF_PROTECTED",
+                        "type": "PLAINTEXT",
+                        "value": "true"
+                    },
+                    {
+                        "name": "ACCOUNT",
+                        "type": "PLAINTEXT",
+                        "value": "928065939415"
+                    },
+                    {
+                        "name": "GITHUB_SERVER_URL",
+                        "type": "PLAINTEXT",
+                        "value": "https://github.com"
+                    },
+                    {
+                        "name": "GITHUB_API_URL",
+                        "type": "PLAINTEXT",
+                        "value": "https://api.github.com"
+                    },
+                    {
+                        "name": "GITHUB_GRAPHQL_URL",
+                        "type": "PLAINTEXT",
+                        "value": "https://api.github.com/graphql"
+                    },
+                    {
+                        "name": "GITHUB_REF",
+                        "type": "PLAINTEXT",
+                        "value": "refs/heads/master"
+                    },
+                    {
+                        "name": "ENV_NAME",
+                        "type": "PLAINTEXT",
+                        "value": "master"
+                    },
+                    {
+                        "name": "GITHUB_HEAD_REF",
+                        "type": "PLAINTEXT",
+                        "value": ""
+                    },
+                    {
+                        "name": "GITHUB_ACTION",
+                        "type": "PLAINTEXT",
+                        "value": "__aws-actions_aws-codebuild-run-build"
+                    },
+                    {
+                        "name": "GITHUB_TOKEN_SECRET_ARN",
+                        "type": "PLAINTEXT",
+                        "value": "arn:aws:secretsmanager:eu-west-1:928065939415:secret:/pipeline-factory/default-github-token"
+                    },
+                    {
+                        "name": "GITHUB_ACTOR",
+                        "type": "PLAINTEXT",
+                        "value": "AbdoNile"
+                    },
+                    {
+                        "name": "GITHUB_REF_NAME",
+                        "type": "PLAINTEXT",
+                        "value": "master"
+                    },
+                    {
+                        "name": "GITHUB_JOB",
+                        "type": "PLAINTEXT",
+                        "value": "deploy"
+                    },
+                    {
+                        "name": "GITHUB_RUN_ID",
+                        "type": "PLAINTEXT",
+                        "value": "1784498923"
+                    },
+                    {
+                        "name": "GITHUB_RUN_NUMBER",
+                        "type": "PLAINTEXT",
+                        "value": "1001"
+                    },
+                    {
+                        "name": "AWS_REGION",
+                        "type": "PLAINTEXT",
+                        "value": "eu-west-1"
+                    },
+                    {
+                        "name": "GITHUB_WORKSPACE",
+                        "type": "PLAINTEXT",
+                        "value": "/home/runner/work/stage-door-cdk/stage-door-cdk"
+                    },
+                    {
+                        "name": "GITHUB_RUN_ATTEMPT",
+                        "type": "PLAINTEXT",
+                        "value": "3"
+                    },
+                    {
+                        "name": "GITHUB_EVENT_PATH",
+                        "type": "PLAINTEXT",
+                        "value": "/home/runner/work/_temp/_github_workflow/event.json"
+                    },
+                    {
+                        "name": "GITHUB_REPOSITORY_OWNER",
+                        "type": "PLAINTEXT",
+                        "value": "stage-tech"
+                    },
+                    {
+                        "name": "GITHUB_TOKEN_SECRETNAME",
+                        "type": "PLAINTEXT",
+                        "value": "arn:aws:secretsmanager:eu-west-1:928065939415:secret:/pipeline-factory/default-github-token"
+                    },
+                    {
+                        "name": "GITHUB_WORKFLOW",
+                        "type": "PLAINTEXT",
+                        "value": "Publish"
+                    },
+                    {
+                        "name": "GITHUB_RETENTION_DAYS",
+                        "type": "PLAINTEXT",
+                        "value": "90"
+                    },
+                    {
+                        "name": "GITHUB_ACTION_REPOSITORY",
+                        "type": "PLAINTEXT",
+                        "value": "aws-actions/aws-codebuild-run-build"
+                    },
+                    {
+                        "name": "STAGE_PACKAGE_BUCKET_NAME",
+                        "type": "PLAINTEXT",
+                        "value": "salt-deployment-packages"
+                    },
+                    {
+                        "name": "GITHUB_BASE_REF",
+                        "type": "PLAINTEXT",
+                        "value": ""
+                    },
+                    {
+                        "name": "STAGE_ENV_NAME",
+                        "type": "PLAINTEXT",
+                        "value": "master"
+                    },
+                    {
+                        "name": "GITHUB_SHA",
+                        "type": "PLAINTEXT",
+                        "value": "6835dda7825df0c4cf1c2cde170df46591c9dc62"
+                    },
+                    {
+                        "name": "GITHUB_ACTIONS",
+                        "type": "PLAINTEXT",
+                        "value": "true"
+                    },
+                    {
+                        "name": "GITHUB_ENV",
+                        "type": "PLAINTEXT",
+                        "value": "/home/runner/work/_temp/_runner_file_commands/set_env_677da572-9cc0-47ce-bba8-e0c35f00b281"
+                    },
+                    {
+                        "name": "GITHUB_EVENT_NAME",
+                        "type": "PLAINTEXT",
+                        "value": "push"
+                    },
+                    {
+                        "name": "GITHUB_REPOSITORY_BRANCH",
+                        "type": "PLAINTEXT",
+                        "value": "master"
+                    },
+                    {
+                        "name": "GITHUB_REF_TYPE",
+                        "type": "PLAINTEXT",
+                        "value": "branch"
+                    },
+                    {
+                        "name": "GITHUB_ACTION_REF",
+                        "type": "PLAINTEXT",
+                        "value": "v1"
+                    }
+                ]
+            },
+            "logs": {
+                "group-name": "/aws/codebuild/PLF-stage-door-cdk-master",
+                "stream-name": "2eccad97-d5ae-48cd-96d5-9ede518a90bc",
+                "deep-link": "https://console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logEvent:group=/aws/codebuild/PLF-stage-door-cdk-master;stream=2eccad97-d5ae-48cd-96d5-9ede518a90bc"
+            },
+            "phases": [
+                {
+                    "phase-context": [],
+                    "start-time": "Feb 2, 2022 5:02:37 PM",
+                    "end-time": "Feb 2, 2022 5:02:38 PM",
+                    "duration-in-seconds": 0,
+                    "phase-type": "SUBMITTED",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [],
+                    "start-time": "Feb 2, 2022 5:02:38 PM",
+                    "end-time": "Feb 2, 2022 5:02:39 PM",
+                    "duration-in-seconds": 1,
+                    "phase-type": "QUEUED",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:02:39 PM",
+                    "end-time": "Feb 2, 2022 5:03:03 PM",
+                    "duration-in-seconds": 24,
+                    "phase-type": "PROVISIONING",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:03:03 PM",
+                    "end-time": "Feb 2, 2022 5:03:28 PM",
+                    "duration-in-seconds": 24,
+                    "phase-type": "DOWNLOAD_SOURCE",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:03:28 PM",
+                    "end-time": "Feb 2, 2022 5:03:29 PM",
+                    "duration-in-seconds": 0,
+                    "phase-type": "INSTALL",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:03:29 PM",
+                    "end-time": "Feb 2, 2022 5:03:29 PM",
+                    "duration-in-seconds": 0,
+                    "phase-type": "PRE_BUILD",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:03:29 PM",
+                    "end-time": "Feb 2, 2022 5:06:42 PM",
+                    "duration-in-seconds": 193,
+                    "phase-type": "BUILD",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        "COMMAND_EXECUTION_ERROR: Error while executing command: yarn run test:cucumber. Reason: exit status 1"
+                    ],
+                    "start-time": "Feb 2, 2022 5:06:42 PM",
+                    "end-time": "Feb 2, 2022 5:22:09 PM",
+                    "duration-in-seconds": 927,
+                    "phase-type": "POST_BUILD",
+                    "phase-status": "FAILED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:22:09 PM",
+                    "end-time": "Feb 2, 2022 5:22:11 PM",
+                    "duration-in-seconds": 1,
+                    "phase-type": "UPLOAD_ARTIFACTS",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "phase-context": [
+                        ": "
+                    ],
+                    "start-time": "Feb 2, 2022 5:22:11 PM",
+                    "end-time": "Feb 2, 2022 5:22:13 PM",
+                    "duration-in-seconds": 2,
+                    "phase-type": "FINALIZING",
+                    "phase-status": "SUCCEEDED"
+                },
+                {
+                    "start-time": "Feb 2, 2022 5:22:13 PM",
+                    "phase-type": "COMPLETED"
+                }
+            ],
+            "queued-timeout-in-minutes": 480
+        },
+        "current-phase": "COMPLETED",
+        "current-phase-context": "[: ]",
+        "version": "1"
+    }
+}

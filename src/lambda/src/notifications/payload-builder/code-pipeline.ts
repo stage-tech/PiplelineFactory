@@ -3,7 +3,7 @@ import { GithubClient } from '../../clients/github-client';
 import { NotificationPayload, PipelineEventDetail } from '../../models';
 import { INotificationsPayloadBuilder } from './interface';
 
-export class CodeBuildNotificationsPayloadBuilder implements INotificationsPayloadBuilder {
+export class CodePipelinePayloadBuilder implements INotificationsPayloadBuilder {
   constructor(
     private awsClient: AWSDevToolsClient,
     private gitHubClient: GithubClient,

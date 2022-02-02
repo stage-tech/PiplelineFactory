@@ -60,8 +60,7 @@ export interface PipelineEventDetail {
   executionId: string;
   state: string;
   source: BuildEventSource;
-  link?: string;
-  phase?: string;
+  sourceEvent: ExecutionEvent;
 }
 
 export interface NotificationPayload {

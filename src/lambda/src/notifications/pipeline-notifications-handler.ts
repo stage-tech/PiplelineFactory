@@ -5,8 +5,8 @@ import { GithubClient } from '../clients/github-client';
 import { BuildEventSource, PipelineEventDetail, ExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
 import { NotificationTargetsManager } from './notification-targets-manager';
-import { CodeBuildNotificationsPayloadBuilder } from './payload-builder/code-pipeline';
-import { CodePipelineNotificationsPayloadBuilder } from './payload-builder/code-build';
+import { CodePipelinePayloadBuilder } from './payload-builder/code-pipeline';
+import { CodeBuildPayloadBuilder } from './payload-builder/code-build';
 import { INotificationsPayloadBuilder } from './payload-builder/interface';
 import { SlackNotificationDeliveryClient } from './slack-manager';
 
@@ -18,22 +18,24 @@ export class PipelineNotificationsHandler {
     const CODEBUILD_DETAIL_TYPE = 'CodeBuild Build State Change';
     if (event['detail-type'] == CODEPIPELINE_DETAIL_TYPE) {
       return {
+        source: BuildEventSource.AWS_CODE_PIPELINE,
         name: event.detail.pipeline,
         executionId: event.detail['execution-id'],
         state: event.detail.state,
-        source: BuildEventSource.AWS_CODE_PIPELINE,
+        sourceEvent: event,
       } as PipelineEventDetail;
     }
+
     if (event['detail-type'] == CODEBUILD_DETAIL_TYPE) {
       return {
+        source: BuildEventSource.AWS_CODE_BUILD,
         name: event.detail['project-name'],
         executionId: event.detail['build-id'],
         state: event.detail['build-status'],
-        source: BuildEventSource.AWS_CODE_BUILD,
-        phase: event.detail['current-phase'],
-        link: event.detail['additional-information'].logs['deep-link']
+        sourceEvent: event
       } as PipelineEventDetail;
     }
+
     return undefined;
   }
 
@@ -51,9 +53,9 @@ export class PipelineNotificationsHandler {
     const awsClient = new AWSDevToolsClient();
     let notificationPayloadBuilder: INotificationsPayloadBuilder;
     if (eventDetails.source === BuildEventSource.AWS_CODE_PIPELINE) {
-      notificationPayloadBuilder = new CodePipelineNotificationsPayloadBuilder(awsClient, githubClient, eventDetails);
+      notificationPayloadBuilder = new CodeBuildPayloadBuilder(awsClient, githubClient, eventDetails);
     } else if (eventDetails.source === BuildEventSource.AWS_CODE_BUILD) {
-      notificationPayloadBuilder = new CodeBuildNotificationsPayloadBuilder(awsClient, githubClient, eventDetails);
+      notificationPayloadBuilder = new CodePipelinePayloadBuilder(awsClient, githubClient, eventDetails);
     } else {
       throw new Error('No notification builder found ');
     }
