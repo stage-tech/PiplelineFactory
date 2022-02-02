@@ -3,7 +3,7 @@ export class SettingsOverrides {
   buildSpecLocation?: string;
   buildAsRoleArn?: string;
   monitoredBranches?: string[];
-  deployViaGithubActions? : boolean
+  deployViaGithubActions?: boolean;
   notifications?: NotificationSettings[];
 }
 
@@ -50,10 +50,16 @@ export interface PipelineExecutionEvent {
   detail: any;
 }
 
+export enum BuildEventSource {
+  AWS_CODE_PIPELINE = 'AWS_CODE_PIPELINE',
+  AWS_CODE_BUILD = 'AWS_CODE_BUILD',
+}
+
 export interface PipelineEventDetail {
   pipelineName: string;
   executionId: string;
   state: string;
+  source: BuildEventSource;
 }
 
 export interface NotificationPayload {
