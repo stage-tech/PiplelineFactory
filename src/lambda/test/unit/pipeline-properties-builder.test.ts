@@ -16,6 +16,7 @@ describe('Sample Test', () => {
         buildAsRoleArn: 'buildAsRoleArn',
         artifactsBucketName: 'artifactsBucketName',
       },
+      deployViaGithubActions: true,
     };
     const props = new PipeLinePropertiesBuilder().build(payload);
 
@@ -25,5 +26,6 @@ describe('Sample Test', () => {
     expect(props.monitoredBranches?.sort()).toEqual(['abdo', 'bugfix-12', 'test', 'demo'].sort());
     expect(props.buildAsRoleArn).toEqual('buildAsRoleArn');
     expect(props.artifactsBucketName).toEqual('artifactsBucketName');
+    expect(props.deployViaGithubActions).toEqual(true);
   });
 });

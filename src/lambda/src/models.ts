@@ -3,6 +3,7 @@ export class SettingsOverrides {
   buildSpecLocation?: string;
   buildAsRoleArn?: string;
   monitoredBranches?: string[];
+  deployViaGithubActions? : boolean
   notifications?: NotificationSettings[];
 }
 
