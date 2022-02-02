@@ -1,19 +1,18 @@
 import { AWSDevToolsClient } from '../../clients/aws-dev-tools-client';
 import { GithubClient } from '../../clients/github-client';
-import { NotificationPayload } from '../../models';
+import { NotificationPayload, PipelineEventDetail } from '../../models';
 import { INotificationsPayloadBuilder } from './interface';
 
-export class CodePipelineNotificationsPayloadBuilder implements INotificationsPayloadBuilder {
+export class CodeBuildNotificationsPayloadBuilder implements INotificationsPayloadBuilder {
   constructor(
     private awsClient: AWSDevToolsClient,
     private gitHubClient: GithubClient,
-    private event: { name: string; executionId: string },
+    private event: PipelineEventDetail,
   ) {}
 
   async buildNotificationPayload(): Promise<NotificationPayload> {
-    const { name: pipelineName, executionId } = this.event;
-    const pipelineExecution = await this.awsClient.getPipelineExecution(pipelineName, executionId);
-    const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
+    const pipelineExecution = await this.awsClient.getPipelineExecution(this.event.name, this.event.executionId);
+    const githubConfigs = await this.awsClient.getBuildSourceConfigurations(this.event.name);
     const artifactRevision = pipelineExecution.artifactRevisions ? pipelineExecution?.artifactRevisions[0] : undefined;
     if (!artifactRevision?.revisionId) {
       throw new Error('cannot get version information');
@@ -27,7 +26,7 @@ export class CodePipelineNotificationsPayloadBuilder implements INotificationsPa
 
     let failureDetails: { link?: string; summary?: string; step?: string } | undefined;
     if (pipelineExecution.status?.toUpperCase() == 'FAILED') {
-      const failedExecution = await this.awsClient.getFailedAction(pipelineName, executionId);
+      const failedExecution = await this.awsClient.getFailedAction(this.event.name, this.event.executionId);
       failureDetails = {
         link: failedExecution?.output?.executionResult?.externalExecutionUrl,
         summary: failedExecution?.output?.executionResult?.externalExecutionSummary,
@@ -35,9 +34,9 @@ export class CodePipelineNotificationsPayloadBuilder implements INotificationsPa
       };
     }
     return {
-      name: pipelineName,
+      name: this.event.name,
       state: pipelineExecution.status?.toUpperCase() || '',
-      executionId: executionId,
+      executionId: this.event.executionId,
       commitUrl: commitInfo.url || '',
       commitMessage: commitInfo.message || '',
       commitAuthor: commitInfo.author || '',

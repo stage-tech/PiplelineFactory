@@ -32,7 +32,7 @@ export class AWSDevToolsClient {
     owner: string;
     repository: string;
     branch: string;
-    commitSha?: string;
+    commitSha: string;
   }> {
     const response = await this.codebuild.batchGetBuilds({ids: [buildId]});
     const build = response.builds?.[0];
@@ -50,8 +50,11 @@ export class AWSDevToolsClient {
       owner:  repo?.[0] || 'undefined',
       repository: repo?.[1] || 'undefined',
       branch: branch || 'undefined',
-      commitSha
+      commitSha: commitSha || 'undefined'
     };
+
+    build.currentPhase
+    this.codebuild.listReports
 
     return githubConfigs;
   }

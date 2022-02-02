@@ -5,8 +5,8 @@ import { GithubClient } from '../clients/github-client';
 import { BuildEventSource, PipelineEventDetail, ExecutionEvent } from '../models';
 import { OrganizationManager } from '../monitor/organization-manager';
 import { NotificationTargetsManager } from './notification-targets-manager';
-import { CodeBuildNotificationsPayloadBuilder } from './payload-builder/code-build';
-import { CodePipelineNotificationsPayloadBuilder } from './payload-builder/code-pipeline';
+import { CodeBuildNotificationsPayloadBuilder } from './payload-builder/code-pipeline';
+import { CodePipelineNotificationsPayloadBuilder } from './payload-builder/code-build';
 import { INotificationsPayloadBuilder } from './payload-builder/interface';
 import { SlackNotificationDeliveryClient } from './slack-manager';
 
@@ -30,6 +30,8 @@ export class PipelineNotificationsHandler {
         executionId: event.detail['build-id'],
         state: event.detail['build-status'],
         source: BuildEventSource.AWS_CODE_BUILD,
+        phase: event.detail['current-phase'],
+        link: event.detail['additional-information'].logs['deep-link']
       } as PipelineEventDetail;
     }
     return undefined;
