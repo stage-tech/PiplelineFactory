@@ -58,9 +58,10 @@ export class PipelineNotificationsHandler {
 
     const slackNotificationClient = new SlackNotificationDeliveryClient();
     const notificationTargetsManager = new NotificationTargetsManager(awsClient, githubClient);
+    const notificationPayload = await notificationPayloadBuilder.buildNotificationPayload();
 
     const notificationTargets = await notificationTargetsManager.getNotificationTargets(
-      eventDetails.name,
+      notificationPayload.codeInformation,
       eventDetails.state,
     );
 
@@ -69,7 +70,6 @@ export class PipelineNotificationsHandler {
       return;
     }
 
-    const notificationPayload = await notificationPayloadBuilder.buildNotificationPayload();
     if (notificationPayload) {
       for (let i = 0; i < notificationTargets.length; i++) {
         await slackNotificationClient.send(notificationPayload, notificationTargets[i]);

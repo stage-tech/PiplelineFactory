@@ -7,11 +7,11 @@ export class CodePipelineNotificationsPayloadBuilder implements INotificationsPa
   constructor(
     private awsClient: AWSDevToolsClient,
     private gitHubClient: GithubClient,
-    private event: { pipelineName: string; executionId: string },
+    private event: { name: string; executionId: string },
   ) {}
 
   async buildNotificationPayload(): Promise<NotificationPayload> {
-    const { pipelineName, executionId } = this.event;
+    const { name: pipelineName, executionId } = this.event;
     const pipelineExecution = await this.awsClient.getPipelineExecution(pipelineName, executionId);
     const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
     const artifactRevision = pipelineExecution.artifactRevisions ? pipelineExecution?.artifactRevisions[0] : undefined;
@@ -45,6 +45,7 @@ export class CodePipelineNotificationsPayloadBuilder implements INotificationsPa
       failureLogs: failureDetails?.link,
       failureSummary: failureDetails?.summary,
       failurePhase: failureDetails?.step,
+      codeInformation: githubConfigs,
     };
   }
 }

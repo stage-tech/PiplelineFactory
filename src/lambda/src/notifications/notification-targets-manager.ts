@@ -11,9 +11,10 @@ export class NotificationTargetsManager {
     this.githubClient = githubClient;
   }
 
-  public getNotificationTargets = async (pipelineName: string, eventState: string): Promise<NotificationTarget[]> => {
-    const githubConfigs = await this.awsClient.getPipelineSourceConfigurations(pipelineName);
-
+  public getNotificationTargets = async (
+    githubConfigs: { owner: string; repository: string; branch: string },
+    eventState: string,
+  ): Promise<NotificationTarget[]> => {
     const repo = await this.githubClient.getRepository(githubConfigs.owner, githubConfigs.repository);
 
     const factorySettings = repo.settings;

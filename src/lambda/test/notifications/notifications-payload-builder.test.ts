@@ -51,7 +51,7 @@ describe('Notification Payload Builder', () => {
     });
     const event = {
       executionId: 'executionId',
-      pipelineName: '',
+      name: '',
       source: BuildEventSource.AWS_CODE_PIPELINE,
     };
     const notificationsManager = new CodePipelineNotificationsPayloadBuilder(
@@ -101,7 +101,7 @@ describe('Notification Payload Builder', () => {
       instance(gitHubMock),
       {
         executionId: 'executionId',
-        pipelineName: '',
+        name: '',
       },
     );
     const payload = await notificationsManager.buildNotificationPayload();

@@ -73,6 +73,11 @@ export interface NotificationPayload {
   failureLogs?: string;
   failureSummary?: string;
   failurePhase?: string;
+  codeInformation: {
+    repository: string;
+    owner: string;
+    branch: string;
+  };
 }
 
 export interface NotificationSettings {
