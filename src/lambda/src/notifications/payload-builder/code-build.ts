@@ -20,7 +20,7 @@ export class CodeBuildPayloadBuilder implements INotificationsPayloadBuilder {
 
     const githubConfigs = {
       owner: repository.split('/')[0],
-      repository: repository.split('/')[0],
+      repository: repository.split('/')[1],
       branch: environmentVariables.find((variable) => variable.name === 'GITHUB_REPOSITORY_BRANCH').value as string,
       commitSha: this.event.sourceEvent.detail['additional-information']['source-version'] as string,
     };
