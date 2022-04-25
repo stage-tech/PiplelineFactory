@@ -84,7 +84,7 @@ export class Monitor extends cdk.Construct {
       this,
       "Lambda_Repository_Monitor",
       {
-        runtime: lambda.Runtime.NODEJS_10_X,
+        runtime: lambda.Runtime.NODEJS_14_X,
         functionName: `${stackName}-Repository-Monitor`,
         handler: "dist/monitor/handler-monitor-repositories.handler",
         role: lambdaRole,
@@ -107,7 +107,7 @@ export class Monitor extends cdk.Construct {
       this,
       "Lambda_Pipeline_Manager",
       {
-        runtime: lambda.Runtime.NODEJS_10_X,
+        runtime: lambda.Runtime.NODEJS_14_X,
         functionName: `${stackName}-Pipeline-Manager`,
         handler: "dist/monitor/handler-pipeline-management.handler",
         role: lambdaRole,

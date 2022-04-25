@@ -39,7 +39,7 @@ export default class BranchHandlers extends cdk.Construct {
       this,
       "Lambda_API_BranchCreation",
       {
-        runtime: lambda.Runtime.NODEJS_10_X,
+        runtime: lambda.Runtime.NODEJS_14_X,
         functionName: `${
           cdk.Stack.of(this).stackName
         }-API-BranchCreatedHandler`,
@@ -55,7 +55,7 @@ export default class BranchHandlers extends cdk.Construct {
       this,
       "Lambda_API_BranchDeletion",
       {
-        runtime: lambda.Runtime.NODEJS_10_X,
+        runtime: lambda.Runtime.NODEJS_14_X,
         functionName: `${
           cdk.Stack.of(this).stackName
         }-API-BranchDeletedHandler`,
