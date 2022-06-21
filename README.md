@@ -4,13 +4,14 @@
 
 In a new AWS account execute the following setup steps:
 
-1. In AWS Secrets Manager add a GitHub token with read access to code and packages under `/pipeline-factory/default-github-token`
 
-2. Run the command:
+1. Run the command:
 
 ```shell
  ./deploy.sh [aws-profile-name]
 ```
+
+2. In AWS Secrets Manager update the secret `/pipeline-factory/default-github-token` with a GitHub token with read access to code and packages
 
 ## Manually deploy a pipeline via the PLF API
 
