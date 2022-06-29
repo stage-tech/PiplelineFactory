@@ -126,6 +126,7 @@ export class CodeBuildProject extends cdk.Construct {
       provider,
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
+      maxSessionDuration: cdk.Duration.hours(2),
       filter: `ref:refs/heads/${props.githubRepositoryBranch}`,
     });
     executionRole.addToPolicy(
