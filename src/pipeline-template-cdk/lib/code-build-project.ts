@@ -51,6 +51,9 @@ export class CodeBuildProject extends cdk.Construct {
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
       webhook: false,
+      cloneDepth: 1,
+      fetchSubmodules: false,
+      ...(props.deployViaGitHubActions ? { branchOrRef: `refs/heads/${props.githubRepositoryBranch.toLowerCase()}` } : {}),
     });
 
     const buildAsRole = iam.Role.fromRoleArn(
@@ -67,6 +70,7 @@ export class CodeBuildProject extends cdk.Construct {
         buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
         privileged: true,
       },
+      timeout: cdk.Duration.hours(2),
 
       projectName: `PLF-${props.projectName}`,
       environmentVariables: {
