@@ -1,6 +1,6 @@
-import * as cdk from "@aws-cdk/core";
-import * as ssm from "@aws-cdk/aws-ssm";
-import * as secretManager from "@aws-cdk/aws-secretsmanager";
+import * as cdk from "aws-cdk-lib/core";
+import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as secretManager from "aws-cdk-lib/aws-secretsmanager";
 import { CodeBuildProject } from "./code-build-project";
 import { CodePipeline } from "./code-pipeline";
 

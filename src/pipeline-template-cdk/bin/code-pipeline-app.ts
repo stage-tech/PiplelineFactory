@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 require("dotenv").config();
-import * as cdk from "@aws-cdk/core";
+import * as cdk from "aws-cdk-lib/core";
 import { Utility } from "./utility";
 import { CodePipelineStack } from "../lib/code-pipeline-stack";
 

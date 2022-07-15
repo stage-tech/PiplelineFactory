@@ -1,11 +1,12 @@
-import * as cdk from "@aws-cdk/core";
-import * as codePipeline from "@aws-cdk/aws-codepipeline";
-import * as codePipelineActions from "@aws-cdk/aws-codepipeline-actions";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as iam from "@aws-cdk/aws-iam";
-import * as ssm from "@aws-cdk/aws-ssm";
-import { IPipeline } from "@aws-cdk/aws-codepipeline";
-import { IProject } from "@aws-cdk/aws-codebuild";
+import * as cdk from "aws-cdk-lib/core";
+import * as codePipeline from "aws-cdk-lib/aws-codepipeline";
+import * as codePipelineActions from "aws-cdk-lib/aws-codepipeline-actions";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as ssm from "aws-cdk-lib/aws-ssm";
+import { IPipeline } from "aws-cdk-lib/aws-codepipeline";
+import { IProject } from "aws-cdk-lib/aws-codebuild";
+import { Construct } from 'constructs';
 
 export interface CodePipelineProps {
   artifactsBucketName: string;
@@ -18,9 +19,9 @@ export interface CodePipelineProps {
   buildProject: IProject;
 }
 
-export class CodePipeline extends cdk.Construct {
+export class CodePipeline extends Construct {
   public readonly pipeline: IPipeline;
-  constructor(scope: cdk.Construct, id: string, props: CodePipelineProps) {
+  constructor(scope: Construct, id: string, props: CodePipelineProps) {
     super(scope, id);
 
     const buildAsRole = iam.Role.fromRoleArn(
