@@ -1,10 +1,11 @@
-import * as cdk from "@aws-cdk/core";
-import * as iam from "@aws-cdk/aws-iam";
-import { Effect } from "@aws-cdk/aws-iam";
+import * as cdk from "aws-cdk-lib";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { Effect } from "aws-cdk-lib/aws-iam";
+import { Construct } from 'constructs';
 
-export default class FactoryIamRole extends cdk.Construct {
+export default class FactoryIamRole extends Construct {
   role: iam.Role;
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
     const projectName = cdk.Stack.of(this).stackName
     const codebuildRole = new iam.Role(this, "Role_Codebuild", {

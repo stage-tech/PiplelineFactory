@@ -1,16 +1,17 @@
-import * as cdk from "@aws-cdk/core";
-import * as sns from "@aws-cdk/aws-sns";
-import * as kms from "@aws-cdk/aws-kms";
-import * as ssm from "@aws-cdk/aws-ssm";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as eventTargets from "@aws-cdk/aws-events-targets";
-import * as logs from "@aws-cdk/aws-logs";
-import * as iam from "@aws-cdk/aws-iam";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as events from "@aws-cdk/aws-events";
-import { SubscriptionProtocol } from "@aws-cdk/aws-sns";
-import { SnsEventSource } from "@aws-cdk/aws-lambda-event-sources";
-import { RemovalPolicy } from "@aws-cdk/core";
+import * as cdk from "aws-cdk-lib";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as kms from "aws-cdk-lib/aws-kms";
+import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as eventTargets from "aws-cdk-lib/aws-events-targets";
+import * as logs from "aws-cdk-lib/aws-logs";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as events from "aws-cdk-lib/aws-events";
+import { SubscriptionProtocol } from "aws-cdk-lib/aws-sns";
+import { SnsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { RemovalPolicy } from "aws-cdk-lib";
+import { Construct } from 'constructs';
 import { CloudWatchLogsTarget } from "./cloudwatch-logs-target";
 import { ServicePrincipals } from "cdk-constants";
 import NotificationsLambdaRole from "./lambda-role";
@@ -22,8 +23,8 @@ export interface NotificationsProps {
   kmsEncryptionKey: kms.Key;
 }
 
-export default class Notifications extends cdk.Construct {
-  constructor(scope: cdk.Construct, id: string, props: NotificationsProps) {
+export default class Notifications extends Construct {
+  constructor(scope: Construct, id: string, props: NotificationsProps) {
     super(scope, id);
     const projectName = cdk.Stack.of(this).stackName;
     const pipelineEventsTopic = new sns.Topic(this, "PipelineEventsTopic", {

@@ -1,11 +1,11 @@
-import * as cdk from "@aws-cdk/core";
-import * as secretsmanager from "@aws-cdk/aws-secretsmanager";
+import * as cdk from "aws-cdk-lib";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import FactoryProperties from "./factoryProperties";
 import Factory from "./factory";
 import Notifications from "./notifications/notifications";
 import Api from "./api";
-import * as kms from "@aws-cdk/aws-kms";
-import * as iam from "@aws-cdk/aws-iam";
+import * as kms from "aws-cdk-lib/aws-kms";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as cdkConstants from 'cdk-constants'
 import DefaultBuildAsRole from "./default-build-as-role";
 import DefaultBuckets from "./default-buckets";
