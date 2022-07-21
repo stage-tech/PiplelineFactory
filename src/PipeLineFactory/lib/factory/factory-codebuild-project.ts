@@ -30,7 +30,7 @@ export default class FactoryCodeBuildProject extends Construct {
         role: codebuildRole,
         projectName : `${projectName}`,
         environment :  {
-            buildImage : codebuild.LinuxBuildImage.STANDARD_5_0,
+            buildImage : codebuild.LinuxBuildImage.STANDARD_6_0,
             privileged : true
         }
       }
