@@ -7,6 +7,7 @@ import {
   GithubActionsRole,
 } from "aws-cdk-github-oidc";
 import { Effect, PolicyStatement } from "@aws-cdk/aws-iam";
+import { Duration } from "@aws-cdk/core";
 
 
 export interface CodeBuildProjectProps {
@@ -127,6 +128,7 @@ export class CodeBuildProject extends cdk.Construct {
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
       filter: `ref:refs/heads/${props.githubRepositoryBranch}`,
+      maxSessionDuration : Duration.hours(3)
     });
     executionRole.addToPolicy(
       new PolicyStatement({
