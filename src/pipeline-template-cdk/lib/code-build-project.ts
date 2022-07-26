@@ -127,6 +127,7 @@ export class CodeBuildProject extends Construct {
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
       filter: `ref:refs/heads/${props.githubRepositoryBranch}`,
+      maxSessionDuration : Duration.hours(3)
     });
     executionRole.addToPolicy(
       new PolicyStatement({
