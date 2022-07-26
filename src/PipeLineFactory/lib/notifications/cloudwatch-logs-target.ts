@@ -1,5 +1,5 @@
-import * as events from '@aws-cdk/aws-events';
-import * as logs from '@aws-cdk/aws-logs';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as logs from 'aws-cdk-lib/aws-logs';
 
 
 export class CloudWatchLogsTarget implements events.IRuleTarget {
@@ -11,7 +11,6 @@ export class CloudWatchLogsTarget implements events.IRuleTarget {
 
   public bind(_rule: events.IRule, _id?: string): events.RuleTargetConfig {
     return {
-      id: '',
       // we can't use logGroup.logArn because it has `:*` on the end, and it's a token
       // so we can't just remove the suffix with string replacement operations
       // aws-cdk issue: https://github.com/aws/aws-cdk/issues/9953

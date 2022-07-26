@@ -1,14 +1,13 @@
-import * as cdk from "@aws-cdk/core";
-import * as codebuild from "@aws-cdk/aws-codebuild";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as iam from "@aws-cdk/aws-iam";
+import * as cdk from "aws-cdk-lib";
+import * as codebuild from "aws-cdk-lib/aws-codebuild";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as iam from "aws-cdk-lib/aws-iam";
 import {
   GithubActionsIdentityProvider,
   GithubActionsRole,
 } from "aws-cdk-github-oidc";
-import { Effect, PolicyStatement } from "@aws-cdk/aws-iam";
-import { Duration } from "@aws-cdk/core";
-
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { Construct } from 'constructs';
 
 export interface CodeBuildProjectProps {
   buildAsRoleArn: string;
@@ -21,9 +20,9 @@ export interface CodeBuildProjectProps {
   deployViaGitHubActions: boolean;
   buildSpecLocationOverride?: string;
 }
-export class CodeBuildProject extends cdk.Construct {
+export class CodeBuildProject extends Construct {
   buildProject: codebuild.Project;
-  constructor(scope: cdk.Construct, id: string, props: CodeBuildProjectProps) {
+  constructor(scope: Construct, id: string, props: CodeBuildProjectProps) {
     super(scope, id);
     this.buildProject = this.configureCodeBuildProject(props);
     if (props.deployViaGitHubActions) {
@@ -128,7 +127,7 @@ export class CodeBuildProject extends cdk.Construct {
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
       filter: `ref:refs/heads/${props.githubRepositoryBranch}`,
-      maxSessionDuration : Duration.hours(3)
+      maxSessionDuration : cdk.Duration.hours(3)
     });
     executionRole.addToPolicy(
       new PolicyStatement({

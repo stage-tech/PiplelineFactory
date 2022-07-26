@@ -1,4 +1,4 @@
-import * as cdk from "@aws-cdk/core";
+import * as cdk from "aws-cdk-lib";
 
 export default class FactoryProperties implements cdk.StackProps {
   readonly pipelineTemplateRepositoryName: string;

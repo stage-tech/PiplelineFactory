@@ -1,9 +1,10 @@
-import * as cdk from "@aws-cdk/core";
-import * as apigateway from "@aws-cdk/aws-apigateway";
-import { ApiKeySourceType } from "@aws-cdk/aws-apigateway";
-import * as acm from "@aws-cdk/aws-certificatemanager";
+import * as cdk from "aws-cdk-lib";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import { ApiKeySourceType } from "aws-cdk-lib/aws-apigateway";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import { Construct } from 'constructs';
 import BranchHandlers from "./branchHandlers";
-import { IFunction } from "@aws-cdk/aws-lambda";
+import { IFunction } from "aws-cdk-lib/aws-lambda";
 
 export interface ApiProps {
   apiBranchCreated: IFunction;
@@ -13,10 +14,10 @@ export interface ApiProps {
 
 }
 
-export default class ApiEntryPoint extends cdk.Construct {
+export default class ApiEntryPoint extends Construct {
   public readonly buildProjectArn: string;
   constructor(
-    scope: cdk.Construct,
+    scope: Construct,
     id: string,
     props: ApiProps
   ) {
@@ -58,7 +59,6 @@ export default class ApiEntryPoint extends cdk.Construct {
     });
 
     const usagePlan = new apigateway.UsagePlan(this, "UsagePlan", {
-      apiKey: apiKey,
       name: "Basic Unlimited",
       apiStages: [
         {
@@ -67,6 +67,7 @@ export default class ApiEntryPoint extends cdk.Construct {
         },
       ],
     });
+    usagePlan.addApiKey(apiKey);
 
     if (props.apiDomainName && props.apiDomainCertificateArn) {
       new apigateway.DomainName(this, "ApiCustomDomain", {

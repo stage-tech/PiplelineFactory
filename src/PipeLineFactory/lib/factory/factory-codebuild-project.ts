@@ -1,11 +1,12 @@
-import * as cdk from "@aws-cdk/core";
-import {IRole} from "@aws-cdk/aws-iam";
-import * as codebuild from "@aws-cdk/aws-codebuild";
+import * as cdk from "aws-cdk-lib";
+import {IRole} from "aws-cdk-lib/aws-iam";
+import * as codebuild from "aws-cdk-lib/aws-codebuild";
+import { Construct } from 'constructs';
 import FactoryProps from "./factory-props";
 
-export default class FactoryCodeBuildProject extends cdk.Construct {
+export default class FactoryCodeBuildProject extends Construct {
   BuildProject: codebuild.Project;
-  constructor(scope: cdk.Construct, id: string, props : FactoryProps , codebuildRole : IRole ) {
+  constructor(scope: Construct, id: string, props : FactoryProps , codebuildRole : IRole ) {
     super(scope, id);
 
     const projectName = cdk.Stack.of(this).stackName
@@ -29,7 +30,7 @@ export default class FactoryCodeBuildProject extends cdk.Construct {
         role: codebuildRole,
         projectName : `${projectName}`,
         environment :  {
-            buildImage : codebuild.LinuxBuildImage.STANDARD_5_0,
+            buildImage : codebuild.LinuxBuildImage.STANDARD_6_0,
             privileged : true
         }
       }

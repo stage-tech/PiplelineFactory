@@ -1,9 +1,10 @@
-import * as cdk from "@aws-cdk/core";
-import * as iam from "@aws-cdk/aws-iam";
+import * as cdk from "aws-cdk-lib";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { Construct } from 'constructs';
 
-export default class ApiHandlerLambdaRole extends cdk.Construct {
+export default class ApiHandlerLambdaRole extends Construct {
   lambdaRole: iam.Role;
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
     const stackName = cdk.Stack.of(this).stackName;
     const lambdaRole = new iam.Role(this, "Role_LambdaFunction", {

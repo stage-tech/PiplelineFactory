@@ -1,11 +1,11 @@
-import * as cdk from "@aws-cdk/core";
+import { Construct } from 'constructs';
 import FactoryCodeBuildProject from "./factory-codebuild-project";
 import FactoryIamRole from "./factory-iam-role";
 import FactoryProps from "./factory-props";
 
-export default class Factory extends cdk.Construct {
+export default class Factory extends Construct {
   buildProjectName: string;
-  constructor(scope: cdk.Construct, id: string, props: FactoryProps) {
+  constructor(scope: Construct, id: string, props: FactoryProps) {
     super(scope, id);
 
     const factoryIamRole = new FactoryIamRole(this, "FactoryRole");

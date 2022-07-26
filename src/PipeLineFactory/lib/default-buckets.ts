@@ -1,8 +1,9 @@
-import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as ssm from "@aws-cdk/aws-ssm";
-import * as iam from "@aws-cdk/aws-iam";
-import * as kms from "@aws-cdk/aws-kms";
+import * as cdk from "aws-cdk-lib";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as kms from "aws-cdk-lib/aws-kms";
+import { Construct } from 'constructs';
 
 export interface DefaultBucketsProps {
   existingBucketName?: string;
@@ -10,14 +11,14 @@ export interface DefaultBucketsProps {
   kmsEncryptionKey: kms.Key;
 }
 
-export default class DefaultBuckets extends cdk.Construct {
+export default class DefaultBuckets extends Construct {
   transientArtifactsBucket: s3.Bucket;
   artifactsBucket: s3.IBucket;
-  constructor(scope: cdk.Construct, id: string, props: DefaultBucketsProps) {
+  constructor(scope: Construct, id: string, props: DefaultBucketsProps) {
     super(scope, id);
 
     const stack = cdk.Stack.of(this);
-    
+
     this.transientArtifactsBucket = new s3.Bucket(this, "transientBucket", {
       bucketName: `${stack.stackName.toLowerCase()}-${stack.account}-${
         stack.region

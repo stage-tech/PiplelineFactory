@@ -1,4 +1,4 @@
-import * as cdk from "@aws-cdk/core";
+import { Construct } from 'constructs';
 import ApiEntryPoint from "./apiEntryPoint";
 import BranchHandlers from "./branchHandlers";
 
@@ -10,9 +10,9 @@ export interface ApiProps {
   PipelineFactoryBuildProjectName: string;
 }
 
-export default class Api extends cdk.Construct {
+export default class Api extends Construct {
   public readonly buildProjectArn: string;
-  constructor(scope: cdk.Construct, id: string, props: ApiProps) {
+  constructor(scope: Construct, id: string, props: ApiProps) {
     super(scope, id);
 
     const handlers = new BranchHandlers(this, "handlers", {

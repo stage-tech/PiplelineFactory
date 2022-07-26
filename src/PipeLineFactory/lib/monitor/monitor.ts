@@ -1,12 +1,13 @@
-import * as cdk from "@aws-cdk/core";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as iam from "@aws-cdk/aws-iam";
-import * as events from "@aws-cdk/aws-events";
-import * as eventTargets from "@aws-cdk/aws-events-targets";
+import * as cdk from "aws-cdk-lib";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as events from "aws-cdk-lib/aws-events";
+import * as eventTargets from "aws-cdk-lib/aws-events-targets";
 
-import { SqsEventSource } from "@aws-cdk/aws-lambda-event-sources";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { Construct } from 'constructs';
 
 export interface MonitorProps {
   organizationName: string;
@@ -16,9 +17,9 @@ export interface MonitorProps {
   repositorySelector : string
 }
 
-export class Monitor extends cdk.Construct {
+export class Monitor extends Construct {
   public readonly buildProjectArn: string;
-  constructor(scope: cdk.Construct, id: string, props: MonitorProps) {
+  constructor(scope: Construct, id: string, props: MonitorProps) {
     super(scope, id);
     const queue = new sqs.Queue(this, "repository_discovery_jobs", {
       queueName: `repository_discovery_jobs`,

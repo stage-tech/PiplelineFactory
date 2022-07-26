@@ -1,7 +1,8 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as s3 from "@aws-cdk/aws-s3";
-import { IFunction } from "@aws-cdk/aws-lambda";
+import * as cdk from "aws-cdk-lib";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import { IFunction } from "aws-cdk-lib/aws-lambda";
+import { Construct } from 'constructs';
 import ApiHandlerLambdaRole from "./lambda-role";
 
 export interface BranchHandlersProps {
@@ -9,12 +10,12 @@ export interface BranchHandlersProps {
   triggerCodeS3Key: string;
   triggerCodeS3Bucket: string;
 }
-export default class BranchHandlers extends cdk.Construct {
+export default class BranchHandlers extends Construct {
   public readonly apiBranchCreated: IFunction;
 
   public readonly apiBranchDeleted: IFunction;
 
-  constructor(scope: cdk.Construct, id: string, props: BranchHandlersProps) {
+  constructor(scope: Construct, id: string, props: BranchHandlersProps) {
     super(scope, id);
 
     const lambdaRole = new ApiHandlerLambdaRole(this, "lambdaRole");
