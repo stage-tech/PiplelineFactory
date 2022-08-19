@@ -14,6 +14,7 @@ export interface CodePipelineProps {
   githubRepositoryOwner: string;
   githubRepositoryName: string;
   gitHubTokenSecretArn: string;
+  envName: string,
   buildAsRoleArn: string;
   projectName: string;
   buildProject: IProject;
@@ -98,7 +99,7 @@ export class CodePipeline extends Construct {
       props.artifactsBucketName
     );
 
-    let objectPrefix = `${props.githubRepositoryName}/${props.githubRepositoryBranch}`;
+    let objectPrefix = `${props.githubRepositoryName}/${props.envName}`;
 
     const publishAction = new codePipelineActions.S3DeployAction({
       actionName: "S3Deploy",
