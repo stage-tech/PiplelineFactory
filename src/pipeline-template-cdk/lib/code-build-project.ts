@@ -15,6 +15,7 @@ export interface CodeBuildProjectProps {
   githubRepositoryName: string;
   githubRepositoryOwner: string;
   githubRepositoryBranch: string;
+  envName: string,
   projectName: string;
   artifactsBucketName: string;
   deployViaGitHubActions: boolean;
@@ -53,7 +54,7 @@ export class CodeBuildProject extends Construct {
       webhook: false,
       cloneDepth: 1,
       fetchSubmodules: false,
-      ...(props.deployViaGitHubActions ? { branchOrRef: `refs/heads/${props.githubRepositoryBranch.toLowerCase()}` } : {}),
+      ...(props.deployViaGitHubActions ? { branchOrRef: `refs/heads/${props.githubRepositoryBranch}` } : {}),
     });
 
     const buildAsRole = iam.Role.fromRoleArn(
@@ -75,11 +76,11 @@ export class CodeBuildProject extends Construct {
       projectName: `PLF-${props.projectName}`,
       environmentVariables: {
         ENV_NAME: {
-          value: props.githubRepositoryBranch.toLowerCase(),
+          value: props.envName.toLowerCase(),
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
         },
         STAGE_ENV_NAME: {
-          value: props.githubRepositoryBranch.toLowerCase(),
+          value: props.envName.toLowerCase(),
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
         },
         STAGE_PACKAGE_BUCKET_NAME: {
