@@ -1,0 +1,17 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "$schema": "./node_modules/lerna/schemas/lerna-schema.json",
+  "version": "0.0.0",
+  "npmClient": "yarn",
+  "useNx": false,
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "registry": "https://npm.pkg.github.com",
+      "conventionalCommits": true,
+      "yes": true
+    }
+  }
+}
