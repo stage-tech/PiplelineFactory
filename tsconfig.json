@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es2019",
+    "target": "es6",
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -18,7 +18,7 @@
     "strictPropertyInitialization": false,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist",
+    "lib": ["es2016", "dom"],
     "paths": {
       "@stage-tech/sphinx-pipeline-factory-cdk": ["../cdk/src"],
       "@stage-tech/sphinx-pipeline-factory-lambda": ["../lambda/src"],

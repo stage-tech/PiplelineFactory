@@ -2,6 +2,7 @@
 import 'source-map-support/register';
 
 import * as cdk from 'aws-cdk-lib';
+import path from 'path';
 
 import FactoryProperties from '../src/factoryProperties';
 import { TriggerStack } from '../src/trigger-stack';
@@ -15,7 +16,7 @@ const s3_lambda_object_key = app.node.tryGetContext('s3_lambda_object_key');
 const s3_bucket_name = app.node.tryGetContext('s3_bucket_name');
 const templateBranchName = app.node.tryGetContext('template_branch_name') ?? 'master';
 console.log(`s3_lambda_object_key ${s3_lambda_object_key} , s3_bucket_name ${s3_bucket_name} `);
-const projectName = 'PipeLine-Factory';
+const projectName = 'PipeLine-Factory-jegor';
 const factoryProperties: FactoryProperties = {
   pipelineTemplateBranchName: templateBranchName,
   pipelineTemplateRepositoryName: 'pipeline-factory',
@@ -27,5 +28,7 @@ const factoryProperties: FactoryProperties = {
   existingBucketName: app.node.tryGetContext('existingBucketName'),
   organizationName: app.node.tryGetContext('organizationName'),
   repositorySelector: `pipeline-factory-${env.account}`,
+  lambdaCodeEntryPoint: path.join(__dirname, '../../lambda/dist/src/notifications/pipeline-notifications-handler.js'),
+  githubToken: process.env.NPM_TOKEN ?? '',
 };
 new TriggerStack(app, projectName, factoryProperties);
