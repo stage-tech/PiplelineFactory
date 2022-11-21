@@ -21,8 +21,6 @@ import NotificationsLambdaRole from './lambda-role';
 export interface NotificationsProps {
   githubToken: string;
   lambdaCodeEntryPoint: string;
-  triggerCodeS3Key: string;
-  triggerCodeS3Bucket: string | undefined;
   organizationName: string;
   kmsEncryptionKey: kms.Key;
 }
@@ -96,8 +94,8 @@ export default class Notifications extends Construct {
     );
 
     const githubToken = props.githubToken;
-    const npmrcFileLocation = '/root/.npmrc';
-
+    const npmrcFileLocation =  '/home/user/.npmrc'; //'/root/.npmrc'
+  
     const handler = new lambdaNodeJs.NodejsFunction(this, 'Lambda_PipelineNotification', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${projectName}-PipelineEvent-Notification`,
