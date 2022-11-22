@@ -96,6 +96,7 @@ export default class Notifications extends Construct {
     const githubToken = props.githubToken;
     const npmrcFileLocation = '/home/user/.npmrc'; //'/root/.npmrc'
 
+    const lambdaCodeHandlerPath = path.join(props.lambdaCodeEntryPoint + '/notifications/pipeline-notifications-handler.js');
     const handler = new lambdaNodeJs.NodejsFunction(this, 'Lambda_PipelineNotification', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${projectName}-PipelineEvent-Notification`,
@@ -139,7 +140,7 @@ export default class Notifications extends Construct {
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/src/notifications/pipeline-notifications-handler.js',
+      entry: lambdaCodeHandlerPath,
     });
 
     new sns.Subscription(this, 'lambda', {
