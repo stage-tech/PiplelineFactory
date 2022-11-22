@@ -39,27 +39,23 @@ export class TriggerStack extends cdk.Stack {
     });
 
     const factory = new Factory(this, 'factoryBuilder', props);
-    /*
+
     new Api(this, 'Api', {
       PipelineFactoryBuildProjectName: factory.buildProjectName,
       apiDomainCertificateArn: props.apiDomainCertificateArn,
       apiDomainName: props.apiDomainName,
-      triggerCodeS3Bucket: props.triggerCodeS3Bucket,
-      triggerCodeS3Key: props.triggerCodeS3Key,
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });
 
     new Monitor(this, 'Monitor', {
-      triggerCodeS3Bucket: props.triggerCodeS3Bucket,
-      triggerCodeS3Key: props.triggerCodeS3Key,
       PipelineFactoryBuildProjectName: factory.buildProjectName,
       organizationName: props.organizationName,
       repositorySelector: props.repositorySelector,
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });
-*/
+
     new Notifications(this, 'PipelineNotifications', {
       organizationName: props.organizationName,
       kmsEncryptionKey,

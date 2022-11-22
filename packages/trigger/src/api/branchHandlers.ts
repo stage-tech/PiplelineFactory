@@ -11,8 +11,6 @@ export interface BranchHandlersProps {
   lambdaCodeEntryPoint: string;
   githubToken: string;
   factoryBuilderProjectName: string;
-  triggerCodeS3Key: string;
-  triggerCodeS3Bucket: string;
 }
 export default class BranchHandlers extends Construct {
   public readonly apiBranchCreated: IFunction;
@@ -26,9 +24,6 @@ export default class BranchHandlers extends Construct {
     const environmentVariables: { [key: string]: string } = {
       FACTORY_CODEBUILD_PROJECT_NAME: props.factoryBuilderProjectName,
     };
-
-    const githubToken = props.githubToken;
-    const npmrcFileLocation = '/home/user/.npmrc'; //'/root/.npmrc'
 
     this.apiBranchCreated = new lambdaNodeJs.NodejsFunction(this, 'Lambda_API_BranchCreation', {
       runtime: lambda.Runtime.NODEJS_14_X,
@@ -59,19 +54,12 @@ export default class BranchHandlers extends Construct {
             return [];
           },
           beforeInstall() {
-            return [
-              'npm config ls -l | grep config',
-              `echo '@stage-tech:registry=https://npm.pkg.github.com/stage-tech' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/stage-tech/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/downloads/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              'cat ${npmrcFileLocation}',
-            ];
+            return [];
           },
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/src/api/create-branch-handler.js',
+      entry: props.lambdaCodeEntryPoint + '/api/create-branch-handler.js',
     });
 
     this.apiBranchDeleted = new lambdaNodeJs.NodejsFunction(this, 'Lambda_API_BranchDeletion', {
@@ -103,19 +91,12 @@ export default class BranchHandlers extends Construct {
             return [];
           },
           beforeInstall() {
-            return [
-              'npm config ls -l | grep config',
-              `echo '@stage-tech:registry=https://npm.pkg.github.com/stage-tech' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/stage-tech/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/downloads/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              'cat ${npmrcFileLocation}',
-            ];
+            return [];
           },
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/src/api/delete-branch-handler.js',
+      entry: props.lambdaCodeEntryPoint + '/api/delete-branch-handler.js',
     });
   }
 }

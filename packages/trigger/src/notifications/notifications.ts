@@ -93,10 +93,9 @@ export default class Notifications extends Construct {
       }),
     );
 
-    const githubToken = props.githubToken;
-    const npmrcFileLocation = '/home/user/.npmrc'; //'/root/.npmrc'
-
-    const lambdaCodeHandlerPath = path.join(props.lambdaCodeEntryPoint + '/notifications/pipeline-notifications-handler.js');
+    const lambdaCodeHandlerPath = path.join(
+      props.lambdaCodeEntryPoint + '/notifications/pipeline-notifications-handler.js',
+    );
     const handler = new lambdaNodeJs.NodejsFunction(this, 'Lambda_PipelineNotification', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${projectName}-PipelineEvent-Notification`,
@@ -128,14 +127,7 @@ export default class Notifications extends Construct {
             return [];
           },
           beforeInstall() {
-            return [
-              'npm config ls -l | grep config',
-              `echo '@stage-tech:registry=https://npm.pkg.github.com/stage-tech' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/stage-tech/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/downloads/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              'cat ${npmrcFileLocation}',
-            ];
+            return [];
           },
         },
       },

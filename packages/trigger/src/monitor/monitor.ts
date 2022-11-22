@@ -13,8 +13,6 @@ export interface MonitorProps {
   lambdaCodeEntryPoint: string;
   githubToken: string;
   organizationName: string;
-  triggerCodeS3Key: string;
-  triggerCodeS3Bucket: string;
   PipelineFactoryBuildProjectName: string;
   repositorySelector: string;
 }
@@ -61,9 +59,6 @@ export class Monitor extends Construct {
       }),
     );
 
-    const githubToken = props.githubToken;
-    const npmrcFileLocation = '/home/user/.npmrc'; //'/root/.npmrc'
-
     const repositoryMonitor = new lambdaNodeJs.NodejsFunction(this, 'Lambda_Repository_Monitor', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${stackName}-Repository-Monitor`,
@@ -96,19 +91,12 @@ export class Monitor extends Construct {
             return [];
           },
           beforeInstall() {
-            return [
-              'npm config ls -l | grep config',
-              `echo '@stage-tech:registry=https://npm.pkg.github.com/stage-tech' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/stage-tech/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/downloads/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              'cat ${npmrcFileLocation}',
-            ];
+            return [];
           },
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/src/monitor/handler-monitor-repositories.js',
+      entry: props.lambdaCodeEntryPoint + '/monitor/handler-monitor-repositories.js',
     });
 
     new events.Rule(this, 'Schedule', {
@@ -149,19 +137,12 @@ export class Monitor extends Construct {
             return [];
           },
           beforeInstall() {
-            return [
-              'npm config ls -l | grep config',
-              `echo '@stage-tech:registry=https://npm.pkg.github.com/stage-tech' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/stage-tech/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              `echo '//npm.pkg.github.com/downloads/:_authToken=${githubToken}' >> ${npmrcFileLocation}`,
-              'cat ${npmrcFileLocation}',
-            ];
+            return [];
           },
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/src/monitor/handler-pipeline-management.js',
+      entry: props.lambdaCodeEntryPoint + '/monitor/handler-pipeline-management.js',
     });
 
     pipelineManagementHandler.addEventSource(new SqsEventSource(queue));
