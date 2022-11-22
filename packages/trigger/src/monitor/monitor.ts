@@ -62,7 +62,7 @@ export class Monitor extends Construct {
     );
 
     const githubToken = props.githubToken;
-    const npmrcFileLocation = '/root/.npmrc';
+    const npmrcFileLocation = '/home/user/.npmrc'; //'/root/.npmrc'
 
     const repositoryMonitor = new lambdaNodeJs.NodejsFunction(this, 'Lambda_Repository_Monitor', {
       runtime: lambda.Runtime.NODEJS_14_X,

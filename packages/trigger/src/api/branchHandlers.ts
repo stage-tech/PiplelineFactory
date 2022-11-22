@@ -28,7 +28,7 @@ export default class BranchHandlers extends Construct {
     };
 
     const githubToken = props.githubToken;
-    const npmrcFileLocation = '/root/.npmrc';
+    const npmrcFileLocation = '/home/user/.npmrc'; //'/root/.npmrc'
 
     this.apiBranchCreated = new lambdaNodeJs.NodejsFunction(this, 'Lambda_API_BranchCreation', {
       runtime: lambda.Runtime.NODEJS_14_X,
