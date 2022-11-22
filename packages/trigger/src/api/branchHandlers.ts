@@ -71,7 +71,7 @@ export default class BranchHandlers extends Construct {
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint,
+      entry: props.lambdaCodeEntryPoint + '/src/api/create-branch-handler.js',
     });
 
     this.apiBranchDeleted = new lambdaNodeJs.NodejsFunction(this, 'Lambda_API_BranchDeletion', {
@@ -115,7 +115,7 @@ export default class BranchHandlers extends Construct {
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint,
+      entry: props.lambdaCodeEntryPoint + '/src/api/delete-branch-handler.js',
     });
   }
 }

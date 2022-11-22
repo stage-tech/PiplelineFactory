@@ -108,7 +108,7 @@ export class Monitor extends Construct {
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint,
+      entry: props.lambdaCodeEntryPoint + '/src/monitor/handler-monitor-repositories.js',
     });
 
     new events.Rule(this, 'Schedule', {
@@ -161,7 +161,7 @@ export class Monitor extends Construct {
         },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint,
+      entry: props.lambdaCodeEntryPoint + '/src/monitor/handler-pipeline-management.js',
     });
 
     pipelineManagementHandler.addEventSource(new SqsEventSource(queue));

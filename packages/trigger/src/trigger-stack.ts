@@ -63,7 +63,7 @@ export class TriggerStack extends cdk.Stack {
     new Notifications(this, 'PipelineNotifications', {
       organizationName: props.organizationName,
       kmsEncryptionKey,
-      lambdaCodeEntryPoint: props.lambdaCodeEntryPoint + '/notifications/pipeline-notifications-handler.js',
+      lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });
   }
