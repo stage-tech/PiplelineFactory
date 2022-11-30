@@ -42,8 +42,6 @@ export class TriggerStack extends cdk.Stack {
 
     new Api(this, 'Api', {
       PipelineFactoryBuildProjectName: factory.buildProjectName,
-      apiDomainCertificateArn: props.apiDomainCertificateArn,
-      apiDomainName: props.apiDomainName,
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });

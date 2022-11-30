@@ -6,8 +6,6 @@ import BranchHandlers from './branchHandlers';
 export interface ApiProps {
   lambdaCodeEntryPoint: string;
   githubToken: string;
-  apiDomainName: string | undefined;
-  apiDomainCertificateArn: string | undefined;
   PipelineFactoryBuildProjectName: string;
 }
 
@@ -21,12 +19,10 @@ export default class Api extends Construct {
       githubToken: props.githubToken,
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
     });
-
+    
     new ApiEntryPoint(this, 'Api', {
       apiBranchCreated: handlers.apiBranchCreated,
       apiBranchDeleted: handlers.apiBranchDeleted,
-      apiDomainCertificateArn: props.apiDomainCertificateArn,
-      apiDomainName: props.apiDomainName,
-    });
+    }); 
   }
 }

@@ -13,14 +13,12 @@ const env = {
   region: process.env.CDK_DEFAULT_REGION,
 };
 const templateBranchName = app.node.tryGetContext('template_branch_name') ?? 'master';
-const projectName = 'PipeLine-Factory-jegor';
+const projectName = 'PipeLine-Factory';
 const factoryProperties: FactoryProperties = {
   pipelineTemplateBranchName: templateBranchName,
   pipelineTemplateRepositoryName: 'pipeline-factory',
   pipelineTemplateGithubOwner: 'stage-tech',
-  apiDomainCertificateArn: app.node.tryGetContext('apiDomainCertificateArn'),
-  apiDomainName: app.node.tryGetContext('apiDomainName'),
-  existingBucketName: app.node.tryGetContext('existingBucketName'),
+  existingBucketName: app.node.tryGetContext(`${env.account}-existingBucketName`),
   organizationName: app.node.tryGetContext('organizationName'),
   repositorySelector: `pipeline-factory-${env.account}`,
   lambdaCodeEntryPoint: path.join(__dirname, '../../lambda/dist/'),

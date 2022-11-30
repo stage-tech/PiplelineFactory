@@ -9,8 +9,6 @@ import BranchHandlers from './branchHandlers';
 
 export interface ApiProps {
   apiBranchCreated: IFunction;
-  apiDomainCertificateArn?: string;
-  apiDomainName?: string;
   apiBranchDeleted: IFunction;
 }
 
@@ -58,16 +56,7 @@ export default class ApiEntryPoint extends Construct {
       ],
     });
     usagePlan.addApiKey(apiKey);
-
-    if (props.apiDomainName && props.apiDomainCertificateArn) {
-      new apigateway.DomainName(this, 'ApiCustomDomain', {
-        domainName: props.apiDomainName,
-        certificate: acm.Certificate.fromCertificateArn(this, 'customDomainCertificate', props.apiDomainCertificateArn),
-        endpointType: apigateway.EndpointType.REGIONAL,
-        securityPolicy: apigateway.SecurityPolicy.TLS_1_2,
-        mapping: entryPointApi,
-      });
-    }
+    
 
     new cdk.CfnOutput(this, 'APIUrl', {
       value: entryPointApi.url,
