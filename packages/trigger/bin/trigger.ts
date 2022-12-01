@@ -21,7 +21,7 @@ const factoryProperties: FactoryProperties = {
   existingBucketName: app.node.tryGetContext(`${env.account}-existingBucketName`),
   organizationName: app.node.tryGetContext('organizationName'),
   repositorySelector: `pipeline-factory-${env.account}`,
-  lambdaCodeEntryPoint: path.join(__dirname, '../../lambda/dist/'),
+  lambdaCodeEntryPoint: path.join(__dirname, '../../lambda/src/'),
   githubToken: process.env.NPM_TOKEN ?? '',
 };
 new TriggerStack(app, projectName, factoryProperties);

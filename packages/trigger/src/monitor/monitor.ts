@@ -62,41 +62,21 @@ export class Monitor extends Construct {
     const repositoryMonitor = new lambdaNodeJs.NodejsFunction(this, 'Lambda_Repository_Monitor', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${stackName}-Repository-Monitor`,
-      handler: 'dist/monitor/handler-monitor-repositories.handler',
+      handler: 'handler',
       role: lambdaRole,
+
       environment: {
         SQS_QUEUE_URL: queue.queueUrl,
         ORGANIZATION_NAME: props.organizationName,
       },
-      timeout: cdk.Duration.seconds(10),
+      timeout: cdk.Duration.minutes(10),
       architecture: lambda.Architecture.X86_64,
       depsLockFilePath: path.join(__dirname, '../../../lambda/yarn.lock'),
       bundling: {
-        externalModules: [
-          'aws-sdk',
-          '@aws-sdk/client-codebuild',
-          'fsevents',
-          '@octokit/rest',
-          '@slack/web-api',
-          'js-base64',
-          '@aws-sdk/client-codepipeline',
-        ],
         logLevel: lambdaNodeJs.LogLevel.WARNING,
-        nodeModules: ['typescript'],
-        commandHooks: {
-          beforeBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          afterBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          beforeInstall() {
-            return [];
-          },
-        },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/monitor/handler-monitor-repositories.js',
+      entry: path.join(props.lambdaCodeEntryPoint, '/monitor/handler-monitor-repositories.ts'),
     });
 
     new events.Rule(this, 'Schedule', {
@@ -108,7 +88,7 @@ export class Monitor extends Construct {
     const pipelineManagementHandler = new lambdaNodeJs.NodejsFunction(this, 'Lambda_Pipeline_Manager', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${stackName}-Pipeline-Manager`,
-      handler: 'dist/monitor/handler-pipeline-management.handler',
+      handler: 'handler',
       role: lambdaRole,
       environment: {
         FACTORY_CODEBUILD_PROJECT_NAME: props.PipelineFactoryBuildProjectName,
@@ -118,31 +98,10 @@ export class Monitor extends Construct {
       architecture: lambda.Architecture.X86_64,
       depsLockFilePath: path.join(__dirname, '../../../lambda/yarn.lock'),
       bundling: {
-        externalModules: [
-          'aws-sdk',
-          '@aws-sdk/client-codebuild',
-          'fsevents',
-          '@octokit/rest',
-          '@slack/web-api',
-          'js-base64',
-          '@aws-sdk/client-codepipeline',
-        ],
         logLevel: lambdaNodeJs.LogLevel.WARNING,
-        nodeModules: ['typescript'],
-        commandHooks: {
-          beforeBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          afterBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          beforeInstall() {
-            return [];
-          },
-        },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/monitor/handler-pipeline-management.js',
+      entry: path.join(props.lambdaCodeEntryPoint, '/monitor/handler-pipeline-management.ts'),
     });
 
     pipelineManagementHandler.addEventSource(new SqsEventSource(queue));

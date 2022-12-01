@@ -28,75 +28,33 @@ export default class BranchHandlers extends Construct {
     this.apiBranchCreated = new lambdaNodeJs.NodejsFunction(this, 'Lambda_API_BranchCreation', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${cdk.Stack.of(this).stackName}-API-BranchCreatedHandler`,
-      handler: 'dist/api/create-branch-handler.handler',
+      handler: 'handler',
       role: lambdaRole.lambdaRole,
       environment: environmentVariables,
       timeout: cdk.Duration.seconds(10),
       architecture: lambda.Architecture.X86_64,
       depsLockFilePath: path.join(__dirname, '../../../lambda/yarn.lock'),
       bundling: {
-        externalModules: [
-          'aws-sdk',
-          '@aws-sdk/client-codebuild',
-          'fsevents',
-          '@octokit/rest',
-          '@slack/web-api',
-          'js-base64',
-          '@aws-sdk/client-codepipeline',
-        ],
         logLevel: lambdaNodeJs.LogLevel.WARNING,
-        nodeModules: ['typescript'],
-        commandHooks: {
-          beforeBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          afterBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          beforeInstall() {
-            return [];
-          },
-        },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/api/create-branch-handler.js',
+      entry: path.join(props.lambdaCodeEntryPoint, '/api/create-branch-handler.ts'),
     });
 
     this.apiBranchDeleted = new lambdaNodeJs.NodejsFunction(this, 'Lambda_API_BranchDeletion', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${cdk.Stack.of(this).stackName}-API-BranchDeletedHandler`,
-      handler: 'dist/api/delete-branch-handler.handler',
+      handler: 'handler',
       role: lambdaRole.lambdaRole,
       environment: environmentVariables,
       timeout: cdk.Duration.seconds(10),
       architecture: lambda.Architecture.X86_64,
       depsLockFilePath: path.join(__dirname, '../../../lambda/yarn.lock'),
       bundling: {
-        externalModules: [
-          'aws-sdk',
-          '@aws-sdk/client-codebuild',
-          'fsevents',
-          '@octokit/rest',
-          '@slack/web-api',
-          'js-base64',
-          '@aws-sdk/client-codepipeline',
-        ],
         logLevel: lambdaNodeJs.LogLevel.WARNING,
-        nodeModules: ['typescript'],
-        commandHooks: {
-          beforeBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          afterBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          beforeInstall() {
-            return [];
-          },
-        },
       },
       memorySize: 128,
-      entry: props.lambdaCodeEntryPoint + '/api/delete-branch-handler.js',
+      entry: path.join(props.lambdaCodeEntryPoint, '/api/delete-branch-handler.ts'),
     });
   }
 }

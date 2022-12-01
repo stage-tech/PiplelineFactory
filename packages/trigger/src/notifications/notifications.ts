@@ -94,12 +94,12 @@ export default class Notifications extends Construct {
     );
 
     const lambdaCodeHandlerPath = path.join(
-      props.lambdaCodeEntryPoint + '/notifications/pipeline-notifications-handler.js',
+      props.lambdaCodeEntryPoint + '/notifications/pipeline-notifications-handler.ts',
     );
     const handler = new lambdaNodeJs.NodejsFunction(this, 'Lambda_PipelineNotification', {
       runtime: lambda.Runtime.NODEJS_14_X,
       functionName: `${projectName}-PipelineEvent-Notification`,
-      handler: 'dist/notifications/pipeline-notifications-handler.handler',
+      handler: 'handler',
       role: lambdaRole,
       environment: {
         ORGANIZATION_NAME: props.organizationName,
@@ -108,28 +108,7 @@ export default class Notifications extends Construct {
       architecture: lambda.Architecture.X86_64,
       depsLockFilePath: path.join(__dirname, '../../../lambda/yarn.lock'),
       bundling: {
-        externalModules: [
-          'aws-sdk',
-          '@aws-sdk/client-codebuild',
-          'fsevents',
-          '@octokit/rest',
-          '@slack/web-api',
-          'js-base64',
-          '@aws-sdk/client-codepipeline',
-        ],
         logLevel: lambdaNodeJs.LogLevel.WARNING,
-        nodeModules: ['typescript'],
-        commandHooks: {
-          beforeBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          afterBundling(inputDir: string, outputDir: string): string[] {
-            return [];
-          },
-          beforeInstall() {
-            return [];
-          },
-        },
       },
       memorySize: 128,
       entry: lambdaCodeHandlerPath,

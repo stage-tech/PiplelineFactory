@@ -7,7 +7,7 @@
         }
       },
       "pre_build": {
-        "commands": ["cd src/pipeline-template-cdk", "npm uninstall -g aws-cdk" , "npm i -g aws-cdk", "yarn install" ]
+        "commands": ["cd packages/src/cdk", "npm uninstall -g aws-cdk" , "npm i -g aws-cdk", "yarn install" ]
       },
       "build": {
         "commands": [

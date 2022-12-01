@@ -20,7 +20,7 @@ export default class FactoryCodeBuildProject extends Construct {
     });
 
     // assumption about where the buildspec is located
-    const buildSpecFile = 'src/pipeline-template-cdk/buildspec.json';
+    const buildSpecFile = 'packages/cdk/buildspec.json';
 
     const cdkCodeBuilder = new codebuild.Project(this, 'CodeBuild_CreatePipeline', {
       buildSpec: codebuild.BuildSpec.fromSourceFilename(buildSpecFile),
