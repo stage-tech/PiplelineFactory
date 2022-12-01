@@ -40,6 +40,7 @@ export class PipelineNotificationsHandler {
   }
 
   public handler = async (event: lambda.SNSEvent) => {
+    console.log(`raw event : ${JSON.stringify(event, null, 4)}`);
     const payload = JSON.parse(event.Records[0].Sns.Message || '') as ExecutionEvent;
     console.log(JSON.stringify(payload, null, 4));
     const eventDetails = this.getEventDetails(payload);
