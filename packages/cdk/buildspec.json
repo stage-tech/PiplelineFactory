@@ -1,0 +1,22 @@
+{
+    "version": "0.2",
+    "phases": {
+      "install": {
+        "runtime-versions": {
+          "nodejs": 14
+        }
+      },
+      "pre_build": {
+        "commands": ["cd packages/src/cdk", "npm uninstall -g aws-cdk" , "npm i -g aws-cdk", "yarn install" ]
+      },
+      "build": {
+        "commands": [
+          "yarn build",
+          "yarn cdk-confirmed"
+        ]
+      }
+    },
+    "cache": {
+      "paths": ["node_modules/**/*"]
+  }
+}

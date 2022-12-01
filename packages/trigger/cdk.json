@@ -1,0 +1,7 @@
+{
+  "app": "npx ts-node bin/trigger.ts",
+  "context" : {
+    "928065939415-existingBucketName" : "salt-deployment-packages",
+    "organizationName" : "stage-tech"
+  }
+}

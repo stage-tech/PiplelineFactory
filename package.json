@@ -1,0 +1,17 @@
+{
+  "name": "sphinx-pipeline-factory",
+  "description": "Node TypeScript monorepo for the Sphinx Pipeline Factory packages",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "lerna run test --stream",
+    "build": "lerna run build --stream",
+    "deploy": "lerna run deploy --stream",
+    "lint": "lerna run lint --stream",
+    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('Please use Yarn instead of NPM to install dependencies. See: https://yarnpkg.com/lang/en/docs/install/')\"",
+    "prepare": "husky install",
+    "release": "npx lerna publish"
+  }
+}

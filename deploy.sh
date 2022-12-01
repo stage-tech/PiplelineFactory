@@ -36,12 +36,12 @@ s3_lambda_object_key="$package_name/$branch_name/$package_file_name"
 s3_package_path="s3://$s3_bucket_name/$s3_lambda_object_key"
 
 pushd $PWD
-cd ./src/lambda
+cd ./packages/lambda
 ./build.sh $package_file_name $s3_package_path
 popd
 
 pushd $PWD
-cd ./src/PipeLineFactory
+cd ./packages/trigger
 yarn install
 yarn build
 cdk deploy --context s3_bucket_name=$s3_bucket_name --context s3_lambda_object_key=$s3_lambda_object_key --context template_branch_name=$branch_name
