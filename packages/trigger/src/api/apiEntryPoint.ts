@@ -56,7 +56,6 @@ export default class ApiEntryPoint extends Construct {
       ],
     });
     usagePlan.addApiKey(apiKey);
-    
 
     new cdk.CfnOutput(this, 'APIUrl', {
       value: entryPointApi.url,

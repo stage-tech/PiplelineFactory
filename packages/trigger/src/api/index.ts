@@ -19,10 +19,10 @@ export default class Api extends Construct {
       githubToken: props.githubToken,
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
     });
-    
+
     new ApiEntryPoint(this, 'Api', {
       apiBranchCreated: handlers.apiBranchCreated,
       apiBranchDeleted: handlers.apiBranchDeleted,
-    }); 
+    });
   }
 }
