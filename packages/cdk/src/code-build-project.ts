@@ -56,7 +56,7 @@ export class CodeBuildProject extends Construct {
       role: buildAsRole,
       source: gitHubSource,
       environment: {
-        buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+        buildImage: codebuild.LinuxBuildImage.STANDARD_6_0,
         privileged: true,
       },
       timeout: cdk.Duration.hours(2),
