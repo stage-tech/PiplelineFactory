@@ -16,6 +16,7 @@ export interface CodeBuildProjectProps {
   projectName: string;
   artifactsBucketName: string;
   deployViaGitHubActions: boolean;
+  githubOidcAllowAllRefs: boolean;
   buildSpecLocationOverride?: string;
 }
 export class CodeBuildProject extends Construct {
@@ -111,7 +112,7 @@ export class CodeBuildProject extends Construct {
       provider,
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
-      filter: `ref:refs/heads/${props.githubRepositoryBranch}`,
+      filter: props.githubOidcAllowAllRefs ? '*' : `ref:refs/heads/${props.githubRepositoryBranch}`,
       maxSessionDuration: cdk.Duration.hours(3),
     });
     executionRole.addToPolicy(
