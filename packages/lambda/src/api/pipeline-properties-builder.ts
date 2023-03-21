@@ -38,7 +38,7 @@ export class PipeLinePropertiesBuilder {
   }
 
   private extractBranchName(branchName: string) {
-    let trimmedBranchName = branchName.toLowerCase();
+    let trimmedBranchName = branchName;
     if (branchName.startsWith('refs/heads/')) {
       trimmedBranchName = branchName.replace('refs/heads/', '');
     }
