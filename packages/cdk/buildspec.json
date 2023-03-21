@@ -7,7 +7,7 @@
         }
       },
       "pre_build": {
-        "commands": ["cd packages/src/cdk", "npm uninstall -g aws-cdk" , "npm i -g aws-cdk", "yarn install" ]
+        "commands": ["cd packages/cdk/src", "npm uninstall -g aws-cdk" , "npm i -g aws-cdk", "yarn install" ]
       },
       "build": {
         "commands": [
