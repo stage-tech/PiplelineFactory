@@ -45,7 +45,8 @@ export class TriggerStack extends cdk.Stack {
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });
-
+    /*
+   
     new Monitor(this, 'Monitor', {
       PipelineFactoryBuildProjectName: factory.buildProjectName,
       organizationName: props.organizationName,
@@ -53,6 +54,7 @@ export class TriggerStack extends cdk.Stack {
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });
+    */
     new Notifications(this, 'PipelineNotifications', {
       organizationName: props.organizationName,
       kmsEncryptionKey,
