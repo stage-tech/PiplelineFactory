@@ -18,6 +18,7 @@ export interface CodeBuildProjectProps {
   deployViaGitHubActions: boolean;
   githubOidcAllowAllRefs: boolean;
   buildSpecLocationOverride?: string;
+  nodeVersion?: string;
 }
 export class CodeBuildProject extends Construct {
   buildProject: codebuild.Project;
@@ -56,7 +57,8 @@ export class CodeBuildProject extends Construct {
       role: buildAsRole,
       source: gitHubSource,
       environment: {
-        buildImage: codebuild.LinuxBuildImage.STANDARD_6_0,
+        buildImage:
+          props.nodeVersion === '18' ? codebuild.LinuxBuildImage.STANDARD_7_0 : codebuild.LinuxBuildImage.STANDARD_6_0,
         privileged: true,
       },
       timeout: cdk.Duration.hours(2),
