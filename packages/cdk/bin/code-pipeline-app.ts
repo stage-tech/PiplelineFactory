@@ -36,6 +36,7 @@ new CodePipelineStack(app, `PLF-${projectName}`, {
   artifactsBucket: process.env.ARTIFACTS_BUCKET,
   deployViaGitHubActions: process.env.DEPLOY_VIA_GITHUB_ACTIONS == 'true',
   githubOidcAllowAllRefs: process.env.GITHUB_OIDC_ALLOW_ALL_REFS == 'true',
+  nodeVersion: process.env.NODE_VERSION,
   projectName: projectName,
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,

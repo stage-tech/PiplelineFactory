@@ -19,6 +19,7 @@ export class CodePipelineStackProps implements cdk.StackProps {
   gitHubTokenSecretArn?: string;
   deployViaGitHubActions?: boolean;
   githubOidcAllowAllRefs?: boolean;
+  readonly nodeVersion?: string;
 }
 
 export class CodePipelineStack extends cdk.Stack {
@@ -73,6 +74,7 @@ export class CodePipelineStack extends cdk.Stack {
       buildAsRoleArn: props.buildAsRoleArn,
       deployViaGitHubActions: props.deployViaGitHubActions || false,
       githubOidcAllowAllRefs: props.githubOidcAllowAllRefs || false,
+      nodeVersion: props.nodeVersion,
     });
 
     if (!props.deployViaGitHubActions) {
