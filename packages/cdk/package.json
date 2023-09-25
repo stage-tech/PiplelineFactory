@@ -9,7 +9,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "cdk": "cdk",
-    "cdk-confirmed": "cdk deploy --require-approval never",
+    "cdk-confirmed": "yarn cdk deploy --require-approval never",
     "lint": "tsc && eslint '*/**/*.{js,ts,tsx}' --fix"
   },
   "devDependencies": {
