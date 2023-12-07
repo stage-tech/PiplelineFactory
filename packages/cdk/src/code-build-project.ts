@@ -152,7 +152,7 @@ function getFilter(
   if (githubOidcAllowAllRefs) {
     return '*';
   } else if (githubEnvironmentTag) {
-    return `environment/${githubEnvironmentTag}`;
+    return `environment:${githubEnvironmentTag}`;
   } else {
     return `ref:refs/heads/${githubRepositoryBranch}`;
   }
