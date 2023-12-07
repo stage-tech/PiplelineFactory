@@ -60,6 +60,7 @@ export class CodeBuildProject extends Construct {
         buildImage:
           props.nodeVersion === '18' ? codebuild.LinuxBuildImage.STANDARD_7_0 : codebuild.LinuxBuildImage.STANDARD_6_0,
         privileged: true,
+        computeType: codebuild.ComputeType.LARGE,
       },
       timeout: cdk.Duration.hours(2),
 
