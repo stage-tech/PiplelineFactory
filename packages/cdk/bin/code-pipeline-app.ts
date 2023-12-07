@@ -32,6 +32,7 @@ new CodePipelineStack(app, `PLF-${projectName}`, {
   envName: envName,
   buildAsRoleArn: process.env.BUILD_AS_ROLE_ARN,
   buildSpecFileRelativeLocation: process.env.BUILD_SPEC_RELATIVE_LOCATION,
+  githubEnvironmentTag: process.env.GITHUB_ENVIRONMENT_TAG,
   gitHubTokenSecretArn: process.env.GITHUB_TOKEN_SECRET_ARN,
   artifactsBucket: process.env.ARTIFACTS_BUCKET,
   deployViaGitHubActions: process.env.DEPLOY_VIA_GITHUB_ACTIONS == 'true',

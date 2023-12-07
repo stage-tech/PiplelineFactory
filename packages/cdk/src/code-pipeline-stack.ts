@@ -14,6 +14,7 @@ export class CodePipelineStackProps implements cdk.StackProps {
   readonly envName: string;
   readonly projectName: string;
   readonly buildSpecFileRelativeLocation?: string;
+  readonly githubEnvironmentTag?: string;
   artifactsBucket?: string;
   buildAsRoleArn?: string;
   gitHubTokenSecretArn?: string;
@@ -68,6 +69,7 @@ export class CodePipelineStack extends cdk.Stack {
       githubRepositoryBranch: props.githubRepositoryBranch,
       githubRepositoryName: props.githubRepositoryName,
       githubRepositoryOwner: props.githubRepositoryOwner,
+      githubEnvironmentTag: props.githubEnvironmentTag,
       envName: props.envName,
       projectName: props.projectName,
       buildSpecLocationOverride: props.buildSpecFileRelativeLocation,
