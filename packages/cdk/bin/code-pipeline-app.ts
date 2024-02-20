@@ -9,27 +9,28 @@ import { Utility } from './utility';
 const githubRepositoryName = ensureEnvironmentVariable(`GITHUB_REPOSITORY_NAME`);
 const githubRepositoryOwner = ensureEnvironmentVariable('GITHUB_REPOSITORY_OWNER');
 const githubRepositoryBranch = ensureEnvironmentVariable('GITHUB_REPOSITORY_BRANCH');
+const envName = process.env.ENV_NAME;
 
 // extract env name for branches prefixed with deploy/
-const envName = githubRepositoryBranch.toLowerCase().startsWith('deploy/')
+const branchName = githubRepositoryBranch.toLowerCase().startsWith('deploy/')
   ? githubRepositoryBranch.substring('deploy/'.length)
   : githubRepositoryBranch;
 
 const app = new cdk.App();
-const projectName = Utility.sanitizeStackName(`${githubRepositoryName}-${envName}`).toLowerCase();
+const projectName = Utility.sanitizeStackName(`${githubRepositoryName}-${envName ?? branchName}`).toLowerCase();
 
 function ensureEnvironmentVariable(variableName: string): string {
   if (!process.env[variableName] || process.env[variableName] == undefined) {
     throw new Error(`env variable ${variableName} is not defined`);
   }
-  return process.env[variableName] || '';
+  return process.env[variableName] ?? '';
 }
 
 new CodePipelineStack(app, `PLF-${projectName}`, {
   githubRepositoryName: githubRepositoryName,
   githubRepositoryOwner: githubRepositoryOwner,
   githubRepositoryBranch: githubRepositoryBranch,
-  envName: envName,
+  envName: envName ??  branchName,
   buildAsRoleArn: process.env.BUILD_AS_ROLE_ARN,
   buildSpecFileRelativeLocation: process.env.BUILD_SPEC_RELATIVE_LOCATION,
   gitHubTokenSecretArn: process.env.GITHUB_TOKEN_SECRET_ARN,
