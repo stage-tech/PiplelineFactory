@@ -19,6 +19,7 @@ export interface CodeBuildProjectProps {
   githubOidcAllowAllRefs: boolean;
   buildSpecLocationOverride?: string;
   nodeVersion?: string;
+  githubEnvironmentTag?: string;
 }
 export class CodeBuildProject extends Construct {
   buildProject: codebuild.Project;
@@ -60,6 +61,7 @@ export class CodeBuildProject extends Construct {
         buildImage:
           props.nodeVersion === '18' ? codebuild.LinuxBuildImage.STANDARD_7_0 : codebuild.LinuxBuildImage.STANDARD_6_0,
         privileged: true,
+        computeType: codebuild.ComputeType.LARGE,
       },
       timeout: cdk.Duration.hours(2),
 
@@ -109,12 +111,15 @@ export class CodeBuildProject extends Construct {
 
   private configureGitHubOidcAuth(props: CodeBuildProjectProps) {
     const provider = GithubActionsIdentityProvider.fromAccount(this, 'GitHubProvider');
+
+    const filter = getFilter(props.githubOidcAllowAllRefs, props.githubRepositoryBranch, props.githubEnvironmentTag);
+
     const executionRole = new GithubActionsRole(this, `${props.projectName}-github-oidc-role`, {
       roleName: `${props.projectName}-github-oidc-role`,
       provider,
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
-      filter: props.githubOidcAllowAllRefs ? '*' : `ref:refs/heads/${props.githubRepositoryBranch}`,
+      filter: filter,
       maxSessionDuration: cdk.Duration.hours(3),
     });
     executionRole.addToPolicy(
@@ -137,5 +142,19 @@ export class CodeBuildProject extends Construct {
         ],
       }),
     );
+  }
+}
+
+function getFilter(
+  githubOidcAllowAllRefs: boolean,
+  githubRepositoryBranch: string,
+  githubEnvironmentTag?: string,
+): string {
+  if (githubOidcAllowAllRefs) {
+    return '*';
+  } else if (githubEnvironmentTag) {
+    return `environment:${githubEnvironmentTag}`;
+  } else {
+    return `ref:refs/heads/${githubRepositoryBranch}`;
   }
 }
