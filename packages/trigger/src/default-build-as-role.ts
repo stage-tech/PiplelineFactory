@@ -71,6 +71,11 @@ export default class DefaultBuildAsRole extends Construct {
             actions: ['cloudwatch:*', 'config:*'],
           }),
           new iam.PolicyStatement({
+            sid: 'dynamodb',
+            resources: ['*'],
+            actions: ['dynamodb:*'],
+          }),
+          new iam.PolicyStatement({
             sid: 'InvokeApiPolicy',
             effect: iam.Effect.ALLOW,
             actions: ['execute-api:Invoke', 'execute-api:ManageConnections', 'apigateway:*'],
