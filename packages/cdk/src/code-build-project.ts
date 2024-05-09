@@ -44,7 +44,12 @@ export class CodeBuildProject extends Construct {
     const gitHubSource = codebuild.Source.gitHub({
       owner: props.githubRepositoryOwner,
       repo: props.githubRepositoryName,
-      webhook: false,
+      webhook: true,
+      webhookFilters: [
+        // hack as WORKFLOW_JOB_QUEUED is not yet available in aws-cdk-lib
+        // @ts-ignore
+        codebuild.FilterGroup.inEventOf(['WORKFLOW_JOB_QUEUED' as codebuild.EventAction]),
+      ],
       cloneDepth: 1,
       fetchSubmodules: false,
       ...(props.deployViaGitHubActions ? { branchOrRef: `refs/heads/${props.githubRepositoryBranch}` } : {}),
