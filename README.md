@@ -11,7 +11,10 @@ In a new AWS account execute the following setup steps:
  ./deploy.sh [aws-profile-name]
 ```
 
-2. In AWS Secrets Manager update the secret `/pipeline-factory/default-github-token` with a GitHub token with read access to code and packages
+2. In AWS Secrets Manager update the secret `/pipeline-factory/default-github-token` with a GitHub token with read access to code and packages.
+
+3. Activate the AWS CodeConnections connection for GitHub via AWS Console (it is PENDING after initial deployment).
+This connection is then used for individual PLF CodePipeline deployments via SSM parameter `/pipeline-factory/default-github-connection`.
 
 ## Manually deploy a pipeline via the PLF API
 
