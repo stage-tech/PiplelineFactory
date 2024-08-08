@@ -17,6 +17,7 @@ export class CodePipelineStackProps implements cdk.StackProps {
   artifactsBucket?: string;
   buildAsRoleArn?: string;
   gitHubTokenSecretArn?: string;
+  gitHubConnectionArn?: string;
   deployViaGitHubActions?: boolean;
   githubOidcAllowAllRefs?: boolean;
   readonly nodeVersion?: string;
@@ -78,9 +79,15 @@ export class CodePipelineStack extends cdk.Stack {
     });
 
     if (!props.deployViaGitHubActions) {
+      if (!props.gitHubConnectionArn) {
+        const defaultGitHubConnectionName = '/pipeline-factory/default-github-connection';
+        props.gitHubConnectionArn = ssm.StringParameter.valueForStringParameter(this, defaultGitHubConnectionName);
+      }
+
       new CodePipeline(this, 'CodePipeline', {
         artifactsBucketName: props.artifactsBucket,
         gitHubTokenSecretArn: props.gitHubTokenSecretArn,
+        gitHubConnectionArn: props.gitHubConnectionArn,
         githubRepositoryBranch: props.githubRepositoryBranch,
         githubRepositoryName: props.githubRepositoryName,
         githubRepositoryOwner: props.githubRepositoryOwner,
