@@ -1,4 +1,3 @@
-import * as cdk from 'aws-cdk-lib';
 import { IProject } from 'aws-cdk-lib/aws-codebuild';
 import * as codePipeline from 'aws-cdk-lib/aws-codepipeline';
 import { IPipeline } from 'aws-cdk-lib/aws-codepipeline';
@@ -14,6 +13,7 @@ export interface CodePipelineProps {
   githubRepositoryOwner: string;
   githubRepositoryName: string;
   gitHubTokenSecretArn: string;
+  gitHubConnectionArn: string;
   envName: string;
   buildAsRoleArn: string;
   projectName: string;
@@ -46,21 +46,19 @@ export class CodePipeline extends Construct {
       crossAccountKeys: false,
     });
 
-    if (!props.gitHubTokenSecretArn) {
-      throw new Error(`props.gitHubTokenSecretName is empty`);
+    if (!props.gitHubConnectionArn) {
+      throw new Error(`props.gitHubConnectionArn is empty`);
     }
 
-    console.log(props.gitHubTokenSecretArn);
-    const githubToken = cdk.SecretValue.secretsManager(props.gitHubTokenSecretArn);
+    console.log(props.gitHubConnectionArn);
     const sourceCodeOutput = new codePipeline.Artifact('SourceCode');
-    const fetchSourceAction = new codePipelineActions.GitHubSourceAction({
+    const fetchSourceAction = new codePipelineActions.CodeStarConnectionsSourceAction({
       actionName: `GitHub-${props.projectName}`,
       repo: props.githubRepositoryName,
       owner: props.githubRepositoryOwner,
       branch: props.githubRepositoryBranch,
       output: sourceCodeOutput,
-      oauthToken: githubToken,
-      trigger: codePipelineActions.GitHubTrigger.WEBHOOK,
+      connectionArn: props.gitHubConnectionArn,
     });
 
     pipeline.addStage({

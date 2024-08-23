@@ -12,6 +12,7 @@ The following ENV variables are used to configure the pipeline:
 |BUILD_AS_ROLE_ARN|The role ARN to execute the build under|From SSM: `/pipeline-factory/default-build-as-role`|
 |BUILD_SPEC_RELATIVE_LOCATION|The name/path of the build spec executed by code build (relative to the root of the repo)|`buildspec.yml`|
 |GITHUB_TOKEN_SECRET_ARN|The ARN of the token secret|From SSM: `/pipeline-factory/default-github-token`|
+|GITHUB_CONNECTION_ARN| The ARN of the AWS CodeConnections connection for GitHub|From SSM: `/pipeline-factory/default-github-connection`|
 |ARTIFACTS_BUCKET|The name of the code build artifact bucket|From SSM: `/pipeline-factory/artifactsBucket`|
 
 The `cdk.json` file tells the CDK Toolkit how to execute the [code-pipeline-app](./bin/code-pipeline-app.ts)

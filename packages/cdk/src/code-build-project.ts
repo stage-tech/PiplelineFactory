@@ -58,7 +58,9 @@ export class CodeBuildProject extends Construct {
       source: gitHubSource,
       environment: {
         buildImage:
-          props.nodeVersion === '18' ? codebuild.LinuxBuildImage.STANDARD_7_0 : codebuild.LinuxBuildImage.STANDARD_6_0,
+          props.nodeVersion === '18' || props.nodeVersion === '20'
+            ? codebuild.LinuxBuildImage.STANDARD_7_0
+            : codebuild.LinuxBuildImage.STANDARD_6_0,
         privileged: true,
       },
       timeout: cdk.Duration.hours(2),

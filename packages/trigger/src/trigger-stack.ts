@@ -5,6 +5,7 @@ import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as cdkConstants from 'cdk-constants';
 
 import Api from './api';
+import { CodeConnections } from './codeconnections/codeconnections';
 import DefaultBuckets from './default-buckets';
 import DefaultBuildAsRole from './default-build-as-role';
 import Factory from './factory';
@@ -61,5 +62,7 @@ export class TriggerStack extends cdk.Stack {
       lambdaCodeEntryPoint: props.lambdaCodeEntryPoint,
       githubToken: props.githubToken,
     });
+
+    new CodeConnections(this, 'CodeConnections');
   }
 }

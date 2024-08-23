@@ -1,6 +1,6 @@
-import { expect as expectCDK, MatchStyle, matchTemplate } from '@aws-cdk/assert';
-import * as cdk from 'aws-cdk-lib';
-import Trigger = require('../src/trigger-stack');
+// import { expect as expectCDK, MatchStyle, matchTemplate } from '@aws-cdk/assert';
+// import * as cdk from 'aws-cdk-lib';
+// import Trigger = require('../src/trigger-stack');
 /*
 test('Empty Stack', () => {
     const app = new cdk.App();
